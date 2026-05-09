@@ -1,0 +1,74 @@
+﻿/* admin-usuarios.css - Estilos adicionales */
+
+/* Animación de carga */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Hover en botones */
+button:hover {
+  transition: all 0.3s ease;
+}
+
+/* Responsive para tablas en móvil */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+
+  th, td {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  .flex.gap-3 {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+/* Focus states para accesibilidad */
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Focus states específicos para botones de filtro */
+.filter-todos:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px;
+}
+
+.filter-admin:focus {
+  outline: 2px solid #ef4444 !important;
+  outline-offset: 2px;
+}
+
+.filter-arbitro:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px;
+}
+
+.filter-aficionado:focus {
+  outline: 2px solid #22c55e !important;
+  outline-offset: 2px;
+}
+
+/* Estilos para transiciones suaves */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+

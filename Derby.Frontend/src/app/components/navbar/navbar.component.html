@@ -1,0 +1,94 @@
+﻿﻿<nav class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 border-b-2 border-gradient-to-r shadow-2xl shadow-red-500/20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <div class="flex items-center gap-4 cursor-pointer group" routerLink="/">
+        <div class="relative">
+          <img src="/logo.png" alt="Liga Derby" class="relative h-12 w-12 object-cover rounded-lg mt-2" />
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-400">
+            LIGA DERBY
+          </span>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-1">
+        <a routerLink="/" class="px-4 py-2 text-gray-300 hover:text-white transition-all duration-300 text-sm font-semibold flex items-center gap-2 relative group">
+          <i class="fas fa-home text-red-500 group-hover:text-blue-500 transition-colors"></i>
+          <span class="bg-left-bottom bg-gradient-to-r from-red-500 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300">
+            Inicio
+          </span>
+        </a>
+
+        <a routerLink="/competiciones" routerLinkActive="nav-link-active" class="px-4 py-2 text-gray-300 hover:text-white transition-all duration-300 text-sm font-semibold flex items-center gap-2 relative group">
+          <i class="fas fa-trophy text-red-500 group-hover:text-blue-500 transition-colors"></i>
+          <span class="bg-left-bottom bg-gradient-to-r from-red-500 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300">
+            Competiciones
+          </span>
+        </a>
+
+        <a routerLink="/clubes" routerLinkActive="nav-link-active" class="px-4 py-2 text-gray-300 hover:text-white transition-all duration-300 text-sm font-semibold flex items-center gap-2 relative group">
+          <i class="fas fa-shield-alt text-red-500 group-hover:text-blue-500 transition-colors"></i>
+          <span class="bg-left-bottom bg-gradient-to-r from-red-500 to-blue-500 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-300">
+            Clubes
+          </span>
+        </a>
+      </div>
+
+      <!-- Botón Intranet / Menú de Perfil -->
+      <div *ngIf="!usuarioLogueado" class="flex items-center gap-4">
+        <button routerLink="/login" class="px-8 py-2.5 bg-gradient-to-r from-red-600 to-blue-600 text-white text-sm font-bold rounded-lg transition-all duration-300 ease-out hover:scale-105 hover:brightness-125 hover:shadow-2xl hover:shadow-blue-500/50 active:scale-95 flex items-center gap-2 group">
+          <i class="fas fa-sign-in-alt group-hover:scale-110 transition-transform"></i>
+          <span>Intranet</span>
+        </button>
+      </div>
+
+      <!-- Perfil del Usuario (si está logueado) -->
+      <div *ngIf="usuarioLogueado" class="relative">
+        <button
+          (click)="toggleMenu()"
+          class="flex items-center gap-3 px-4 py-2 bg-slate-800/80 hover:bg-slate-700/80 border border-blue-500/40 hover:border-blue-400/80 rounded-lg transition-all duration-300">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-user-circle text-xl text-blue-400"></i>
+            <span class="text-sm font-semibold text-white hidden sm:inline">{{ usuarioLogueado.email }}</span>
+          </div>
+          <i class="fas fa-chevron-down text-xs text-gray-400" [ngClass]="mostrarMenu ? 'rotate-180' : ''"></i>
+        </button>
+
+        <!-- Menú Desplegable -->
+        <div *ngIf="mostrarMenu" class="absolute right-0 mt-2 w-64 bg-slate-900/95 border border-blue-500/40 rounded-lg shadow-2xl backdrop-blur-md z-50">
+          <!-- Header con Email -->
+          <div class="px-4 py-3 border-b border-blue-500/20">
+            <p class="text-xs text-gray-400">Sesión iniciada</p>
+            <p class="text-sm font-semibold text-white break-all">{{ usuarioLogueado.email }}</p>
+            <p class="text-xs text-blue-400 mt-1">
+              <i class="fas fa-badge mr-1"></i>
+              {{ usuarioLogueado.rol }}
+            </p>
+          </div>
+
+          <div class="p-2 space-y-2">
+            <button
+              *ngIf="usuarioLogueado.rol === 'Administrador'"
+              type="button"
+              routerLink="/admin"
+              (click)="cerrarMenu()"
+              class="w-full flex items-center gap-3 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 rounded transition-colors duration-200 font-semibold">
+              <i class="fas fa-cog w-4"></i>
+              <span class="text-sm">Panel de Admin</span>
+            </button>
+            <button
+              type="button"
+              (click)="cerrarSesion()"
+              class="w-full flex items-center gap-3 px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-300 rounded transition-colors duration-200 font-semibold">
+              <i class="fas fa-sign-out-alt w-4"></i>
+              <span class="text-sm">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+

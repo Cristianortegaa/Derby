@@ -1,0 +1,205 @@
+﻿<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
+
+  <app-navbar></app-navbar>
+  <div class="h-20"></div>
+
+  <!-- Blobs decorativos -->
+  <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+  <div class="relative z-10 px-6 md:px-12 py-8 max-w-7xl mx-auto w-full">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-black mb-1 text-white">Gestionar Competiciones</h1>
+        <p class="text-gray-500 text-sm font-medium">Crea, edita y gestiona competiciones y temporadas</p>
+        <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a routerLink="/admin/ligas"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <i class="fas fa-list text-blue-400 text-xs"></i> Ir a Ligas
+        </a>
+        <a routerLink="/admin"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <span>←</span> Volver
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5">
+      <div class="stat-card rounded-xl p-4">
+        <div class="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1 flex items-center gap-2">
+          <i class="fas fa-trophy text-red-400"></i> Competiciones
+        </div>
+        <div class="text-3xl font-black text-white">{{ competiciones.length }}</div>
+        <div class="text-xs text-gray-600 mt-1">totales en el sistema</div>
+      </div>
+      <div class="stat-card rounded-xl p-4">
+        <div class="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1 flex items-center gap-2">
+          <i class="fas fa-circle-check text-green-400"></i> Activas
+        </div>
+        <div class="text-3xl font-black text-white">{{ statActivas }}</div>
+        <div class="text-xs text-gray-600 mt-1">en curso ahora mismo</div>
+      </div>
+      <div class="stat-card rounded-xl p-4">
+        <div class="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1 flex items-center gap-2">
+          <i class="fas fa-circle-xmark text-gray-400"></i> Inactivas
+        </div>
+        <div class="text-3xl font-black text-white">{{ competiciones.length - statActivas }}</div>
+        <div class="text-xs text-gray-600 mt-1">pausadas o finalizadas</div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div *ngIf="mostrarFormComp"
+         class="section-card rounded-xl p-8 mb-6 border border-blue-500/30">
+      <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <i class="fas" [ngClass]="editandoCompId ? 'fa-pen-to-square' : 'fa-plus-circle'"></i>
+        {{ editandoCompId ? 'Editar competición' : 'Nueva competición' }}
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="field-label">Nombre <span class="text-red-400">*</span></label>
+          <input type="text" [(ngModel)]="formularioComp.nombre" name="nombre"
+                 placeholder="Ej: Copa RFEF Fase Autonómica" class="field-input"/>
+        </div>
+        <div>
+          <label class="field-label">Temporada <span class="text-red-400">*</span></label>
+          <input type="text" [(ngModel)]="formularioComp.temporada" name="temporada"
+                 placeholder="Ej: 2025-2026" class="field-input"/>
+        </div>
+        <div>
+          <label class="field-label">Tipo de competición</label>
+          <select [(ngModel)]="formularioComp.tipo" name="tipo" class="field-input">
+            <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Tipo de juego</label>
+          <select [(ngModel)]="formularioComp.tipoJuego" name="tipoJuego" class="field-input">
+            <option *ngFor="let tj of tiposJuego" [value]="tj">{{ tj }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Estado</label>
+          <select [(ngModel)]="formularioComp.estado" name="estado" class="field-input">
+            <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Descripción</label>
+          <input type="text" [(ngModel)]="formularioComp.descripcion" name="descripcion"
+                 placeholder="Descripción opcional..." class="field-input"/>
+        </div>
+      </div>
+
+      <div class="flex gap-3 justify-end mt-6">
+        <button (click)="cerrarForm()" class="btn-secondary">Cancelar</button>
+        <button (click)="guardarComp()" class="btn-primary">
+          <i class="fas" [ngClass]="editandoCompId ? 'fa-save' : 'fa-check'"></i>
+          {{ editandoCompId ? 'Actualizar' : 'Crear' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="section-card rounded-xl border border-blue-500/20">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 border-b border-slate-700/50">
+        <h2 class="text-base font-bold text-red-400 flex items-center gap-2">
+          <i class="fas fa-trophy"></i> Competiciones ({{ competicionesFiltradas.length }})
+        </h2>
+        <div class="flex flex-wrap gap-3 items-center">
+          <div class="search-box">
+            <i class="fas fa-search text-gray-500 text-xs"></i>
+            <input type="text" [(ngModel)]="busquedaNombre" (input)="aplicarFiltro()"
+                   placeholder="Buscar por nombre..." class="search-input"/>
+          </div>
+          <select [(ngModel)]="filtroEstado" (change)="aplicarFiltro()" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+          </select>
+          <button *ngIf="!mostrarFormComp" (click)="abrirFormComp()" class="btn-primary">
+            <i class="fas fa-plus text-xs"></i> Nueva
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="cargando" class="flex flex-col items-center justify-center py-16">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+        <p class="text-gray-500 text-sm">Cargando competiciones...</p>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="!cargando && competicionesFiltradas.length === 0"
+           class="flex flex-col items-center justify-center py-16 text-center">
+        <i class="fas fa-inbox text-4xl text-gray-600 mb-3"></i>
+        <p class="text-gray-400 font-semibold">No hay competiciones</p>
+        <p class="text-gray-600 text-sm mt-1">Cambia los filtros o crea una nueva</p>
+      </div>
+
+      <!-- Tabla -->
+      <div *ngIf="!cargando && competicionesFiltradas.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+          <tr class="border-b border-slate-700/50">
+            <th class="th-cell text-red-400">Nombre</th>
+            <th class="th-cell text-blue-400">Temporada</th>
+            <th class="th-cell text-gray-400">Tipo</th>
+            <th class="th-cell text-gray-400">Tipo Juego</th>
+            <th class="th-cell text-amber-400">Estado</th>
+            <th class="th-cell text-center text-red-400">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let comp of competicionesFiltradas"
+              class="border-b border-slate-700/30 hover:bg-slate-800/40 transition-colors">
+            <td class="td-cell font-semibold text-white">{{ comp.nombre }}</td>
+            <td class="td-cell text-gray-400">{{ comp.temporada }}</td>
+            <td class="td-cell">
+              <span class="chip">{{ comp.tipo || 'Liga' }}</span>
+            </td>
+            <td class="td-cell">
+              <span class="chip">{{ comp.tipoJuego || 'Futbol-11' }}</span>
+            </td>
+            <td class="td-cell">
+              <span class="badge" [ngClass]="getBadgeClase(comp.estado)">
+                <span class="dot" [ngClass]="'dot-' + comp.estado.toLowerCase()"></span>
+                {{ comp.estado }}
+              </span>
+            </td>
+            <td class="td-cell">
+              <div class="flex gap-2 justify-center">
+                <button (click)="abrirFormComp(comp)" class="action-btn text-blue-300 border-blue-500/40 hover:bg-blue-500/20">
+                  <i class="fas fa-pen text-xs"></i>
+                </button>
+                <button (click)="eliminarComp(comp.id, comp.nombre)" class="action-btn text-red-300 border-red-500/40 hover:bg-red-500/20">
+                  <i class="fas fa-trash text-xs"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Notificación -->
+  <div
+    *ngIf="notificacion.mostrar"
+    class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-xl text-sm font-semibold shadow-2xl transition-all"
+    [ngClass]="notificacion.tipo === 'exito'
+      ? 'bg-green-500/90 text-white border border-green-400/50'
+      : 'bg-red-500/90 text-white border border-red-400/50'">
+    <i class="fas" [ngClass]="notificacion.tipo === 'exito' ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
+    {{ notificacion.mensaje }}
+  </div>
+
+</div>

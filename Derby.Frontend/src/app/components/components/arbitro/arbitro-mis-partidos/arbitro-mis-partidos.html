@@ -1,0 +1,60 @@
+﻿<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
+
+  <app-navbar></app-navbar>
+
+  <div class="h-20"></div>
+
+  <div class="absolute top-0 left-0 w-80 h-80 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-80 h-80 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+  <div class="relative z-10 px-6 md:px-12 py-6 max-w-7xl mx-auto w-full">
+    <h1 class="text-3xl md:text-4xl font-black mb-2 text-white mt-2">Mis Partidos</h1>
+    <p class="text-gray-500 text-sm md:text-base font-medium">Partidos asignados para arbitrar</p>
+    <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
+  </div>
+
+  <main class="relative z-10 flex-1 px-6 md:px-12 pb-20 max-w-7xl mx-auto w-full">
+
+    <!-- LISTA DE PARTIDOS -->
+    <div class="bg-slate-900/80 backdrop-blur-md border border-blue-500/40 rounded-xl p-6 shadow-lg">
+      @if (partidos.length > 0) {
+        <div class="space-y-4">
+          @for (partido of partidos; track partido.id) {
+            <div class="bg-slate-800/50 border border-blue-500/30 rounded-lg p-6 hover:border-blue-400/60 transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-bold text-white mb-2">
+                    {{ partido.equipoLocal.nombre }} vs {{ partido.equipoVisitante.nombre }}
+                  </h3>
+                  <div class="flex gap-4 text-sm text-gray-400">
+                    <span><i class="fas fa-calendar mr-1"></i>{{ partido.fecha | date: 'dd/MM/yyyy' }}</span>
+                    <span><i class="fas fa-clock mr-1"></i>{{ partido.hora }}</span>
+                    <span><i class="fas fa-map-marker-alt mr-1"></i>{{ partido.estadio }}</span>
+                  </div>
+                </div>
+                <span class="text-xs font-bold px-3 py-1 rounded-md" [class]="getEstiloEstado(partido.estado)">
+                  {{ partido.estado }}
+                </span>
+              </div>
+
+              <div class="flex gap-3">
+                <button class="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold rounded-lg transition-all">
+                  <i class="fas fa-file-pen mr-1"></i>Crear Acta
+                </button>
+                <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition-all border border-blue-500/40">
+                  <i class="fas fa-info-circle mr-1"></i>Detalles
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="text-center py-12">
+          <i class="fas fa-inbox text-5xl text-gray-600 mb-4"></i>
+          <p class="text-gray-400 text-lg">No tienes partidos asignados</p>
+        </div>
+      }
+    </div>
+  </main>
+</div>
+

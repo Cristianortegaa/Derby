@@ -1,0 +1,74 @@
+﻿<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
+
+  <app-navbar></app-navbar>
+
+  <div class="h-20"></div>
+
+  <div class="absolute top-0 left-0 w-80 h-80 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-80 h-80 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+  <div class="relative z-10 px-6 md:px-12 py-6 max-w-7xl mx-auto w-full">
+    <h1 class="text-3xl md:text-4xl font-black mb-2 text-white mt-2">Gestionar Acta de Partido</h1>
+    <p class="text-gray-500 text-sm md:text-base font-medium">Completa el acta del partido arbitrado</p>
+    <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
+  </div>
+
+  <main class="relative z-10 flex-1 px-6 md:px-12 pb-20 max-w-7xl mx-auto w-full max-w-2xl">
+
+    <!-- FORMULARIO DE ACTA -->
+    <div class="bg-slate-900/80 backdrop-blur-md border border-blue-500/40 rounded-xl p-8 shadow-lg">
+      <div class="space-y-6">
+        <!-- Partido -->
+        <div>
+          <label class="block text-white text-sm font-semibold mb-2">
+            <span class="text-red-400">*</span> PARTIDO
+          </label>
+          <input type="number" [(ngModel)]="formulario.partideId" placeholder="ID del partido"
+                 class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Goles -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-white text-sm font-semibold mb-2">Goles Local</label>
+            <input type="number" [(ngModel)]="formulario.golesLocal" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-white text-sm font-semibold mb-2">Goles Visitante</label>
+            <input type="number" [(ngModel)]="formulario.golesVisitante" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Tarjetas -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-white text-sm font-semibold mb-2">Tarjetas Amarillas</label>
+            <input type="text" [(ngModel)]="formulario.tarjetasAmarillas" placeholder="Ej: 5,12,45" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-white text-sm font-semibold mb-2">Tarjetas Rojas</label>
+            <input type="text" [(ngModel)]="formulario.tarjetasRojas" placeholder="Ej: 78" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Observaciones -->
+        <div>
+          <label class="block text-white text-sm font-semibold mb-2">Observaciones</label>
+          <textarea [(ngModel)]="formulario.observaciones" placeholder="Notas adicionales sobre el partido..."
+                    class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none h-32"></textarea>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-4 pt-4">
+          <button (click)="guardarActa()" [disabled]="cargando" class="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:from-red-800 disabled:to-red-900 text-white font-semibold rounded-lg transition-all">
+            <i class="fas fa-save mr-2"></i>{{ cargando ? 'Guardando...' : 'Guardar Acta' }}
+          </button>
+          <button (click)="resetFormulario()" class="flex-1 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-all border border-blue-500/40">
+            <i class="fas fa-redo mr-2"></i>Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+

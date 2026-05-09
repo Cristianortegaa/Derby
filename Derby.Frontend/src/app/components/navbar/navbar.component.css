@@ -1,0 +1,52 @@
+﻿﻿nav {
+  transition: all 0.3s ease;
+}
+
+nav button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+nav button:hover {
+  filter: brightness(1.1);
+}
+
+nav button:active {
+  transform: scale(0.95);
+}
+
+/* Animación de menú móvil */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideInFromTop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animación del chevron */
+i.fa-chevron-down {
+  transition: transform 0.3s ease;
+}
+
+/* Menú desplegable */
+.relative div:last-child {
+  animation: slideInFromTop 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover en items del menú */
+a, button {
+  position: relative;
+}
+
+a.text-white:hover,
+button.text-white:hover {
+  transition: all 0.2s ease;
+}
+
