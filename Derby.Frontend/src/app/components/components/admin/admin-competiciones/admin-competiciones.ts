@@ -143,6 +143,7 @@ export class AdminCompeticiones implements OnInit {
       this.resetForm();
     }
     this.mostrarFormComp = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   cerrarForm() {

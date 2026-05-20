@@ -19,7 +19,7 @@ export class AdminEquipoDetail implements OnInit {
   cargando = true;
 
   editandoEquipo = false;
-  formularioEquipo = { nombre: '', sede: '', entrenador: '' };
+  formularioEquipo = { nombre: '', sede: '', entrenador: '', escudoUrl: '' };
 
   formularioJugador = { nombre: '', dorsal: null as number | null };
   editandoJugadorId: number | null = null;
@@ -56,8 +56,9 @@ export class AdminEquipoDetail implements OnInit {
   }
 
   abrirEditarEquipo() {
-    this.formularioEquipo = { nombre: this.equipo.nombre, sede: this.equipo.sede, entrenador: this.equipo.entrenador || '' };
+    this.formularioEquipo = { nombre: this.equipo.nombre, sede: this.equipo.sede, entrenador: this.equipo.entrenador || '', escudoUrl: this.equipo.escudoUrl || '' };
     this.editandoEquipo = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   cerrarEditarEquipo() {
@@ -84,6 +85,7 @@ export class AdminEquipoDetail implements OnInit {
       this.formularioJugador = { nombre: '', dorsal: null };
     }
     this.mostrarFormJugador = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   cerrarFormJugador() {

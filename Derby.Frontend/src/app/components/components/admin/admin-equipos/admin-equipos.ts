@@ -1,9 +1,9 @@
-﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../../../navbar/navbar.component';
-import { AdminService } from '../../../../services/admin.service';
+﻿import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterLink} from '@angular/router';
+import {NavbarComponent} from '../../../navbar/navbar.component';
+import {AdminService} from '../../../../services/admin.service';
 
 @Component({
   selector: 'app-admin-equipos',
@@ -14,27 +14,44 @@ import { AdminService } from '../../../../services/admin.service';
 })
 export class AdminEquipos implements OnInit {
   equipos: any[] = [];
+  equiposFiltrados: any[] = [];
+  busqueda = '';
+  filtroLiga = '';
   cargando = false;
   mostrarForm = false;
-  formulario = { nombre: '', sede: '', escudoUrl: '' };
+  formulario = {nombre: '', sede: '', escudoUrl: ''};
 
   editandoId: number | null = null;
   mostrarFormEditar = false;
-  formularioEditar = { nombre: '', sede: '', escudoUrl: '' };
+  formularioEditar = {nombre: '', sede: '', escudoUrl: '', entrenador: ''};
 
   jugadoresForm: { [equipoId: number]: { nombre: string, dorsal: number | null }[] } = {};
-  notificacion = { mostrar: false, tipo: 'exito' as 'exito' | 'error', mensaje: '' };
-  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Eliminar', onConfirm: () => {} };
+  notificacion = {mostrar: false, tipo: 'exito' as 'exito' | 'error', mensaje: ''};
+  modalConfirm = {
+    mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Eliminar', onConfirm: () => {
+    }
+  };
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {
+  }
 
-  ngOnInit() { this.cargarEquipos(); }
+  ngOnInit() {
+    this.cargarEquipos();
+  }
 
   cargarEquipos() {
     this.cargando = true;
     this.adminService.obtenerEquipos().subscribe({
-      next: (data) => { this.equipos = data; this.cargando = false; this.cdr.detectChanges(); },
-      error: () => { this.cargando = false; this.cdr.detectChanges(); }
+      next: (data) => {
+        this.equipos = data;
+        this.aplicarFiltro();
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -54,7 +71,7 @@ export class AdminEquipos implements OnInit {
       next: (equipo: any) => {
         const promesas = jugadores
           .filter(j => j.nombre && j.dorsal)
-          .map(j => this.adminService.agregarJugador(equipo.id, { nombre: j.nombre, dorsal: j.dorsal }).toPromise());
+          .map(j => this.adminService.agregarJugador(equipo.id, {nombre: j.nombre, dorsal: j.dorsal}).toPromise());
         Promise.all(promesas).then(() => {
           this.cargarEquipos();
           this.resetFormulario();
@@ -68,17 +85,18 @@ export class AdminEquipos implements OnInit {
 
   abrirEditar(equipo: any) {
     this.editandoId = equipo.id;
-    this.formularioEditar = { nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || '' };
+    this.formularioEditar = {nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || '', entrenador: equipo.entrenador || ''};
     this.mostrarFormEditar = true;
     setTimeout(() => {
-      document.getElementById('formEditar')?.scrollIntoView({ behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }, 50);
   }
 
   cerrarEditar() {
     this.editandoId = null;
     this.mostrarFormEditar = false;
-    this.formularioEditar = { nombre: '', sede: '', escudoUrl: '' };
+    this.formularioEditar = {nombre: '', sede: '', escudoUrl: '', entrenador: ''};
   }
 
   actualizarEquipo() {
@@ -97,38 +115,65 @@ export class AdminEquipos implements OnInit {
   }
 
   abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Eliminar') {
-    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+    this.modalConfirm = {mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion};
   }
-  cerrarConfirm() { this.modalConfirm.mostrar = false; }
-  confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
+
+  cerrarConfirm() {
+    this.modalConfirm.mostrar = false;
+  }
+
+  confirmar() {
+    this.modalConfirm.onConfirm();
+    this.cerrarConfirm();
+  }
 
   eliminarEquipo(id: number) {
     this.abrirConfirm('Eliminar equipo', '¿Estás seguro de eliminar este equipo?', () => {
       this.adminService.eliminarEquipo(id).subscribe({
-        next: () => { this.cargarEquipos(); this.mostrarNotificacion('exito', 'Equipo eliminado'); },
+        next: () => {
+          this.cargarEquipos();
+          this.mostrarNotificacion('exito', 'Equipo eliminado');
+        },
         error: () => this.mostrarNotificacion('error', 'Error al eliminar equipo')
       });
     });
   }
 
+  aplicarFiltro() {
+    let resultado = this.equipos;
+    if (this.busqueda.trim()) {
+      const q = this.busqueda.toLowerCase();
+      resultado = resultado.filter(e => e.nombre.toLowerCase().includes(q));
+    }
+    if (this.filtroLiga) {
+      resultado = resultado.filter(e => e.ligaNombre === this.filtroLiga);
+    }
+    this.equiposFiltrados = resultado;
+  }
+
+  get ligas(): string[] {
+    return [...new Set(this.equipos.map((e: any) => e.ligaNombre).filter((l: any) => l && l !== 'Sin Liga'))] as string[];
+  }
+
   get jugadoresNuevos(): { nombre: string, dorsal: number | null }[] {
-    if (!this.jugadoresForm[0]) this.jugadoresForm[0] = [{ nombre: '', dorsal: null }];
+    if (!this.jugadoresForm[0]) this.jugadoresForm[0] = [{nombre: '', dorsal: null}];
     return this.jugadoresForm[0];
   }
 
   abrirForm(equipo?: any) {
     if (equipo) {
       this.editandoId = equipo.id;
-      this.formulario = { nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || '' };
+      this.formulario = {nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || ''};
     } else {
       this.editandoId = null;
       this.resetForm();
     }
     this.mostrarForm = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   resetForm() {
-    this.formulario = { nombre: '', sede: '', escudoUrl: '' };
+    this.formulario = {nombre: '', sede: '', escudoUrl: ''};
   }
 
   agregarJugadorForm() {
@@ -141,7 +186,7 @@ export class AdminEquipos implements OnInit {
       this.mostrarNotificacion('error', 'Máximo 25 jugadores');
       return;
     }
-    this.jugadoresNuevos.push({ nombre: '', dorsal: null });
+    this.jugadoresNuevos.push({nombre: '', dorsal: null});
   }
 
   quitarJugador(index: number) {
@@ -150,7 +195,9 @@ export class AdminEquipos implements OnInit {
 
   onEscudoSeleccionado(event: any, destino: 'nuevo' | 'editar') {
     const file = event.target.files[0];
-    if (!file) { return; }
+    if (!file) {
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e: any) => {
       setTimeout(() => {
@@ -166,12 +213,14 @@ export class AdminEquipos implements OnInit {
   }
 
   resetFormulario() {
-    this.formulario = { nombre: '', sede: '', escudoUrl: '' };
-    this.jugadoresForm[0] = [{ nombre: '', dorsal: null }];
+    this.formulario = {nombre: '', sede: '', escudoUrl: ''};
+    this.jugadoresForm[0] = [{nombre: '', dorsal: null}];
   }
 
   mostrarNotificacion(tipo: 'exito' | 'error', mensaje: string) {
-    this.notificacion = { mostrar: true, tipo, mensaje };
-    setTimeout(() => { this.notificacion.mostrar = false; }, 3000);
+    this.notificacion = {mostrar: true, tipo, mensaje};
+    setTimeout(() => {
+      this.notificacion.mostrar = false;
+    }, 3000);
   }
 }

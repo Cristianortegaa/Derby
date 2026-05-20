@@ -110,6 +110,7 @@ export class AdminPartidosComponent implements OnInit {
       this.formulario = this.nuevoPartido();
     }
     this.mostrarForm = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   cerrarForm(): void {

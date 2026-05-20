@@ -217,6 +217,7 @@ export class AdminLigas implements OnInit {
       this.resetForm();
     }
     this.mostrarForm = true;
+    setTimeout(() => { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }, 50);
   }
 
   cerrarForm() {

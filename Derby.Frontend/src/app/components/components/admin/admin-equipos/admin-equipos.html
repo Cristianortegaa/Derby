@@ -108,13 +108,26 @@
       </div>
     </div>
 
+    <!-- BUSCADOR Y FILTROS -->
+    <div class="flex flex-wrap gap-3 items-center mb-4">
+      <div class="search-box">
+        <i class="fas fa-search text-gray-500 text-xs"></i>
+        <input type="text" [(ngModel)]="busqueda" (input)="aplicarFiltro()"
+               placeholder="Buscar por nombre..." class="search-input"/>
+      </div>
+      <select [(ngModel)]="filtroLiga" (change)="aplicarFiltro()" class="filter-select">
+        <option value="">Todas las ligas</option>
+        <option *ngFor="let liga of ligas" [value]="liga">{{ liga }}</option>
+      </select>
+    </div>
+
     <!-- TABLA DE EQUIPOS -->
     <div class="bg-slate-900/80 backdrop-blur-md border border-blue-500/40 rounded-xl p-6 shadow-lg overflow-x-auto">
-      <div *ngIf="equipos.length === 0" class="text-center py-8">
+      <div *ngIf="equiposFiltrados.length === 0" class="text-center py-8">
         <i class="fas fa-inbox text-4xl text-gray-600 mb-3"></i>
         <p class="text-gray-400">No hay equipos registrados</p>
       </div>
-      <table *ngIf="equipos.length > 0" class="w-full">
+      <table *ngIf="equiposFiltrados.length > 0" class="w-full">
         <thead>
         <tr class="border-b border-slate-700/50">
           <th class="th-cell text-gray-400" style="width:56px"></th>
@@ -125,11 +138,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let equipo of equipos"
+        <tr *ngFor="let equipo of equiposFiltrados"
             class="border-b border-slate-700/30 hover:bg-slate-800/40 transition-colors">
           <td class="td-cell">
-            <img *ngIf="equipo.escudoUrl" [src]="equipo.escudoUrl" class="w-9 h-9 rounded-full object-cover border border-slate-600"/>
-            <div *ngIf="!equipo.escudoUrl" class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center">
+            <img *ngIf="equipo.escudoUrl" [src]="equipo.escudoUrl" class="w-9 h-9 min-w-[36px] min-h-[36px] aspect-square rounded-full object-cover border border-slate-600"/>
+            <div *ngIf="!equipo.escudoUrl" class="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-slate-700 flex items-center justify-center shrink-0">
               <i class="fas fa-shield-halved text-slate-500 text-xs"></i>
             </div>
           </td>

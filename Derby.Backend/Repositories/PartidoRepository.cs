@@ -107,6 +107,13 @@ public class PartidoRepository : IPartidoRepository
         await _context.SaveChangesAsync();
         return true;
     }
+    
+    public async Task EliminarPorLigaAsync(int ligaId)
+    {
+        var partidos = await _context.Partidos.Where(p => p.LigaId == ligaId).ToListAsync();
+        _context.Partidos.RemoveRange(partidos);
+        await _context.SaveChangesAsync();
+    }
 
     public async Task CrearRangoAsync(List<Partido> partidos)
     {

@@ -13,6 +13,9 @@ public interface IPartidoRepository
     Task<Partido> CrearAsync(Partido partido);
     Task<Partido?> ActualizarAsync(int id, Partido partido);
     Task<bool> EliminarAsync(int id);
+    
+    Task EliminarPorLigaAsync(int ligaId);
+    
     Task CrearRangoAsync(List<Partido> partidos);
 }
 

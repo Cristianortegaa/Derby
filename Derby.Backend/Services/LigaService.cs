@@ -74,8 +74,7 @@ public class LigaService : ILigaService
         if (liga == null)
             throw new Exception("Liga no encontrada");
 
-        if (await _ligaRepository.TienePartidosAsync(ligaId))
-            throw new Exception("Esta liga ya tiene partidos generados");
+        await _partidoRepository.EliminarPorLigaAsync(ligaId);
 
         var equipos = await _ligaRepository.ObtenerEquiposAsync(ligaId);
         if (equipos.Count < 2)

@@ -2,6 +2,51 @@
   display: block;
 }
 
+/* ─── Search ─────────────────────────────────────────────────────────────────── */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(2, 6, 23, 0.6);
+  border: 0.5px solid rgba(59, 130, 246, 0.25);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.8125rem;
+  width: 180px;
+}
+
+.search-input::placeholder {
+  color: #4b5563;
+}
+
+.filter-select {
+  padding: 0.35rem 0.6rem;
+  background: rgba(2, 6, 23, 0.6);
+  border: 0.5px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.7rem;
+  outline: none;
+  cursor: pointer;
+  width: 200px;
+}
+
+.filter-select option {
+  background: #0f172a;
+  color: #fff;
+}
+
+.filter-select:focus {
+  border-color: rgba(59, 130, 246, 0.7);
+}
+
 /* ─── Table ──────────────────────────────────────────────────────────────────── */
 .th-cell {
   padding: 0.75rem 1.25rem;
