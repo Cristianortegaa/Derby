@@ -14,6 +14,6 @@ public class EquipoRequestDto
     [Required(ErrorMessage = "La sede es obligatoria.")]
     public string Sede { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Debes indicar a qué división pertenece.")]
-    public string Division { get; set; } = string.Empty;
+    public string Entrenador { get; set; } = string.Empty;
+
 }

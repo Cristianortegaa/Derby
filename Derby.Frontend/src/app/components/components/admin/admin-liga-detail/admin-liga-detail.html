@@ -1,0 +1,183 @@
+﻿<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
+
+  <app-navbar></app-navbar>
+  <div class="h-20"></div>
+
+  <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+  <div class="relative z-10 px-6 md:px-12 py-8 max-w-7xl mx-auto w-full">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold uppercase tracking-widest mb-1">Liga</p>
+        <h1 class="text-3xl md:text-4xl font-black mb-1 text-white">
+          <span *ngIf="cargando">Cargando...</span>
+          <span *ngIf="!cargando && liga">{{ liga.nombre }}</span>
+          <span *ngIf="!cargando && !liga">Liga no encontrada</span>
+        </h1>
+        <div class="flex items-center gap-3 mt-2" *ngIf="liga">
+          <span class="text-gray-500 text-sm">{{ liga.grupo }}</span>
+          <span class="text-gray-600">·</span>
+          <span class="text-gray-500 text-sm">J{{ liga.jornadaActual }}/{{ liga.jornadas }}</span>
+          <span class="text-gray-600">·</span>
+          <span class="badge" [ngClass]="getBadgeClase(liga.estado)">
+            <span class="dot" [ngClass]="'dot-' + liga.estado?.toLowerCase()"></span>
+            {{ liga.estado }}
+          </span>
+        </div>
+        <div class="h-1 w-16 bg-gradient-to-r from-blue-400 to-red-400 mt-3 rounded-full"></div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button *ngIf="liga && liga.jornadas === 0"
+                (click)="generarCalendario()"
+                [disabled]="generandoCalendario"
+                class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 disabled:opacity-50 text-white font-semibold rounded-lg text-sm">
+          {{ generandoCalendario ? 'Generando...' : 'Generar Calendario' }}
+        </button>
+        <a routerLink="/admin/ligas"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <span>←</span> Volver a Ligas
+        </a>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="cargando" class="flex flex-col items-center justify-center py-24">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+      <p class="text-gray-500 text-sm">Cargando liga...</p>
+    </div>
+
+    <!-- Not found -->
+    <div *ngIf="!cargando && !liga" class="flex flex-col items-center justify-center py-24 text-center">
+      <i class="fas fa-circle-xmark text-5xl text-red-500/40 mb-4"></i>
+      <p class="text-gray-400 font-semibold text-lg">Liga no encontrada</p>
+      <a routerLink="/admin/ligas" class="mt-4 text-blue-400 hover:text-blue-300 text-sm">← Volver a la lista</a>
+    </div>
+
+    <!-- Tarjetas -->
+    <div *ngIf="!cargando && liga" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+
+      <!-- Partidos -->
+      <a [routerLink]="['/admin/partidos']" [queryParams]="{ ligaId: ligaId }"
+         class="group bg-gradient-to-br from-green-900/40 to-green-800/20 border border-green-500/40 rounded-xl p-6 hover:border-green-400/80 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 cursor-pointer">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:bg-green-500/40 transition-colors">
+            <i class="fas fa-futbol text-green-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">Partidos</h3>
+        </div>
+        <p class="text-gray-400 text-sm">Gestiona los partidos de esta liga</p>
+        <div class="mt-4 flex items-center gap-1 text-green-400/70 text-xs font-semibold group-hover:text-green-400 transition-colors">
+          Ir a Partidos <i class="fas fa-arrow-right text-xs"></i>
+        </div>
+      </a>
+
+      <!-- Clasificación -->
+      <a [routerLink]="['/admin/clasificacion']" [queryParams]="{ ligaId: ligaId }"
+         class="group bg-gradient-to-br from-pink-900/40 to-pink-800/20 border border-pink-500/40 rounded-xl p-6 hover:border-pink-400/80 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 cursor-pointer">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center group-hover:bg-pink-500/40 transition-colors">
+            <i class="fas fa-table text-pink-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">Clasificación</h3>
+        </div>
+        <p class="text-gray-400 text-sm">Tabla de posiciones de esta liga</p>
+        <div class="mt-4 flex items-center gap-1 text-pink-400/70 text-xs font-semibold group-hover:text-pink-400 transition-colors">
+          Ir a Clasificación <i class="fas fa-arrow-right text-xs"></i>
+        </div>
+      </a>
+
+      <!-- Calendario -->
+      <a [routerLink]="['/admin/calendario']" [queryParams]="{ ligaId: ligaId }"
+         class="group bg-gradient-to-br from-cyan-900/40 to-cyan-800/20 border border-cyan-500/40 rounded-xl p-6 hover:border-cyan-400/80 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300 cursor-pointer">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center group-hover:bg-cyan-500/40 transition-colors">
+            <i class="fas fa-calendar-days text-cyan-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">Calendario</h3>
+        </div>
+        <p class="text-gray-400 text-sm">Calendario de partidos por jornada de esta liga</p>
+        <div class="mt-4 flex items-center gap-1 text-cyan-400/70 text-xs font-semibold group-hover:text-cyan-400 transition-colors">
+          Ir a Calendario <i class="fas fa-arrow-right text-xs"></i>
+        </div>
+      </a>
+
+      <!-- Goleadores -->
+      <a [routerLink]="['/admin/goleadores']" [queryParams]="{ ligaId: ligaId }"
+         class="group bg-gradient-to-br from-orange-900/40 to-orange-800/20 border border-orange-500/40 rounded-xl p-6 hover:border-orange-400/80 hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 cursor-pointer">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:bg-orange-500/40 transition-colors">
+            <i class="fas fa-ranking-star text-orange-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">Goleadores</h3>
+        </div>
+        <p class="text-gray-400 text-sm">Ranking de goleadores de esta liga</p>
+        <div class="mt-4 flex items-center gap-1 text-orange-400/70 text-xs font-semibold group-hover:text-orange-400 transition-colors">
+          Ir a Goleadores <i class="fas fa-arrow-right text-xs"></i>
+        </div>
+      </a>
+
+    </div>
+    <div class="mt-10" *ngIf="!cargando && liga">
+
+      <h2 class="text-xl font-bold text-white mb-1">Equipos de la liga</h2>
+      <p class="text-gray-500 text-sm mb-6">{{ equiposLiga.length }} equipo(s) inscritos</p>
+
+      <div class="flex flex-wrap gap-3 mb-6">
+        <input type="text" [(ngModel)]="filtroEquipo" placeholder="Buscar equipo..."
+               class="px-3 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 outline-none w-52"/>
+        <select [(ngModel)]="equipoSeleccionado"
+                class="px-3 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 outline-none">
+          <option [ngValue]="0">Seleccionar equipo...</option>
+          <option *ngFor="let e of equiposFiltrados" [ngValue]="e.id">{{ e.nombre }}</option>
+        </select>
+        <button (click)="agregarEquipo()"
+                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg text-sm">
+          + Añadir equipo
+        </button>
+      </div>
+
+      <div *ngIf="equiposLiga.length === 0" class="text-gray-500 text-sm py-4">
+        No hay equipos en esta liga todavía.
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div *ngFor="let equipo of equiposLiga"
+             class="flex items-center justify-between bg-slate-900/80 border border-slate-700/50 rounded-xl px-4 py-3">
+          <span class="text-white font-semibold text-sm">{{ equipo.nombre }}</span>
+          <button (click)="quitarEquipo(equipo.id)"
+                  class="text-red-400 hover:text-red-300 text-xs border border-red-500/30 rounded px-2 py-1 hover:bg-red-500/10">
+            Quitar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal confirmación -->
+  <div *ngIf="modalConfirm.mostrar"
+       class="fixed inset-0 z-50 flex items-center justify-center p-4"
+       (click)="cerrarConfirm()">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative z-10 w-full max-w-md bg-slate-900 rounded-2xl border border-red-500/30 p-6 shadow-2xl"
+         (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 mx-auto mb-5">
+        <i class="fas fa-triangle-exclamation text-red-400 text-xl"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white text-center mb-2">{{ modalConfirm.titulo }}</h3>
+      <p class="text-gray-400 text-sm text-center leading-relaxed mb-6">{{ modalConfirm.mensaje }}</p>
+      <div class="flex gap-3">
+        <button (click)="cerrarConfirm()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg border border-slate-600 transition-all">
+          Cancelar
+        </button>
+        <button (click)="confirmar()" class="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold rounded-lg transition-all">
+          {{ modalConfirm.textoConfirmar }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

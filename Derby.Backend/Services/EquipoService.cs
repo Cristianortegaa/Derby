@@ -22,10 +22,8 @@ public class EquipoService : IEquipoService
     public async Task<Result<IEnumerable<EquipoResponseDto>, DerbyError>> ObtenerTodosAsync()
     {
         _logger.LogInformation("Servicio: Solicitando la lista completa de equipos.");
-        
-        var equipos = await _repository.ObtenerTodosAsync();
+        var equipos = await _repository.ObtenerTodosConLigaAsync();
         var dtos = equipos.Select(e => e.ToDto());
-        
         _logger.LogInformation("Servicio: Se han obtenido {Cantidad} equipos correctamente.", equipos.Count());
         return Result.Success<IEnumerable<EquipoResponseDto>, DerbyError>(dtos);
     }
@@ -50,13 +48,6 @@ public class EquipoService : IEquipoService
     {
         _logger.LogInformation("Servicio: Iniciando la creación del equipo '{Nombre}'.", dto.Nombre);
 
-        if (dto.Division != "1" && dto.Division != "2" && dto.Division != "fem")
-        {
-            _logger.LogInformation("Servicio: Fallo de validación al crear. La división '{Division}' no es válida.", dto.Division);
-            return Result.Failure<EquipoResponseDto, DerbyError>(
-                new DivisionInvalidaError("La división solo puede ser '1', '2' o 'fem'."));
-        }
-
         var nuevoEquipo = dto.ToEntity();
         var equipoCreado = await _repository.CrearAsync(nuevoEquipo);
         
@@ -76,17 +67,10 @@ public class EquipoService : IEquipoService
                 new NotFoundError($"No se puede actualizar. El equipo con ID {id} no existe."));
         }
 
-        if (dto.Division != "1" && dto.Division != "2" && dto.Division != "fem")
-        {
-            _logger.LogInformation("Servicio: Fallo de validación al actualizar equipo ID {Id}. La división '{Division}' no es válida.", id, dto.Division);
-            return Result.Failure<EquipoResponseDto, DerbyError>(
-                new DivisionInvalidaError("La división solo puede ser '1', '2' o 'fem'."));
-        }
-
         equipoExistente.Nombre = dto.Nombre;
         equipoExistente.EscudoUrl = dto.EscudoUrl;
         equipoExistente.Sede = dto.Sede;
-        equipoExistente.Division = dto.Division;
+        equipoExistente.Entrenador = dto.Entrenador;
 
         var equipoActualizado = await _repository.ActualizarAsync(equipoExistente);
         

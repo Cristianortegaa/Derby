@@ -8,11 +8,13 @@ namespace Derby.Backend.Controllers;
 public class CompeticionesController : ControllerBase
 {
     private readonly ICompeticionService _competicionService;
+    private readonly ILigaService _ligaService;
     private readonly ILogger<CompeticionesController> _logger;
 
-    public CompeticionesController(ICompeticionService competicionService, ILogger<CompeticionesController> logger)
+    public CompeticionesController(ICompeticionService competicionService, ILigaService ligaService, ILogger<CompeticionesController> logger)
     {
         _competicionService = competicionService;
+        _ligaService = ligaService;
         _logger = logger;
     }
 
@@ -85,6 +87,51 @@ public class CompeticionesController : ControllerBase
         {
             _logger.LogError(ex, "Error al obtener goleadores");
             return StatusCode(500, new { message = "Error al obtener goleadores" });
+        }
+    }
+
+    [HttpGet("ligas/{ligaId:int}/jornadas")]
+    public async Task<IActionResult> ObtenerJornadasPorLiga(int ligaId)
+    {
+        try
+        {
+            var jornadas = await _ligaService.ObtenerJornadasAsync(ligaId);
+            return Ok(jornadas);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener jornadas por liga");
+            return StatusCode(500, new { message = "Error al obtener jornadas por liga" });
+        }
+    }
+
+    [HttpGet("ligas/{ligaId:int}/resultados")]
+    public async Task<IActionResult> ObtenerResultadosPorLiga(int ligaId)
+    {
+        try
+        {
+            var resultados = await _ligaService.ObtenerResultadosAsync(ligaId);
+            return Ok(resultados);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener resultados por liga");
+            return StatusCode(500, new { message = "Error al obtener resultados por liga" });
+        }
+    }
+
+    [HttpGet("ligas/{ligaId:int}/clasificacion")]
+    public async Task<IActionResult> ObtenerClasificacionPorLiga(int ligaId)
+    {
+        try
+        {
+            var clasificacion = await _ligaService.ObtenerClasificacionAsync(ligaId);
+            return Ok(clasificacion);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener clasificación por liga");
+            return StatusCode(500, new { message = "Error al obtener clasificación por liga" });
         }
     }
 

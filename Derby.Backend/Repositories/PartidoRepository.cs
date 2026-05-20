@@ -16,30 +16,50 @@ public class PartidoRepository : IPartidoRepository
     public async Task<List<Partido>> ObtenerPorCompeticionAsync(int competicionId)
     {
         return await _context.Partidos
-            .Where(p => p.CompeticionId == competicionId)
+            .Where(p => p.Liga != null && p.Liga.CompeticionId == competicionId)
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
-            .OrderBy(p => p.Fecha)
+            .OrderBy(p => p.FechaHora)
+            .ToListAsync();
+    }
+
+    public async Task<List<Partido>> ObtenerPorLigaAsync(int ligaId)
+    {
+        return await _context.Partidos
+            .Where(p => p.LigaId == ligaId)
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .OrderBy(p => p.FechaHora)
+            .ToListAsync();
+    }
+
+    public async Task<List<Partido>> ObtenerResultadosPorLigaAsync(int ligaId)
+    {
+        return await _context.Partidos
+            .Where(p => p.LigaId == ligaId && p.Estado == "Finalizado")
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .OrderByDescending(p => p.FechaHora)
             .ToListAsync();
     }
 
     public async Task<List<Partido>> ObtenerJornadaAsync(int competicionId, int jornadaNumero)
     {
         return await _context.Partidos
-            .Where(p => p.CompeticionId == competicionId && p.Jornada == jornadaNumero)
+            .Where(p => p.Liga != null && p.Liga.CompeticionId == competicionId && p.Jornada == jornadaNumero)
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
-            .OrderBy(p => p.Fecha)
+            .OrderBy(p => p.FechaHora)
             .ToListAsync();
     }
 
     public async Task<List<Partido>> ObtenerResultadosAsync(int competicionId)
     {
         return await _context.Partidos
-            .Where(p => p.CompeticionId == competicionId && p.Finalizado == true)
+            .Where(p => p.Liga != null && p.Liga.CompeticionId == competicionId && p.Estado == "Finalizado")
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
-            .OrderByDescending(p => p.Fecha)
+            .OrderByDescending(p => p.FechaHora)
             .ToListAsync();
     }
 
@@ -64,14 +84,14 @@ public class PartidoRepository : IPartidoRepository
         if (existing == null)
             return null;
 
-        existing.Fecha = partido.Fecha;
+        existing.FechaHora = partido.FechaHora;
         existing.GolesLocal = partido.GolesLocal;
-        existing.GolesVisitantes = partido.GolesVisitantes;
-        existing.Finalizado = partido.Finalizado;
+        existing.GolesVisitante = partido.GolesVisitante;
+        existing.Estado = partido.Estado;
         existing.EquipoLocalId = partido.EquipoLocalId;
         existing.EquipoVisitanteId = partido.EquipoVisitanteId;
         existing.Jornada = partido.Jornada;
-        existing.CompeticionId = partido.CompeticionId;
+        existing.LigaId = partido.LigaId;
 
         await _context.SaveChangesAsync();
         return existing;
@@ -87,5 +107,10 @@ public class PartidoRepository : IPartidoRepository
         await _context.SaveChangesAsync();
         return true;
     }
-}
 
+    public async Task CrearRangoAsync(List<Partido> partidos)
+    {
+        _context.Partidos.AddRange(partidos);
+        await _context.SaveChangesAsync();
+    }
+}

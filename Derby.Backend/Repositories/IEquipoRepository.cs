@@ -8,6 +8,8 @@ public interface IEquipoRepository
     
     Task<Equipo?> ObtenerPorIdAsync(int id);
     
+    Task<IEnumerable<Equipo>> ObtenerTodosConLigaAsync();
+    
     Task<Equipo> CrearAsync(Equipo equipo);
 
     Task<Equipo> ActualizarAsync(Equipo equipo);

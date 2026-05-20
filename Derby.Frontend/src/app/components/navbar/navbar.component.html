@@ -1,4 +1,4 @@
-﻿﻿<nav class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 border-b-2 border-gradient-to-r shadow-2xl shadow-red-500/20">
+﻿<nav class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 border-b-2 border-gradient-to-r shadow-2xl shadow-red-500/20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-20">
       <div class="flex items-center gap-4 cursor-pointer group" routerLink="/">
@@ -78,6 +78,15 @@
               <span class="text-sm">Panel de Admin</span>
             </button>
             <button
+              *ngIf="usuarioLogueado.rol === 'Arbitro'"
+              type="button"
+              routerLink="/arbitro"
+              (click)="cerrarMenu()"
+              class="w-full flex items-center gap-3 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 rounded transition-colors duration-200 font-semibold">
+              <i class="fas fa-cog w-4"></i>
+              <span class="text-sm">Panel de Arbitro</span>
+            </button>
+            <button
               type="button"
               (click)="cerrarSesion()"
               class="w-full flex items-center gap-3 px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-300 rounded transition-colors duration-200 font-semibold">
@@ -90,5 +99,3 @@
     </div>
   </div>
 </nav>
-
-

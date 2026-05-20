@@ -8,13 +8,12 @@ public class Competicion
     
     public string Temporada { get; set; } = "2025/2026";
     
-    public string? Descripcion { get; set; } // Descripción de la competición
+    public string? Descripcion { get; set; } 
     
-    public string Estado { get; set; } = "Activo"; // Activo, Inactivo, Pausado, Finalizado
+    public string Estado { get; set; } = "Activo"; 
     
-    public string? TipoJuego { get; set; } // futbol11, futbol7, futsal
+    public string? TipoJuego { get; set; } 
     
-    public string? Grupo { get; set; } // Grupo A, Grupo B, etc.
+    public string? Grupo { get; set; } 
     
-    public List<Partido> Partidos { get; set; } = new();
 }

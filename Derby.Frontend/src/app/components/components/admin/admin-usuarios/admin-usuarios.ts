@@ -22,12 +22,19 @@ export class AdminUsuarios implements OnInit {
   filtroRol: string = 'Todos';
   busquedaEmail: string = '';
 
-  // Estado para nuestra alerta chula
   notificacion = {
     mostrar: false,
     mensaje: '',
-    tipo: 'exito' // puede ser 'exito' o 'error'
+    tipo: 'exito'
   };
+
+  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Eliminar', onConfirm: () => {} };
+
+  abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Eliminar') {
+    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+  }
+  cerrarConfirm() { this.modalConfirm.mostrar = false; }
+  confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
 
   formulario = {
     email: '',
@@ -156,9 +163,7 @@ export class AdminUsuarios implements OnInit {
   }
 
   eliminarUsuario(id: number, email: string) {
-    // Para la confirmación de eliminar, seguimos usando confirm() por seguridad,
-    // pero el mensaje de éxito será con nuestro diseño.
-    if (confirm(`¿Estás seguro de eliminar el usuario ${email}?`)) {
+    this.abrirConfirm('Eliminar usuario', `¿Estás seguro de eliminar el usuario ${email}?`, () => {
       this.adminService.eliminarUsuario(id).subscribe({
         next: () => {
           this.cargarUsuarios();
@@ -169,7 +174,7 @@ export class AdminUsuarios implements OnInit {
           this.mostrarAlerta('Error al eliminar el usuario', 'error');
         }
       });
-    }
+    });
   }
 
   cerrarFormulario() {

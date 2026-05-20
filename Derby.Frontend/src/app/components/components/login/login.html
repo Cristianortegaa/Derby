@@ -1,0 +1,238 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-950 relative p-6 overflow-hidden">
+
+  <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/campoFutbol.png');"></div>
+
+  <div class="absolute -top-20 -left-20 w-96 h-96 bg-red-600/20 blur-[120px] rounded-full"></div>
+  <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-blue-600/20 blur-[120px] rounded-full"></div>
+
+  <div class="relative z-10 w-full max-w-md bg-gray-900 border border-white/5 p-10 rounded-[2rem] shadow-2xl">
+
+    <div class="text-center mb-10">
+      <img src="/logo.png" alt="Logo Derby" class="h-16 mx-auto mb-4 drop-shadow-md">
+      <h2 class="text-3xl font-black text-white tracking-tight">INTRANET</h2>
+      <p class="text-gray-500 text-sm mt-1 uppercase tracking-widest font-semibold">
+        {{ mostrarRegistro ? 'Crear Cuenta' : 'Acceso Oficial' }}
+      </p>
+    </div>
+
+    <form *ngIf="!mostrarRegistro" [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()" class="space-y-6">
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Email</label>
+
+        <div class="flex items-center bg-gray-800/50 border border-gray-700 rounded-2xl p-4 group transition-all duration-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10"
+             [class.!border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+             [class.!border-blue-500]="loginForm.get('email')?.valid">
+
+          <i class="fa-solid fa-envelope mt-1 mr-3 transition-colors text-gray-500 group-focus-within:text-blue-500"
+             [class.!text-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+             [class.!text-blue-500]="loginForm.get('email')?.valid"></i>
+
+          <input type="email" formControlName="email" placeholder="ejemplo@derby.com"
+                 class="bg-transparent border-none text-white text-sm w-full outline-none placeholder:text-gray-600">
+        </div>
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="text-red-500 text-[10px] font-bold uppercase ml-2 mt-1 tracking-wider">
+            @if (loginForm.get('email')?.errors?.['required']) { <p>El email es obligatorio</p> }
+            @if (loginForm.get('email')?.errors?.['email'] || loginForm.get('email')?.errors?.['pattern']) { <p>Formato de email no válido</p> }
+            @if (loginForm.get('email')?.errors?.['minlength']) { <p>Debe tener al menos 5 caracteres</p> }
+          </div>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Contraseña</label>
+
+        <div class="flex items-center bg-gray-800/50 border border-gray-700 rounded-2xl p-4 group transition-all duration-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10"
+             [class.!border-red-500]="loginForm.get('contrasena')?.invalid && loginForm.get('contrasena')?.touched"
+             [class.!border-blue-500]="loginForm.get('contrasena')?.valid">
+
+          <i class="fa-solid fa-lock mr-3 transition-colors text-gray-500 group-focus-within:text-blue-500"
+             [class.!text-red-500]="loginForm.get('contrasena')?.invalid && loginForm.get('contrasena')?.touched"
+             [class.!text-blue-500]="loginForm.get('contrasena')?.valid"></i>
+
+          <input type="password" formControlName="contrasena" placeholder="••••••••"
+                 class="bg-transparent border-none text-white text-sm w-full outline-none placeholder:text-gray-600">
+        </div>
+
+        @if (loginForm.get('contrasena')?.invalid && loginForm.get('contrasena')?.touched) {
+          <div class="text-red-500 text-[10px] font-bold uppercase ml-2 mt-1 tracking-wider">
+            @if (loginForm.get('contrasena')?.errors?.['required']) { <p>La contraseña es obligatoria</p> }
+            @if (loginForm.get('contrasena')?.errors?.['minlength']) { <p>Debe tener al menos 6 caracteres</p> }
+            @if (loginForm.get('contrasena')?.errors?.['maxlength']) { <p>Máximo 20 caracteres</p> }
+          </div>
+        }
+      </div>
+
+      <button type="submit"
+              [disabled]="loginForm.invalid || cargando"
+              class="w-full font-black py-4 rounded-2xl transition-all transform mt-4 flex items-center justify-center gap-2"
+              [class.bg-gradient-to-r]="loginForm.valid && !cargando"
+              [class.from-red-600]="loginForm.valid && !cargando"
+              [class.to-blue-600]="loginForm.valid && !cargando"
+              [class.text-white]="loginForm.valid && !cargando"
+              [class.shadow-lg]="loginForm.valid && !cargando"
+              [class.shadow-blue-600/20]="loginForm.valid && !cargando"
+      [class.hover:-translate-y-0.5]="loginForm.valid && !cargando"
+      [class.hover:brightness-110]="loginForm.valid && !cargando"
+      [class.bg-gray-800]="loginForm.invalid"
+      [class.text-gray-500]="loginForm.invalid"
+      [class.cursor-not-allowed]="loginForm.invalid"
+      [class.bg-gradient-to-r]="cargando"
+      [class.from-blue-700]="cargando"
+      [class.to-red-700]="cargando">
+      <span *ngIf="!cargando"><i class="fa-solid fa-sign-in-alt mr-2"></i>ENTRAR</span>
+      <span *ngIf="cargando" class="flex items-center gap-2">
+          <span class="animate-spin"><i class="fa-solid fa-spinner"></i></span> Conectando...
+        </span>
+      </button>
+
+      <div class="pt-6 border-t border-gray-800">
+        <p class="text-center text-gray-400 text-sm mb-4">
+          ¿No estás registrado?
+          <button type="button" (click)="toggleRegistro()"
+                  class="text-blue-500 hover:text-blue-400 font-bold transition-colors">
+            Regístrate aquí
+          </button>
+        </p>
+
+        <button routerLink="/" type="button"
+                class="w-full text-xs font-bold text-red-500 hover:text-red-400 flex items-center justify-center gap-2 transition-colors">
+          <i class="fa-solid fa-arrow-left"></i> VOLVER AL PRINCIPIO
+        </button>
+      </div>
+
+    </form>
+
+    <form *ngIf="mostrarRegistro" [formGroup]="registroForm" (ngSubmit)="onSubmitRegistro()" class="space-y-6">
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Email</label>
+
+        <div class="flex items-center bg-gray-800/50 border border-gray-700 rounded-2xl p-4 group transition-all duration-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10"
+             [class.!border-red-500]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched"
+             [class.!border-blue-500]="registroForm.get('email')?.valid">
+
+          <i class="fa-solid fa-envelope mr-3 transition-colors text-gray-500 group-focus-within:text-blue-500"
+             [class.!text-red-500]="registroForm.get('email')?.invalid && registroForm.get('email')?.touched"
+             [class.!text-blue-500]="registroForm.get('email')?.valid"></i>
+
+          <input type="email" formControlName="email" placeholder="tu@email.com"
+                 class="bg-transparent border-none text-white text-sm w-full outline-none placeholder:text-gray-600">
+        </div>
+
+        @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
+          <div class="text-red-500 text-[10px] font-bold uppercase ml-2 mt-1 tracking-wider">
+            @if (registroForm.get('email')?.errors?.['required']) { <p>El email es obligatorio</p> }
+            @if (registroForm.get('email')?.errors?.['email'] || registroForm.get('email')?.errors?.['pattern']) { <p>Formato de email no válido</p> }
+            @if (registroForm.get('email')?.errors?.['minlength']) { <p>Debe tener al menos 5 caracteres</p> }
+          </div>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Contraseña</label>
+
+        <div class="flex items-center bg-gray-800/50 border border-gray-700 rounded-2xl p-4 group transition-all duration-300 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10"
+             [class.!border-red-500]="registroForm.get('contrasena')?.invalid && registroForm.get('contrasena')?.touched"
+             [class.!border-blue-500]="registroForm.get('contrasena')?.valid">
+
+          <i class="fa-solid fa-lock mr-3 transition-colors text-gray-500 group-focus-within:text-blue-500"
+             [class.!text-red-500]="registroForm.get('contrasena')?.invalid && registroForm.get('contrasena')?.touched"
+             [class.!text-blue-500]="registroForm.get('contrasena')?.valid"></i>
+
+          <input type="password" formControlName="contrasena" placeholder="••••••••"
+                 class="bg-transparent border-none text-white text-sm w-full outline-none placeholder:text-gray-600">
+        </div>
+
+        @if (registroForm.get('contrasena')?.invalid && registroForm.get('contrasena')?.touched) {
+          <div class="text-red-500 text-[10px] font-bold uppercase ml-2 mt-1 tracking-wider">
+            @if (registroForm.get('contrasena')?.errors?.['required']) { <p>La contraseña es obligatoria</p> }
+            @if (registroForm.get('contrasena')?.errors?.['minlength']) { <p>Debe tener al menos 6 caracteres</p> }
+            @if (registroForm.get('contrasena')?.errors?.['maxlength']) { <p>Máximo 20 caracteres</p> }
+          </div>
+        }
+      </div>
+
+      <button type="submit"
+              [disabled]="registroForm.invalid || cargando"
+              class="w-full font-black py-4 rounded-2xl transition-all transform mt-4 flex items-center justify-center gap-2"
+              [class.bg-gradient-to-r]="registroForm.valid && !cargando"
+              [class.from-red-600]="registroForm.valid && !cargando"
+              [class.to-blue-600]="registroForm.valid && !cargando"
+              [class.text-white]="registroForm.valid && !cargando"
+              [class.shadow-lg]="registroForm.valid && !cargando"
+              [class.shadow-blue-600/20]="registroForm.valid && !cargando"
+      [class.hover:-translate-y-0.5]="registroForm.valid && !cargando"
+      [class.hover:brightness-110]="registroForm.valid && !cargando"
+      [class.bg-gray-800]="registroForm.invalid"
+      [class.text-gray-500]="registroForm.invalid"
+      [class.cursor-not-allowed]="registroForm.invalid"
+      [class.bg-gradient-to-r]="cargando"
+      [class.from-blue-700]="cargando"
+      [class.to-red-700]="cargando">
+      <span *ngIf="!cargando"><i class="fa-solid fa-user-plus mr-2"></i>CREAR CUENTA</span>
+      <span *ngIf="cargando" class="flex items-center gap-2">
+          <span class="animate-spin"><i class="fa-solid fa-spinner"></i></span> Registrando...
+        </span>
+      </button>
+
+      <div class="pt-6 border-t border-gray-800">
+        <p class="text-center text-gray-400 text-sm mb-4">
+          ¿Ya tienes cuenta?
+          <button type="button" (click)="toggleRegistro()"
+                  class="text-blue-500 hover:text-blue-400 font-bold transition-colors">
+            Inicia sesión
+          </button>
+        </p>
+
+        <button routerLink="/" type="button"
+                class="w-full text-xs font-bold text-red-500 hover:text-red-400 flex items-center justify-center gap-2 transition-colors">
+          <i class="fa-solid fa-arrow-left"></i> VOLVER AL PRINCIPIO
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+@if (showModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-all duration-300">
+    <div class="relative w-full max-w-sm bg-gray-900 border p-8 rounded-[2rem] shadow-2xl text-center"
+         [class.border-red-500/50]="modalTipo === 'success'"
+    [class.border-red-500/30]="modalTipo === 'error'">
+
+    <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 border bg-gradient-to-br"
+         [class.from-red-600]="modalTipo === 'success'"
+         [class.to-blue-600]="modalTipo === 'success'"
+         [class.border-red-500/50]="modalTipo === 'success'"
+    [class.from-red-600/30]="modalTipo === 'error'"
+    [class.to-red-600/30]="modalTipo === 'error'"
+    [class.border-red-500/30]="modalTipo === 'error'">
+    <i class="text-4xl"
+       [class.fa-solid]="true"
+       [class.fa-check]="modalTipo === 'success'"
+       [class.fa-exclamation]="modalTipo === 'error'"
+       [class.text-white]="modalTipo === 'success'"
+       [class.text-red-500]="modalTipo === 'error'"></i>
+  </div>
+
+  <h3 class="text-2xl font-black text-white mb-4 tracking-tight">{{ modalMensaje }}</h3>
+
+  <button type="button" (click)="closeModal()"
+          class="w-full font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
+          [class.bg-gradient-to-r]="modalTipo === 'success'"
+          [class.from-red-600]="modalTipo === 'success'"
+          [class.to-blue-600]="modalTipo === 'success'"
+          [class.hover:brightness-110]="modalTipo === 'success'"
+          [class.bg-red-600]="modalTipo === 'error'"
+          [class.hover:bg-red-500]="modalTipo === 'error'"
+          [class.shadow-red-500/20]="modalTipo === 'error'"
+    [class.text-white]="true">
+  <i class="fa-solid fa-check mr-2"></i>Cerrar
+  </button>
+  </div>
+  </div>
+}

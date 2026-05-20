@@ -16,6 +16,14 @@ export class AdminActas implements OnInit {
   actas: any[] = [];
   cargando = false;
 
+  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Eliminar', onConfirm: () => {} };
+
+  abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Eliminar') {
+    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+  }
+  cerrarConfirm() { this.modalConfirm.mostrar = false; }
+  confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit() {
@@ -37,12 +45,12 @@ export class AdminActas implements OnInit {
   }
 
   eliminarActa(id: number) {
-    if (confirm('¿Estás seguro de eliminar esta acta?')) {
+    this.abrirConfirm('Eliminar acta', '¿Estás seguro de eliminar esta acta?', () => {
       this.adminService.eliminarActa(id).subscribe({
         next: () => this.cargarActas(),
         error: (error) => console.error('Error eliminando:', error)
       });
-    }
+    });
   }
 }
 

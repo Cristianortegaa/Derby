@@ -1,4 +1,4 @@
-﻿namespace Derby.Backend.Dtos;
+namespace Derby.Backend.Dtos;
 
 public class ResultadoPartidoResponseDto
 {
@@ -9,4 +9,3 @@ public class ResultadoPartidoResponseDto
     public int GolesVisitante { get; set; }
     public DateTime Fecha { get; set; }
 }
-

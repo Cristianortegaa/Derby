@@ -1,9 +1,9 @@
 ﻿using Derby.Backend.Dtos;
-using Derby.Backend.Models;
 using Derby.Backend.Services;
 using Derby.Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Derby.Backend.Models;
 
 namespace Derby.Backend.Controllers;
 
@@ -63,6 +63,7 @@ public class ArbitroController : ControllerBase
     public async Task<ActionResult<List<Partido>>> ObtenerMisPartidos(int arbitroId)
     {
         var partidos = await _context.Partidos
+            .Where(p => p.ArbitroId == arbitroId)
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
             .ToListAsync();
@@ -74,7 +75,7 @@ public class ArbitroController : ControllerBase
     public async Task<ActionResult<List<Partido>>> ObtenerPartidosPendientes(int arbitroId)
     {
         var partidos = await _context.Partidos
-            .Where(p => Finalizado != true)
+            .Where(p => p.ArbitroId == arbitroId && p.Estado != "Finalizado")
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
             .ToListAsync();
@@ -86,10 +87,10 @@ public class ArbitroController : ControllerBase
     public async Task<ActionResult<List<Partido>>> ObtenerHistorialPartidos(int arbitroId)
     {
         var partidos = await _context.Partidos
-            .Where(p => p.Finalizado == true)
+            .Where(p => p.ArbitroId == arbitroId && p.Estado == "Finalizado")
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
-            .OrderByDescending(p => p.Fecha)
+            .OrderByDescending(p => p.FechaHora)
             .ToListAsync();
         return Ok(partidos);
     }
@@ -103,13 +104,11 @@ public class ArbitroController : ControllerBase
             return NotFound(new { error = "Partido no encontrado" });
 
         p.GolesLocal = partido.GolesLocal;
-        p.GolesVisitantes = partido.GolesVisitantes;
-        p.Finalizado = true;
+        p.GolesVisitante = partido.GolesVisitante;
+        p.Estado = "Finalizado";
         
         _context.Partidos.Update(p);
         await _context.SaveChangesAsync();
         return Ok(p);
     }
 }
-
-

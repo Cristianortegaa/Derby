@@ -27,6 +27,20 @@ public class EquipoRepository : IEquipoRepository
         _logger.LogInformation("Consultando el equipo con ID: {Id} en la base de datos.", id);
         return await _context.Equipos.FindAsync(id);
     }
+    
+    public async Task<IEnumerable<Equipo>> ObtenerTodosConLigaAsync()
+    {
+        _logger.LogInformation("Consultando todos los equipos con su liga en la base de datos.");
+        var equipos = await _context.Equipos.ToListAsync();
+        var ligaEquipos = await _context.LigaEquipos.Include(le => le.Liga).ToListAsync();
+        foreach (var equipo in equipos)
+        {
+            var ligaEquipo = ligaEquipos.FirstOrDefault(le => le.EquipoId == equipo.Id);
+            if (ligaEquipo?.Liga != null)
+                equipo.LigaNombre = ligaEquipo.Liga.Nombre;
+        }
+        return equipos;
+    }
 
     public async Task<Equipo> CrearAsync(Equipo equipo)
     {

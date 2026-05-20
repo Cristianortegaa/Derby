@@ -1,9 +1,9 @@
-﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../../../navbar/navbar.component';
-import { AdminService } from '../../../../services/admin.service';
+﻿import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterLink} from '@angular/router';
+import {NavbarComponent} from '../../../navbar/navbar.component';
+import {AdminService} from '../../../../services/admin.service';
 
 @Component({
   selector: 'app-admin-competiciones',
@@ -44,10 +44,19 @@ export class AdminCompeticiones implements OnInit {
     tipo: 'exito' as 'exito' | 'error'
   };
 
+  modalConfirm = {
+    mostrar: false,
+    titulo: '',
+    mensaje: '',
+    onConfirm: () => {
+    }
+  };
+
   constructor(
     private adminService: AdminService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.cargarCompeticiones();
@@ -56,7 +65,7 @@ export class AdminCompeticiones implements OnInit {
   // ─── Utilidades ──────────────────────────────────────────────────────────────
 
   mostrarAlerta(mensaje: string, tipo: 'exito' | 'error' = 'exito') {
-    this.notificacion = { mostrar: true, mensaje, tipo };
+    this.notificacion = {mostrar: true, mensaje, tipo};
     this.cdr.detectChanges();
     setTimeout(() => {
       this.notificacion.mostrar = false;
@@ -180,13 +189,34 @@ export class AdminCompeticiones implements OnInit {
   }
 
   eliminarComp(id: number, nombre: string) {
-    if (!confirm(`¿Eliminar la competición "${nombre}"? También se eliminarán sus ligas.`)) return;
-    this.adminService.eliminarCompeticion(id).subscribe({
-      next: () => {
-        this.cargarCompeticiones();
-        this.mostrarAlerta('Competición eliminada del sistema');
-      },
-      error: () => this.mostrarAlerta('Error al eliminar la competición', 'error')
-    });
+    this.abrirConfirm(
+      'Eliminar competición',
+      `¿Estás seguro de que quieres eliminar "${nombre}"? También se eliminarán sus ligas.`,
+      () => {
+        this.adminService.eliminarCompeticion(id).subscribe({
+          next: () => {
+            this.cargarCompeticiones();
+            this.mostrarAlerta('Competición eliminada del sistema');
+          },
+          error: () => this.mostrarAlerta('Error al eliminar la competición', 'error')
+        });
+      }
+    );
   }
+
+  abrirConfirm(titulo: string, mensaje: string, accion: () => void) {
+    this.modalConfirm = {
+      mostrar: true, titulo, mensaje, onConfirm: accion
+    };
+  }
+
+  cerrarConfirm() {
+    this.modalConfirm.mostrar = false;
+  }
+
+  confirmar() {
+    this.modalConfirm.onConfirm();
+    this.cerrarConfirm();
+  }
+
 }

@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../navbar/navbar.component';
 import { AdminService } from '../../../../services/admin.service';
 
@@ -24,6 +24,8 @@ export class AdminLigas implements OnInit {
   filtroCompeticion = '';
   filtroEstado = '';
 
+  competicionIdFijado: number | null = null;
+
   mostrarForm = false;
   editandoId: number | null = null;
 
@@ -34,7 +36,6 @@ export class AdminLigas implements OnInit {
     nombre: '',
     competicionId: null as number | null,
     grupo: 'Único',
-    equipos: 20,
     jornadas: 38,
     jornadaActual: 0,
     estado: 'Activo'
@@ -55,10 +56,16 @@ export class AdminLigas implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    const cid = this.route.snapshot.queryParamMap.get('competicionId');
+    if (cid) {
+      this.competicionIdFijado = Number(cid);
+      this.filtroCompeticion = cid;
+    }
     this.cargarCompeticiones();
     this.cargarLigas();
   }
@@ -187,7 +194,7 @@ export class AdminLigas implements OnInit {
 
   limpiarFiltros() {
     this.busquedaNombre = '';
-    this.filtroCompeticion = '';
+    if (!this.competicionIdFijado) this.filtroCompeticion = '';
     this.filtroEstado = '';
     this.aplicarFiltro();
   }
@@ -201,7 +208,6 @@ export class AdminLigas implements OnInit {
         nombre: liga.nombre,
         competicionId: liga.competicionId,
         grupo: liga.grupo || 'Único',
-        equipos: liga.equipos,
         jornadas: liga.jornadas,
         jornadaActual: liga.jornadaActual || 0,
         estado: liga.estado
@@ -224,7 +230,6 @@ export class AdminLigas implements OnInit {
       nombre: '',
       competicionId: this.competiciones[0]?.id || null,
       grupo: 'Único',
-      equipos: 20,
       jornadas: 38,
       jornadaActual: 0,
       estado: 'Activo'

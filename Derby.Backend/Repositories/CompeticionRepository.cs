@@ -1,4 +1,4 @@
-﻿using Derby.Backend.Data;
+using Derby.Backend.Data;
 using Derby.Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,49 +14,30 @@ public class CompeticionRepository : ICompeticionRepository
     }
 
     public async Task<List<Competicion>> ObtenerTodasAsync()
-    {
-        return await _context.Competiciones
-            .Include(c => c.Partidos)
-            .ToListAsync();
-    }
+        => await _context.Competiciones.ToListAsync();
 
     public async Task<Competicion?> ObtenerPorIdAsync(int id)
-    {
-        return await _context.Competiciones
-            .Include(c => c.Partidos)
-            .FirstOrDefaultAsync(c => c.Id == id);
-    }
+        => await _context.Competiciones.FirstOrDefaultAsync(c => c.Id == id);
 
     public async Task<Competicion?> ObtenerPorNombreYTemporadaAsync(string nombre, string temporada)
-    {
-        return await _context.Competiciones
-            .Include(c => c.Partidos)
+        => await _context.Competiciones
             .FirstOrDefaultAsync(c => c.Nombre == nombre && c.Temporada == temporada);
-    }
 
     public async Task<List<Competicion>> FiltrarAsync(string? temporada = null, string? tipoJuego = null, string? competicion = null, string? grupo = null)
     {
-        var query = _context.Competiciones.Include(c => c.Partidos).AsQueryable();
+        var query = _context.Competiciones.AsQueryable();
 
         if (!string.IsNullOrEmpty(temporada))
-        {
             query = query.Where(c => c.Temporada == temporada);
-        }
 
         if (!string.IsNullOrEmpty(tipoJuego))
-        {
             query = query.Where(c => c.TipoJuego == tipoJuego);
-        }
 
         if (!string.IsNullOrEmpty(competicion))
-        {
             query = query.Where(c => c.Nombre.Contains(competicion));
-        }
 
         if (!string.IsNullOrEmpty(grupo))
-        {
             query = query.Where(c => c.Grupo == grupo);
-        }
 
         return await query.ToListAsync();
     }
@@ -94,4 +75,3 @@ public class CompeticionRepository : ICompeticionRepository
         return true;
     }
 }
-

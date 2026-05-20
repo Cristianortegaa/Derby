@@ -1,0 +1,98 @@
+<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
+
+  <app-navbar></app-navbar>
+  <div class="h-20"></div>
+
+  <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+
+  <div class="relative z-10 px-6 md:px-12 py-8 max-w-7xl mx-auto w-full">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-black mb-1 text-white">Calendario</h1>
+        <p class="text-gray-500 text-sm font-medium">Calendario de partidos por jornada</p>
+        <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a *ngIf="ligaIdFijado"
+           [routerLink]="['/admin/ligas', ligaIdFijado]"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-green-500/40 rounded-lg text-white hover:border-green-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <span>←</span> Volver a Liga
+        </a>
+        <a *ngIf="competicionIdFijado && !ligaIdFijado"
+           [routerLink]="['/admin/competiciones', competicionIdFijado]"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-green-500/40 rounded-lg text-white hover:border-green-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <span>←</span> Volver a Competición
+        </a>
+        <a *ngIf="!competicionIdFijado && !ligaIdFijado" routerLink="/admin"
+           class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+          <span>←</span> Volver
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6 mb-6">
+      <label class="block text-white text-sm font-semibold mb-3">Selecciona una liga:</label>
+      <select [(ngModel)]="ligaSeleccionada" (change)="cambiarLiga()" name="liga"
+              class="px-4 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white focus:border-blue-400 outline-none">
+        <option [ngValue]="0">Seleccionar liga...</option>
+        <option *ngFor="let liga of ligas" [ngValue]="liga.id">{{ liga.nombre }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-8">
+      <p class="text-gray-400">Cargando calendario...</p>
+    </div>
+
+    <div *ngIf="!cargando && jornadas.length === 0" class="text-center py-8">
+      <i class="fas fa-inbox text-4xl text-gray-600 mb-3"></i>
+      <p class="text-gray-400">No hay partidos programados</p>
+    </div>
+
+    <div *ngIf="!cargando && jornadas.length > 0" class="space-y-6">
+      <div *ngFor="let jornada of jornadas" class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6">
+        <h3 class="text-xl font-bold text-yellow-400 mb-4"><i class="fas fa-calendar-days mr-2"></i>Jornada {{ jornada.numero }}</h3>
+
+        <div class="space-y-3">
+          <div *ngFor="let partido of jornada.partidos"
+               class="bg-slate-950/50 border border-slate-700/50 rounded-lg p-4 hover:border-blue-500/50 transition">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+
+              <div class="text-center">
+                <p class="text-white font-bold">{{ partido.equipoLocal?.nombre || 'Equipo Local' }}</p>
+                <p class="text-gray-400 text-sm">Local</p>
+              </div>
+
+              <div class="text-center">
+                <div class="flex items-center justify-center gap-3">
+                  <div class="text-2xl font-bold text-green-400">{{ partido.golesLocal ?? '-' }}</div>
+                  <div class="text-gray-400">-</div>
+                  <div class="text-2xl font-bold text-green-400">{{ partido.golesVisitantes ?? '-' }}</div>
+                </div>
+                <p class="text-gray-400 text-xs mt-1">{{ partido.fecha ? (partido.fecha | date: 'dd/MM HH:mm') : 'Sin fecha' }}</p>
+                <p class="text-xs px-2 py-1 rounded mt-1 inline-block"
+                   [ngClass]="{
+                     'bg-yellow-500/20 text-yellow-400': partido.estado === 'Pendiente',
+                     'bg-red-500/20 text-red-400': partido.estado === 'En juego',
+                     'bg-green-500/20 text-green-400': partido.estado === 'Finalizado'
+                   }">
+                  {{ partido.estado }}
+                </p>
+              </div>
+
+              <div class="text-center">
+                <p class="text-white font-bold">{{ partido.equipoVisitante?.nombre || 'Equipo Visitante' }}</p>
+                <p class="text-gray-400 text-sm">Visitante</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

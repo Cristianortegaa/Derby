@@ -1,4 +1,6 @@
-﻿using Derby.Backend.Dtos;
+using Derby.Backend.Dtos;
+using Derby.Backend.Mappers;
+using Derby.Backend.Models;
 using Derby.Backend.Repositories;
 
 namespace Derby.Backend.Services;
@@ -17,147 +19,73 @@ public class CompeticionService : ICompeticionService
     public async Task<List<JornadaResponseDto>> ObtenerJornadasAsync(int competicionId)
     {
         var partidos = await _partidoRepository.ObtenerPorCompeticionAsync(competicionId);
-        
-        var jornadas = partidos
+        return partidos
             .GroupBy(p => p.Jornada)
             .OrderBy(g => g.Key)
             .Select(g => new JornadaResponseDto
             {
                 Numero = g.Key,
-                Partidos = g.Select(p => new PartidoResponseDto
-                {
-                    Id = p.Id,
-                    Fecha = p.Fecha,
-                    GolesLocal = p.GolesLocal ?? 0,
-                    GolesVisitantes = p.GolesVisitantes ?? 0,
-                    Estado = DeterminarEstado(p),
-                    EquipoLocal = new EquipoResponseDto
-                    {
-                        Id = p.EquipoLocal?.Id ?? 0,
-                        Nombre = p.EquipoLocal?.Nombre ?? "Desconocido",
-                        EscudoUrl = p.EquipoLocal?.EscudoUrl ?? "",
-                        Sede = p.EquipoLocal?.Sede ?? "",
-                        Division = p.EquipoLocal?.Division ?? ""
-                    },
-                    EquipoVisitante = new EquipoResponseDto
-                    {
-                        Id = p.EquipoVisitante?.Id ?? 0,
-                        Nombre = p.EquipoVisitante?.Nombre ?? "Desconocido",
-                        EscudoUrl = p.EquipoVisitante?.EscudoUrl ?? "",
-                        Sede = p.EquipoVisitante?.Sede ?? "",
-                        Division = p.EquipoVisitante?.Division ?? ""
-                    }
-                }).ToList()
+                Partidos = g.Select(p => p.ToDto()).ToList()
             }).ToList();
-
-        return jornadas;
     }
 
     public async Task<List<ResultadoPartidoResponseDto>> ObtenerResultadosAsync(int competicionId)
     {
         var partidos = await _partidoRepository.ObtenerResultadosAsync(competicionId);
-
-        var resultados = partidos
-            .Select(p => new ResultadoPartidoResponseDto
-            {
-                Id = p.Id,
-                EquipoLocal = p.EquipoLocal?.Nombre ?? "Desconocido",
-                EquipoVisitante = p.EquipoVisitante?.Nombre ?? "Desconocido",
-                GolesLocal = p.GolesLocal ?? 0,
-                GolesVisitante = p.GolesVisitantes ?? 0,
-                Fecha = p.Fecha
-            }).ToList();
-
-        return resultados;
+        return partidos.Select(p => p.ToResultadoDto()).ToList();
     }
 
     public async Task<List<EquipoClasificacionResponseDto>> ObtenerClasificacionAsync(int competicionId)
     {
         var partidos = await _partidoRepository.ObtenerResultadosAsync(competicionId);
+        return CalcularClasificacion(partidos);
+    }
 
+    public async Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int competicionId)
+    {
+        return new List<GoleadorResponseDto>();
+    }
+
+    public async Task<List<Competicion>> BuscarCompeticionesAsync(string? temporada, string? tipoJuego, string? competicion, string? grupo)
+    {
+        return await _competicionRepository.FiltrarAsync(temporada, tipoJuego, competicion, grupo);
+    }
+
+    private static List<EquipoClasificacionResponseDto> CalcularClasificacion(List<Partido> partidos)
+    {
         var clasificacion = new Dictionary<int, EquipoClasificacionResponseDto>();
 
         foreach (var partido in partidos)
         {
-            var equipoLocal = partido.EquipoLocal;
-            var equipoVisitante = partido.EquipoVisitante;
+            var local = partido.EquipoLocal;
+            var visitante = partido.EquipoVisitante;
 
-            if (equipoLocal != null)
+            if (local != null)
             {
-                if (!clasificacion.ContainsKey(equipoLocal.Id))
-                {
-                    clasificacion[equipoLocal.Id] = new EquipoClasificacionResponseDto
-                    {
-                        Id = equipoLocal.Id,
-                        Nombre = equipoLocal.Nombre,
-                        PartidosJugados = 0,
-                        Ganancias = 0,
-                        Empates = 0,
-                        Derrotas = 0,
-                        GolesAFavor = 0,
-                        GolesEnContra = 0,
-                        Puntos = 0
-                    };
-                }
+                if (!clasificacion.ContainsKey(local.Id))
+                    clasificacion[local.Id] = new EquipoClasificacionResponseDto { Id = local.Id, Nombre = local.Nombre };
 
-                var stats = clasificacion[equipoLocal.Id];
-                stats.PartidosJugados++;
-                stats.GolesAFavor += partido.GolesLocal ?? 0;
-                stats.GolesEnContra += partido.GolesVisitantes ?? 0;
-
-                if (partido.GolesLocal > partido.GolesVisitantes)
-                {
-                    stats.Ganancias++;
-                    stats.Puntos += 3;
-                }
-                else if (partido.GolesLocal == partido.GolesVisitantes)
-                {
-                    stats.Empates++;
-                    stats.Puntos += 1;
-                }
-                else
-                {
-                    stats.Derrotas++;
-                }
+                var s = clasificacion[local.Id];
+                s.PartidosJugados++;
+                s.GolesAFavor += partido.GolesLocal ?? 0;
+                s.GolesEnContra += partido.GolesVisitante ?? 0;
+                if (partido.GolesLocal > partido.GolesVisitante) { s.Ganancias++; s.Puntos += 3; }
+                else if (partido.GolesLocal == partido.GolesVisitante) { s.Empates++; s.Puntos += 1; }
+                else s.Derrotas++;
             }
 
-            if (equipoVisitante != null)
+            if (visitante != null)
             {
-                if (!clasificacion.ContainsKey(equipoVisitante.Id))
-                {
-                    clasificacion[equipoVisitante.Id] = new EquipoClasificacionResponseDto
-                    {
-                        Id = equipoVisitante.Id,
-                        Nombre = equipoVisitante.Nombre,
-                        PartidosJugados = 0,
-                        Ganancias = 0,
-                        Empates = 0,
-                        Derrotas = 0,
-                        GolesAFavor = 0,
-                        GolesEnContra = 0,
-                        Puntos = 0
-                    };
-                }
+                if (!clasificacion.ContainsKey(visitante.Id))
+                    clasificacion[visitante.Id] = new EquipoClasificacionResponseDto { Id = visitante.Id, Nombre = visitante.Nombre };
 
-                var stats = clasificacion[equipoVisitante.Id];
-                stats.PartidosJugados++;
-                stats.GolesAFavor += partido.GolesVisitantes ?? 0;
-                stats.GolesEnContra += partido.GolesLocal ?? 0;
-
-                if (partido.GolesVisitantes > partido.GolesLocal)
-                {
-                    stats.Ganancias++;
-                    stats.Puntos += 3;
-                }
-                else if (partido.GolesVisitantes == partido.GolesLocal)
-                {
-                    stats.Empates++;
-                    stats.Puntos += 1;
-                }
-                else
-                {
-                    stats.Derrotas++;
-                }
+                var s = clasificacion[visitante.Id];
+                s.PartidosJugados++;
+                s.GolesAFavor += partido.GolesVisitante ?? 0;
+                s.GolesEnContra += partido.GolesLocal ?? 0;
+                if (partido.GolesVisitante > partido.GolesLocal) { s.Ganancias++; s.Puntos += 3; }
+                else if (partido.GolesVisitante == partido.GolesLocal) { s.Empates++; s.Puntos += 1; }
+                else s.Derrotas++;
             }
         }
 
@@ -167,36 +95,4 @@ public class CompeticionService : ICompeticionService
             .ThenByDescending(e => e.GolesAFavor)
             .ToList();
     }
-
-    public async Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int competicionId)
-    {
-        // Placeholder - necesitaría una tabla de goles por jugador
-        return new List<GoleadorResponseDto>();
-    }
-
-    public async Task<List<JornadaResponseDto>> BuscarCompeticionesAsync(string? temporada, string? tipoJuego, string? competicion, string? grupo)
-    {
-        var competiciones = await _competicionRepository.FiltrarAsync(temporada, tipoJuego, competicion, grupo);
-        
-        var jornadas = new List<JornadaResponseDto>();
-        foreach (var comp in competiciones)
-        {
-            var jornadasComp = await ObtenerJornadasAsync(comp.Id);
-            jornadas.AddRange(jornadasComp);
-        }
-
-        return jornadas;
-    }
-
-    private string DeterminarEstado(Models.Partido partido)
-    {
-        if (partido.Finalizado == true)
-            return "jugado";
-        
-        if (DateTime.Now > partido.Fecha)
-            return "en-juego";
-        
-        return "pendiente";
-    }
 }
-

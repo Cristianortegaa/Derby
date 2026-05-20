@@ -57,7 +57,7 @@ export interface GoleadorResponseDto {
   providedIn: 'root'
 })
 export class CompeticionesService {
-  private apiUrl = 'http://localhost:5297/api/competiciones';
+  private apiUrl = 'http://localhost:5101/api/competiciones';
 
   constructor(private http: HttpClient) {}
 
@@ -77,19 +77,31 @@ export class CompeticionesService {
     return this.http.get<GoleadorResponseDto[]>(`${this.apiUrl}/${competicionId}/goleadores`);
   }
 
+  obtenerJornadasPorLiga(ligaId: number): Observable<JornadaResponseDto[]> {
+    return this.http.get<JornadaResponseDto[]>(`${this.apiUrl}/ligas/${ligaId}/jornadas`);
+  }
+
+  obtenerResultadosPorLiga(ligaId: number): Observable<ResultadoPartidoResponseDto[]> {
+    return this.http.get<ResultadoPartidoResponseDto[]>(`${this.apiUrl}/ligas/${ligaId}/resultados`);
+  }
+
+  obtenerClasificacionPorLiga(ligaId: number): Observable<EquipoClasificacionResponseDto[]> {
+    return this.http.get<EquipoClasificacionResponseDto[]>(`${this.apiUrl}/ligas/${ligaId}/clasificacion`);
+  }
+
   buscarCompeticiones(
     temporada?: string,
     tipoJuego?: string,
     competicion?: string,
     grupo?: string
-  ): Observable<JornadaResponseDto[]> {
+  ): Observable<any[]> {
     let params = new HttpParams();
     if (temporada) params = params.set('temporada', temporada);
     if (tipoJuego) params = params.set('tipoJuego', tipoJuego);
     if (competicion) params = params.set('competicion', competicion);
     if (grupo) params = params.set('grupo', grupo);
 
-    return this.http.get<JornadaResponseDto[]>(`${this.apiUrl}/buscar`, { params });
+    return this.http.get<any[]>(`${this.apiUrl}/buscar`, { params });
   }
 }
 

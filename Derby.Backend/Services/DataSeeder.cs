@@ -1,4 +1,4 @@
-﻿using Derby.Backend.Data;
+using Derby.Backend.Data;
 using Derby.Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -19,125 +19,70 @@ public class DataSeeder
 
     public static async Task SeedAsync(DerbyContext context)
     {
-        // Crear usuarios si no existen
+        // ─── Usuarios ────────────────────────────────────────────────────────────
         var usuariosExisten = await context.Usuarios.AnyAsync();
         if (!usuariosExisten)
         {
             var usuarios = new List<Usuario>
             {
-                new Usuario
-                {
-                    Email = "admin@derby.com",
-                    Contraseña = HashPassword("Admin@123"),
-                    Rol = Rol.Administrador
-                },
-                new Usuario
-                {
-                    Email = "arbitro@derby.com",
-                    Contraseña = HashPassword("Arbitro@123"),
-                    Rol = Rol.Arbitro
-                }
+                new Usuario { Email = "admin@derby.com",   Contraseña = HashPassword("Admin@123"),   Rol = Rol.Administrador },
+                new Usuario { Email = "arbitro@derby.com", Contraseña = HashPassword("Arbitro@123"), Rol = Rol.Arbitro }
             };
+            await context.Usuarios.AddRangeAsync(usuarios);
+            await context.SaveChangesAsync();
+            Console.WriteLine("✓ Usuarios creados");
+        }
+        else
+        {
+            Console.WriteLine("✓ Usuarios ya existen");
+        }
 
-                await context.Usuarios.AddRangeAsync(usuarios);
+        // ─── Equipos ─────────────────────────────────────────────────────────────
+        var equiposActuales = await context.Equipos.ToListAsync();
+        var necesitaRecrearEquipos = equiposActuales.Count == 0 || equiposActuales.Any(e => e.Nombre == "Getafe CF");
+        if (necesitaRecrearEquipos)
+        {
+            Console.WriteLine("• Creando equipos Derby...");
+            if (equiposActuales.Count > 0)
+            {
+                context.Equipos.RemoveRange(equiposActuales);
                 await context.SaveChangesAsync();
-                Console.WriteLine("✓ Usuarios creados");
             }
-            else
-            {
-                Console.WriteLine("✓ Usuarios ya existen");
-            }
-
-            // Crear equipos si no existen
-            var equiposExisten = await context.Equipos.AnyAsync();
-            if (!equiposExisten)
-            {
-                Console.WriteLine("• Creando equipos...");
             var equipos = new List<Equipo>
             {
-                new Equipo 
-                { 
-                    Nombre = "Getafe CF", 
-                    Sede = "Polideportivo Getafe", 
-                    Division = "1", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=Getafe" 
-                },
-                new Equipo 
-                { 
-                    Nombre = "Rayo Vallecano", 
-                    Sede = "Vallecas", 
-                    Division = "1", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=Rayo" 
-                },
-                new Equipo 
-                { 
-                    Nombre = "Leganés B", 
-                    Sede = "Polideportivo Butarque", 
-                    Division = "2", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=Leganes" 
-                },
-                new Equipo 
-                { 
-                    Nombre = "Madrid CFF", 
-                    Sede = "Antiguo Canódromo", 
-                    Division = "fem", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=MadridCFF" 
-                },
-                new Equipo 
-                { 
-                    Nombre = "Alcalá CF", 
-                    Sede = "Estadio Alcalá", 
-                    Division = "1", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=Alcala" 
-                },
-                new Equipo 
-                { 
-                    Nombre = "Fuenlabrada", 
-                    Sede = "Fernando Torres", 
-                    Division = "1", 
-                    EscudoUrl = "https://via.placeholder.com/50?text=Fuenlabrada" 
-                }
+                new Equipo { Nombre = "FC Derby Norte",     Sede = "Estadio El Pinar"        },
+                new Equipo { Nombre = "Atlético Sur CF",    Sede = "Campo La Ribera"           },
+                new Equipo { Nombre = "CD Las Torres",      Sede = "Polideportivo Torres"      },
+                new Equipo { Nombre = "Real Vallés FC",     Sede = "Estadio Vallés"            },
+                new Equipo { Nombre = "UD Miralba",         Sede = "Campo Miralba"             },
+                new Equipo { Nombre = "CF Esperanza",       Sede = "Polideportivo Esperanza"   },
+                new Equipo { Nombre = "Racing Derby Club",  Sede = "Estadio La Colina"         },
+                new Equipo { Nombre = "Deportivo Crestall", Sede = "Campo Crestall"            },
+                new Equipo { Nombre = "CD Tres Ríos",       Sede = "Estadio Tres Ríos"         },
+                new Equipo { Nombre = "Sporting Montaña",   Sede = "Campo La Cumbre"           },
+                new Equipo { Nombre = "FC Los Álamos",      Sede = "Polideportivo Álamos"      },
+                new Equipo { Nombre = "UD Piedralba",       Sede = "Estadio Piedralba"         }
             };
-
             await context.Equipos.AddRangeAsync(equipos);
             await context.SaveChangesAsync();
-            Console.WriteLine("✓ Equipos creados");
+            Console.WriteLine("✓ Equipos Derby creados");
         }
         else
         {
             Console.WriteLine("✓ Equipos ya existen");
         }
 
-        // Crear competiciones si no existen
+        // ─── Competiciones ───────────────────────────────────────────────────────
         var competicionesExisten = await context.Competiciones.AnyAsync();
         if (!competicionesExisten)
         {
             Console.WriteLine("• Creando competiciones...");
             var competiciones = new List<Competicion>
             {
-                new Competicion 
-                { 
-                    Nombre = "Copa RFEF Fase Autonómica", 
-                    Temporada = "2025-2026", 
-                    TipoJuego = "futbol11", 
-                    Grupo = "Grupo A" 
-                },
-                new Competicion 
-                { 
-                    Nombre = "Liga Nacional", 
-                    Temporada = "2025-2026", 
-                    TipoJuego = "futbol11", 
-                    Grupo = "Grupo A" 
-                },
-                new Competicion 
-                { 
-                    Nombre = "Copa de Aficionados", 
-                    Temporada = "2025-2026", 
-                    TipoJuego = "futbol7", 
-                    Grupo = "Grupo B" 
-                }
+                new Competicion { Nombre = "Liga Derby",         Temporada = "2025-2026", TipoJuego = "futbol11", Grupo = "Grupo A" },
+                new Competicion { Nombre = "Copa Derby",         Temporada = "2025-2026", TipoJuego = "futbol11", Grupo = "Grupo A" },
+                new Competicion { Nombre = "Torneo Verano",      Temporada = "2025-2026", TipoJuego = "futbol7",  Grupo = "Grupo B" }
             };
-
             await context.Competiciones.AddRangeAsync(competiciones);
             await context.SaveChangesAsync();
             Console.WriteLine("✓ Competiciones creadas");
@@ -147,203 +92,95 @@ public class DataSeeder
             Console.WriteLine("✓ Competiciones ya existen");
         }
 
-        // Crear partidos si no existen
+        // ─── Ligas ───────────────────────────────────────────────────────────────
+        var ligasExisten = await context.Ligas.AnyAsync();
+        if (!ligasExisten)
+        {
+            Console.WriteLine("• Creando ligas...");
+            var competiciones = await context.Competiciones.ToListAsync();
+            if (competiciones.Count >= 1)
+            {
+                var ligas = new List<Liga>
+                {
+                    new Liga { Nombre = "Primera DAW",  CompeticionId = competiciones[0].Id, Grupo = "Único", Jornadas = 22, JornadaActual = 12, Estado = "Activo" },
+                    new Liga { Nombre = "Segunda DAW",  CompeticionId = competiciones[0].Id, Grupo = "Único", Jornadas = 22, JornadaActual = 18, Estado = "Activo" },
+                    new Liga { Nombre = "Tercera DAW",  CompeticionId = competiciones[0].Id, Grupo = "Único", Jornadas = 22, JornadaActual = 5,  Estado = "Activo" }
+                };
+                await context.Ligas.AddRangeAsync(ligas);
+                await context.SaveChangesAsync();
+                Console.WriteLine(" Ligas creadas");
+            }
+        }
+        else
+        {
+            Console.WriteLine("✓ Ligas ya existen");
+        }
+
+        // ─── Partidos ────────────────────────────────────────────────────────────
         var partidosExisten = await context.Partidos.AnyAsync();
         if (!partidosExisten)
         {
             Console.WriteLine("• Creando partidos...");
-            var partidos = new List<Partido>
+            var ligas = await context.Ligas.ToListAsync();
+            var equipos = await context.Equipos.ToListAsync();
+
+            if (ligas.Count >= 3 && equipos.Count >= 12)
             {
-                // Jornada 1
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 25, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 2, 
-                    GolesVisitantes = 1, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 1, 
-                    EquipoVisitanteId = 2 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 25, 20, 30, 0, DateTimeKind.Utc), 
-                    GolesLocal = 1, 
-                    GolesVisitantes = 1, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 3, 
-                    EquipoVisitanteId = 4 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 26, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 3, 
-                    GolesVisitantes = 0, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 5, 
-                    EquipoVisitanteId = 6 
-                },
+                var l1 = ligas[0]; // Primera DAW
+                var l2 = ligas[1]; // Segunda DAW
+                var l3 = ligas[2]; // Tercera DAW
 
-                // Jornada 2
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 2, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 0, 
-                    GolesVisitantes = 2, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 2, 
-                    EquipoVisitanteId = 3 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 2, 20, 30, 0, DateTimeKind.Utc), 
-                    GolesLocal = 1, 
-                    GolesVisitantes = 0, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 4, 
-                    EquipoVisitanteId = 5 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 3, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 2, 
-                    GolesVisitantes = 2, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 6, 
-                    EquipoVisitanteId = 1 
-                },
+                // Equipos por bloques de 4 para cada liga
+                var partidos = new List<Partido>
+                {
+                    // ── Primera DAW ──────────────────────────────────────────────
+                    // Jornada 1
+                    new Partido { Jornada = 1,  LigaId = l1.Id, EquipoLocalId = equipos[0].Id,  EquipoVisitanteId = equipos[1].Id,  GolesLocal = 2, GolesVisitante = 1, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 10, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 1,  LigaId = l1.Id, EquipoLocalId = equipos[2].Id,  EquipoVisitanteId = equipos[3].Id,  GolesLocal = 0, GolesVisitante = 0, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 10, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 2
+                    new Partido { Jornada = 2,  LigaId = l1.Id, EquipoLocalId = equipos[1].Id,  EquipoVisitanteId = equipos[2].Id,  GolesLocal = 3, GolesVisitante = 1, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 17, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 2,  LigaId = l1.Id, EquipoLocalId = equipos[3].Id,  EquipoVisitanteId = equipos[0].Id,  GolesLocal = 1, GolesVisitante = 2, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 17, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 3
+                    new Partido { Jornada = 3,  LigaId = l1.Id, EquipoLocalId = equipos[0].Id,  EquipoVisitanteId = equipos[2].Id,  GolesLocal = 1, GolesVisitante = 1, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 24, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 3,  LigaId = l1.Id, EquipoLocalId = equipos[1].Id,  EquipoVisitanteId = equipos[3].Id,  GolesLocal = 2, GolesVisitante = 0, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 24, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 13 (próxima pendiente)
+                    new Partido { Jornada = 13, LigaId = l1.Id, EquipoLocalId = equipos[2].Id,  EquipoVisitanteId = equipos[0].Id,  GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 16, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 13, LigaId = l1.Id, EquipoLocalId = equipos[3].Id,  EquipoVisitanteId = equipos[1].Id,  GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 16, 20, 0, 0, DateTimeKind.Utc) },
 
-                // Jornada 3 (Pendientes)
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 9, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = null, 
-                    GolesVisitantes = null, 
-                    Finalizado = false, 
-                    Jornada = 3, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 1, 
-                    EquipoVisitanteId = 3 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 9, 20, 30, 0, DateTimeKind.Utc), 
-                    GolesLocal = null, 
-                    GolesVisitantes = null, 
-                    Finalizado = false, 
-                    Jornada = 3, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 2, 
-                    EquipoVisitanteId = 4 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 5, 10, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = null, 
-                    GolesVisitantes = null, 
-                    Finalizado = false, 
-                    Jornada = 3, 
-                    CompeticionId = 1, 
-                    EquipoLocalId = 5, 
-                    EquipoVisitanteId = 6 
-                },
+                    // ── Segunda DAW ──────────────────────────────────────────────
+                    // Jornada 1
+                    new Partido { Jornada = 1,  LigaId = l2.Id, EquipoLocalId = equipos[4].Id,  EquipoVisitanteId = equipos[5].Id,  GolesLocal = 4, GolesVisitante = 2, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 11, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 1,  LigaId = l2.Id, EquipoLocalId = equipos[6].Id,  EquipoVisitanteId = equipos[7].Id,  GolesLocal = 1, GolesVisitante = 3, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 11, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 2
+                    new Partido { Jornada = 2,  LigaId = l2.Id, EquipoLocalId = equipos[5].Id,  EquipoVisitanteId = equipos[6].Id,  GolesLocal = 2, GolesVisitante = 2, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 18, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 2,  LigaId = l2.Id, EquipoLocalId = equipos[7].Id,  EquipoVisitanteId = equipos[4].Id,  GolesLocal = 0, GolesVisitante = 1, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 18, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 3
+                    new Partido { Jornada = 3,  LigaId = l2.Id, EquipoLocalId = equipos[4].Id,  EquipoVisitanteId = equipos[6].Id,  GolesLocal = 3, GolesVisitante = 0, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 25, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 3,  LigaId = l2.Id, EquipoLocalId = equipos[5].Id,  EquipoVisitanteId = equipos[7].Id,  GolesLocal = 1, GolesVisitante = 2, Estado = "Finalizado", FechaHora = new DateTime(2026, 1, 25, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 19 (próxima pendiente)
+                    new Partido { Jornada = 19, LigaId = l2.Id, EquipoLocalId = equipos[6].Id,  EquipoVisitanteId = equipos[4].Id,  GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 17, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 19, LigaId = l2.Id, EquipoLocalId = equipos[7].Id,  EquipoVisitanteId = equipos[5].Id,  GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 17, 20, 0, 0, DateTimeKind.Utc) },
 
-                // Liga Nacional (Competición 2)
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 20, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 3, 
-                    GolesVisitantes = 1, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 2, 
-                    EquipoLocalId = 1, 
-                    EquipoVisitanteId = 2 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 20, 20, 30, 0, DateTimeKind.Utc), 
-                    GolesLocal = 2, 
-                    GolesVisitantes = 2, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 2, 
-                    EquipoLocalId = 3, 
-                    EquipoVisitanteId = 4 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 27, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 1, 
-                    GolesVisitantes = 0, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 2, 
-                    EquipoLocalId = 5, 
-                    EquipoVisitanteId = 6 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 27, 20, 30, 0, DateTimeKind.Utc), 
-                    GolesLocal = 2, 
-                    GolesVisitantes = 1, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 2, 
-                    EquipoLocalId = 2, 
-                    EquipoVisitanteId = 1 
-                },
+                    // ── Tercera DAW ──────────────────────────────────────────────
+                    // Jornada 1
+                    new Partido { Jornada = 1,  LigaId = l3.Id, EquipoLocalId = equipos[8].Id,  EquipoVisitanteId = equipos[9].Id,  GolesLocal = 1, GolesVisitante = 0, Estado = "Finalizado", FechaHora = new DateTime(2026, 3, 14, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 1,  LigaId = l3.Id, EquipoLocalId = equipos[10].Id, EquipoVisitanteId = equipos[11].Id, GolesLocal = 2, GolesVisitante = 3, Estado = "Finalizado", FechaHora = new DateTime(2026, 3, 14, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 2
+                    new Partido { Jornada = 2,  LigaId = l3.Id, EquipoLocalId = equipos[9].Id,  EquipoVisitanteId = equipos[10].Id, GolesLocal = 0, GolesVisitante = 1, Estado = "Finalizado", FechaHora = new DateTime(2026, 3, 21, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 2,  LigaId = l3.Id, EquipoLocalId = equipos[11].Id, EquipoVisitanteId = equipos[8].Id,  GolesLocal = 2, GolesVisitante = 2, Estado = "Finalizado", FechaHora = new DateTime(2026, 3, 21, 20, 0, 0, DateTimeKind.Utc) },
+                    // Jornada 6 (próxima pendiente)
+                    new Partido { Jornada = 6,  LigaId = l3.Id, EquipoLocalId = equipos[8].Id,  EquipoVisitanteId = equipos[10].Id, GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 18, 18, 0, 0, DateTimeKind.Utc) },
+                    new Partido { Jornada = 6,  LigaId = l3.Id, EquipoLocalId = equipos[9].Id,  EquipoVisitanteId = equipos[11].Id, GolesLocal = null, GolesVisitante = null, Estado = "Pendiente", FechaHora = new DateTime(2026, 5, 18, 20, 0, 0, DateTimeKind.Utc) },
+                };
 
-                // Copa de Aficionados - Futbol 7 (Competición 3)
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 22, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 4, 
-                    GolesVisitantes = 3, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 3, 
-                    EquipoLocalId = 1, 
-                    EquipoVisitanteId = 2 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 22, 20, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 5, 
-                    GolesVisitantes = 2, 
-                    Finalizado = true, 
-                    Jornada = 1, 
-                    CompeticionId = 3, 
-                    EquipoLocalId = 3, 
-                    EquipoVisitanteId = 4 
-                },
-                new Partido 
-                { 
-                    Fecha = new DateTime(2026, 4, 29, 19, 0, 0, DateTimeKind.Utc), 
-                    GolesLocal = 3, 
-                    GolesVisitantes = 3, 
-                    Finalizado = true, 
-                    Jornada = 2, 
-                    CompeticionId = 3, 
-                    EquipoLocalId = 5, 
-                    EquipoVisitanteId = 6 
-                }
-            };
-
-            await context.Partidos.AddRangeAsync(partidos);
-            await context.SaveChangesAsync();
+                await context.Partidos.AddRangeAsync(partidos);
+                await context.SaveChangesAsync();
+                Console.WriteLine("✓ Partidos creados");
+            }
+        }
+        else
+        {
+            Console.WriteLine("✓ Partidos ya existen");
         }
     }
 }
-

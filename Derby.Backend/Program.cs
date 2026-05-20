@@ -46,6 +46,12 @@ builder.Services.AddScoped<ICompeticionService, CompeticionService>();
 builder.Services.AddScoped<IArbitroRepository, ArbitroRepository>();
 builder.Services.AddScoped<IArbitroService, ArbitroService>();
 
+builder.Services.AddScoped<ILigaRepository, LigaRepository>();
+builder.Services.AddScoped<ILigaService, LigaService>();
+
+builder.Services.AddScoped<IJugadorRepository, JugadorRepository>();
+builder.Services.AddScoped<IJugadorService, JugadorService>();
+
 var app = builder.Build();
 
 app.Urls.Clear();
@@ -64,7 +70,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.MigrateAsync();
         await DataSeeder.SeedAsync(context);
     }
-    catch (Exception ex)
+    catch (Exception)
     {
     }
 }

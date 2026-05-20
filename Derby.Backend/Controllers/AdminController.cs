@@ -1,5 +1,7 @@
 ﻿using Derby.Backend.Data;
+using Derby.Backend.Dtos;
 using Derby.Backend.Models;
+using Derby.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +13,17 @@ public class AdminController : ControllerBase
 {
     private readonly DerbyContext _context;
     private readonly ILogger<AdminController> _logger;
+    private readonly ILigaService _ligaService;
+    private readonly IJugadorService _jugadorService;
+    private readonly IEquipoService _equipoService;
 
-    public AdminController(DerbyContext context, ILogger<AdminController> logger)
+    public AdminController(DerbyContext context, ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IEquipoService equipoService)
     {
         _context = context;
         _logger = logger;
+        _ligaService = ligaService;
+        _jugadorService = jugadorService;
+        _equipoService = equipoService;
     }
 
     // ─── Competiciones ────────────────────────────────────────────────────────
@@ -101,7 +109,6 @@ public class AdminController : ControllerBase
         lig.Nombre = liga.Nombre;
         lig.CompeticionId = liga.CompeticionId;
         lig.Grupo = liga.Grupo;
-        lig.Equipos = liga.Equipos;
         lig.Jornadas = liga.Jornadas;
         lig.JornadaActual = liga.JornadaActual;
         lig.Estado = liga.Estado;
@@ -123,12 +130,14 @@ public class AdminController : ControllerBase
     }
 
     // ─── Equipos ──────────────────────────────────────────────────────────────
-
+    
     [HttpGet("equipos")]
-    public async Task<ActionResult<List<Equipo>>> ObtenerEquipos()
+    public async Task<IActionResult> ObtenerEquipos()
     {
-        var equipos = await _context.Equipos.ToListAsync();
-        return Ok(equipos);
+        var result = await _equipoService.ObtenerTodosAsync();
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error.Message });
+        return Ok(result.Value);
     }
 
     [HttpPost("equipos")]
@@ -148,7 +157,8 @@ public class AdminController : ControllerBase
 
         eq.Nombre = equipo.Nombre;
         eq.Sede = equipo.Sede;
-        eq.Division = equipo.Division;
+        eq.Entrenador = equipo.Entrenador;
+        eq.EscudoUrl = equipo.EscudoUrl;
 
         await _context.SaveChangesAsync();
         return Ok(eq);
@@ -164,6 +174,13 @@ public class AdminController : ControllerBase
         _context.Equipos.Remove(eq);
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+    
+    [HttpGet("equipos/sin-liga")]
+    public async Task<IActionResult> ObtenerEquiposSinLiga()
+    {
+        var equipos = await _ligaService.ObtenerEquiposSinLigaAsync();
+        return Ok(equipos);
     }
 
     // ─── Árbitros ─────────────────────────────────────────────────────────────
@@ -207,5 +224,153 @@ public class AdminController : ControllerBase
         _context.Arbitros.Remove(arb);
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+    
+    // ─── Partidos ─────────────────────────────────────────────────────────────
+
+    [HttpGet("partidos")]
+    public async Task<ActionResult<List<Partido>>> ObtenerPartidos()
+    {
+        var partidos = await _context.Partidos
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .Include(p => p.Liga)
+            .Include(p => p.Arbitro)
+            .ToListAsync();
+        return Ok(partidos);
+    }
+
+    [HttpPost("partidos")]
+    public async Task<ActionResult<Partido>> CrearPartido([FromBody] Partido partido)
+    {
+        _context.Partidos.Add(partido);
+        await _context.SaveChangesAsync();
+        return Created($"api/admin/partidos/{partido.Id}", partido);
+    }
+
+    [HttpPut("partidos/{id}")]
+    public async Task<IActionResult> ActualizarPartido(int id, [FromBody] Partido partido)
+    {
+        var p = await _context.Partidos.FindAsync(id);
+        if (p == null)
+            return NotFound(new { error = "Partido no encontrado" });
+
+        p.Jornada = partido.Jornada;
+        p.LigaId = partido.LigaId;
+        p.EquipoLocalId = partido.EquipoLocalId;
+        p.EquipoVisitanteId = partido.EquipoVisitanteId;
+        p.GolesLocal = partido.GolesLocal;
+        p.GolesVisitante = partido.GolesVisitante;
+        p.Estado = partido.Estado;
+        p.FechaHora = partido.FechaHora;
+        p.ArbitroId = partido.ArbitroId;
+
+        await _context.SaveChangesAsync();
+        return Ok(p);
+    }
+
+    [HttpDelete("partidos/{id}")]
+    public async Task<IActionResult> EliminarPartido(int id)
+    {
+        var p = await _context.Partidos.FindAsync(id);
+        if (p == null)
+            return NotFound(new { error = "Partido no encontrado" });
+
+        _context.Partidos.Remove(p);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+    
+    // ─── Equipos de una Liga ──────────────────────────────────────────────────
+
+    [HttpGet("ligas/{id}/equipos")]
+    public async Task<IActionResult> ObtenerEquiposLiga(int id)
+    {
+        var equipos = await _ligaService.ObtenerEquiposAsync(id);
+        return Ok(equipos);
+    }
+
+    [HttpPost("ligas/{id}/equipos")]
+    public async Task<IActionResult> AgregarEquipoLiga(int id, [FromBody] int equipoId)
+    {
+        try
+        {
+            await _ligaService.AgregarEquipoAsync(id, equipoId);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("ligas/{id}/equipos/{equipoId}")]
+    public async Task<IActionResult> QuitarEquipoLiga(int id, int equipoId)
+    {
+        await _ligaService.QuitarEquipoAsync(id, equipoId);
+        return NoContent();
+    }
+
+    [HttpPost("ligas/{id}/generar-calendario")]
+    public async Task<IActionResult> GenerarCalendario(int id)
+    {
+        try
+        {
+            var resultado = await _ligaService.GenerarCalendarioAsync(id);
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+    
+    [HttpGet("equipos/{equipoId}/jugadores")]
+    public async Task<IActionResult> ObtenerJugadores(int equipoId)
+    {
+        var jugadores = await _jugadorService.ObtenerPorEquipoAsync(equipoId);
+        return Ok(jugadores);
+    }
+
+    [HttpPost("equipos/{equipoId}/jugadores")]
+    public async Task<IActionResult> AgregarJugador(int equipoId, [FromBody] JugadorRequestDto dto)
+    {
+        try
+        {
+            await _jugadorService.AgregarAsync(equipoId, dto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPut("jugadores/{id}")]
+    public async Task<IActionResult> ActualizarJugador(int id, [FromBody] JugadorRequestDto dto)
+    {
+        try
+        {
+            await _jugadorService.ActualizarAsync(id, dto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("jugadores/{id}")]
+    public async Task<IActionResult> EliminarJugador(int id)
+    {
+        try
+        {
+            await _jugadorService.EliminarAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

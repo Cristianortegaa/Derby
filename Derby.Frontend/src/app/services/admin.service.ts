@@ -1,6 +1,6 @@
-﻿﻿import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+﻿import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 export class AdminService {
   private apiUrl = 'http://localhost:5101/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   // Usuarios
   obtenerUsuarios(): Observable<any[]> {
@@ -50,36 +51,40 @@ export class AdminService {
 
   // Equipos
   obtenerEquipos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/equipos`);
+    return this.http.get<any[]>(`${this.apiUrl}/admin/equipos`);
+  }
+
+  obtenerEquiposSinLiga(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/equipos/sin-liga`);
   }
 
   crearEquipo(datos: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/equipos`, datos);
+    return this.http.post(`${this.apiUrl}/admin/equipos`, datos);
   }
 
   actualizarEquipo(id: number, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/equipos/${id}`, datos);
+    return this.http.put(`${this.apiUrl}/admin/equipos/${id}`, datos);
   }
 
   eliminarEquipo(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/equipos/${id}`);
+    return this.http.delete(`${this.apiUrl}/admin/equipos/${id}`);
   }
 
   // Árbitros
   obtenerArbitros(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/arbitros`);
+    return this.http.get<any[]>(`${this.apiUrl}/admin/arbitros`);
   }
 
   crearArbitro(datos: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/arbitros`, datos);
+    return this.http.post(`${this.apiUrl}/admin/arbitros`, datos);
   }
 
   actualizarArbitro(id: number, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/arbitros/${id}`, datos);
+    return this.http.put(`${this.apiUrl}/admin/arbitros/${id}`, datos);
   }
 
   eliminarArbitro(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/arbitros/${id}`);
+    return this.http.delete(`${this.apiUrl}/admin/arbitros/${id}`);
   }
 
   // Actas
@@ -114,5 +119,53 @@ export class AdminService {
   eliminarLiga(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/admin/ligas/${id}`);
   }
-}
 
+  // Partidos
+  obtenerPartidos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/partidos`);
+  }
+
+  crearPartido(datos: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/partidos`, datos);
+  }
+
+  actualizarPartido(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/admin/partidos/${id}`, datos);
+  }
+
+  eliminarPartido(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/admin/partidos/${id}`);
+  }
+
+  obtenerEquiposLiga(ligaId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/ligas/${ligaId}/equipos`);
+  }
+
+  añadirEquipoLiga(ligaId: number, equipoId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/ligas/${ligaId}/equipos`, equipoId);
+  }
+
+  quitarEquipoLiga(ligaId: number, equipoId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/admin/ligas/${ligaId}/equipos/${equipoId}`);
+  }
+
+  generarCalendario(ligaId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/ligas/${ligaId}/generar-calendario`, {});
+  }
+
+  obtenerJugadores(equipoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/equipos/${equipoId}/jugadores`);
+  }
+
+  agregarJugador(equipoId: number, jugador: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/equipos/${equipoId}/jugadores`, jugador);
+  }
+
+  actualizarJugador(id: number, jugador: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/admin/jugadores/${id}`, jugador);
+  }
+
+  eliminarJugador(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/admin/jugadores/${id}`);
+  }
+}

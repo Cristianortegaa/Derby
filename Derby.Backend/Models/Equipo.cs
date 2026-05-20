@@ -1,4 +1,6 @@
-﻿namespace Derby.Backend.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Derby.Backend.Models;
 
 public class Equipo
 {
@@ -8,10 +10,12 @@ public class Equipo
     
     public string EscudoUrl { get; set; } = string.Empty;
     
-    public string Sede { get; set; } = string.Empty; 
+    public string Sede { get; set; } = string.Empty;
     
-    public string Division { get; set; } = string.Empty; 
-    
+    [NotMapped]
+    public string? LigaNombre { get; set; }
+
+    public string Entrenador { get; set; } = string.Empty;
+
     public List<Jugador> Jugadores { get; set; } = new();
-    public List<Entrenador> Entrenadores { get; set; } = new();
 }

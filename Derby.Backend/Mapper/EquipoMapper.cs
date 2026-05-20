@@ -13,7 +13,8 @@ public static class EquipoMapper
             Nombre = equipo.Nombre,
             EscudoUrl = equipo.EscudoUrl,
             Sede = equipo.Sede,
-            Division = equipo.Division
+            Entrenador = equipo.Entrenador,
+            LigaNombre = equipo.LigaNombre
         };
     }
 
@@ -24,7 +25,7 @@ public static class EquipoMapper
             Nombre = dto.Nombre,
             EscudoUrl = dto.EscudoUrl,
             Sede = dto.Sede,
-            Division = dto.Division
+            Entrenador = dto.Entrenador
         };
     }
 }
