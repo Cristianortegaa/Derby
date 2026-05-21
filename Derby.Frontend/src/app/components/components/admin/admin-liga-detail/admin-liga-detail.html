@@ -38,7 +38,7 @@
         </button>
         <a routerLink="/admin/ligas"
            class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
-          <span>←</span> Volver a Ligas
+          <i class="fas fa-arrow-left"></i> Volver a Ligas
         </a>
       </div>
     </div>
@@ -53,7 +53,7 @@
     <div *ngIf="!cargando && !liga" class="flex flex-col items-center justify-center py-24 text-center">
       <i class="fas fa-circle-xmark text-5xl text-red-500/40 mb-4"></i>
       <p class="text-gray-400 font-semibold text-lg">Liga no encontrada</p>
-      <a routerLink="/admin/ligas" class="mt-4 text-blue-400 hover:text-blue-300 text-sm">← Volver a la lista</a>
+      <a routerLink="/admin/ligas" class="mt-4 text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-arrow-left mr-1"></i> Volver a la lista</a>
     </div>
 
     <!-- Tarjetas -->
