@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
+
 export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -17,7 +18,6 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    // Normalizar roles para comparación
     const rolUsuario = usuarioActual.rol;
     const rolRequeridoNormalizado = rolRequerido === 'Admin' ? 'Administrador' : rolRequerido;
 

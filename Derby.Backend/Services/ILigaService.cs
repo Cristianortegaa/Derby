@@ -13,4 +13,5 @@ public interface ILigaService
     Task<List<JornadaResponseDto>> ObtenerJornadasAsync(int ligaId);
     Task<List<ResultadoPartidoResponseDto>> ObtenerResultadosAsync(int ligaId);
     Task<List<EquipoClasificacionResponseDto>> ObtenerClasificacionAsync(int ligaId);
+    Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int ligaId);
 }

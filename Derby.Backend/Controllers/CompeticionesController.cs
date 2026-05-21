@@ -135,6 +135,21 @@ public class CompeticionesController : ControllerBase
         }
     }
 
+    [HttpGet("ligas/{ligaId:int}/goleadores")]
+    public async Task<IActionResult> ObtenerGoleadoresPorLiga(int ligaId)
+    {
+        try
+        {
+            var goleadores = await _ligaService.ObtenerGoleadoresAsync(ligaId);
+            return Ok(goleadores);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener goleadores por liga");
+            return StatusCode(500, new { message = "Error al obtener goleadores por liga" });
+        }
+    }
+
     /// <summary>
     /// Busca competiciones con filtros
     /// </summary>

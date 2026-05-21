@@ -9,11 +9,13 @@ public class LigaService : ILigaService
 {
     private readonly ILigaRepository _ligaRepository;
     private readonly IPartidoRepository _partidoRepository;
+    private readonly IEventoPartidoRepository _eventoRepository;
 
-    public LigaService(ILigaRepository ligaRepository, IPartidoRepository partidoRepository)
+    public LigaService(ILigaRepository ligaRepository, IPartidoRepository partidoRepository, IEventoPartidoRepository eventoRepository)
     {
         _ligaRepository = ligaRepository;
         _partidoRepository = partidoRepository;
+        _eventoRepository = eventoRepository;
     }
 
     public async Task<List<Equipo>> ObtenerEquiposAsync(int ligaId)
@@ -66,6 +68,23 @@ public class LigaService : ILigaService
     {
         var partidos = await _partidoRepository.ObtenerResultadosPorLigaAsync(ligaId);
         return CalcularClasificacion(partidos);
+    }
+
+    public async Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int ligaId)
+    {
+        var goles = await _eventoRepository.ObtenerGolesPorLigaAsync(ligaId);
+
+        return goles
+            .GroupBy(e => e.JugadorId)
+            .Select(g => new GoleadorResponseDto
+            {
+                Id = g.Key,
+                Nombre = g.First().Jugador?.Nombre ?? "Desconocido",
+                Equipo = g.First().Jugador?.Equipo?.Nombre ?? "Desconocido",
+                Goles = g.Count()
+            })
+            .OrderByDescending(g => g.Goles)
+            .ToList();
     }
 
     public async Task<object> GenerarCalendarioAsync(int ligaId)

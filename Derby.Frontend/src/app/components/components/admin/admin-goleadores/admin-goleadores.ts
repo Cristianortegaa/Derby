@@ -53,7 +53,15 @@ export class AdminGoleadoresComponent implements OnInit {
           ? ligas.filter((l: any) => l.competicionId === this.competicionIdFijado)
           : ligas;
       this.equipos = equipos || [];
-      this.goleadores = [];
+      if (this.ligaIdFijado) {
+        const goleadores = await this.competicionesService.obtenerGoleadoresPorLiga(this.ligaIdFijado).toPromise();
+        this.goleadores = goleadores || [];
+      } else if (this.competicionIdFijado) {
+        const goleadores = await this.competicionesService.obtenerGoleadores(this.competicionIdFijado).toPromise();
+        this.goleadores = goleadores || [];
+      } else {
+        this.goleadores = [];
+      }
       this.aplicarFiltro();
     } catch (error) {
       console.error(error);

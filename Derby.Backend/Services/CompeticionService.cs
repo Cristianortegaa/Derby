@@ -9,11 +9,13 @@ public class CompeticionService : ICompeticionService
 {
     private readonly ICompeticionRepository _competicionRepository;
     private readonly IPartidoRepository _partidoRepository;
+    private readonly IEventoPartidoRepository _eventoRepository;
 
-    public CompeticionService(ICompeticionRepository competicionRepository, IPartidoRepository partidoRepository)
+    public CompeticionService(ICompeticionRepository competicionRepository, IPartidoRepository partidoRepository, IEventoPartidoRepository eventoRepository)
     {
         _competicionRepository = competicionRepository;
         _partidoRepository = partidoRepository;
+        _eventoRepository = eventoRepository;
     }
 
     public async Task<List<JornadaResponseDto>> ObtenerJornadasAsync(int competicionId)
@@ -43,7 +45,19 @@ public class CompeticionService : ICompeticionService
 
     public async Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int competicionId)
     {
-        return new List<GoleadorResponseDto>();
+        var goles = await _eventoRepository.ObtenerGolesPorCompeticionAsync(competicionId);
+
+        return goles
+            .GroupBy(e => e.JugadorId)
+            .Select(g => new GoleadorResponseDto
+            {
+                Id = g.Key,
+                Nombre = g.First().Jugador?.Nombre ?? "Desconocido",
+                Equipo = g.First().Jugador?.Equipo?.Nombre ?? "Desconocido",
+                Goles = g.Count()
+            })
+            .OrderByDescending(g => g.Goles)
+            .ToList();
     }
 
     public async Task<List<Competicion>> BuscarCompeticionesAsync(string? temporada, string? tipoJuego, string? competicion, string? grupo)

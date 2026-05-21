@@ -66,8 +66,8 @@
           <tbody>
           <tr *ngFor="let goleador of goleadoresFiltrados; let i = index" class="border-b border-slate-700/30 hover:bg-slate-800/50">
             <td class="py-3 px-4 font-bold text-yellow-400">{{ i + 1 }}</td>
-            <td class="py-3 px-4 text-white font-semibold">{{ goleador.jugador?.nombre || 'N/A' }}</td>
-            <td class="py-3 px-4 text-green-400">{{ goleador.equipo?.nombre || 'N/A' }}</td>
+            <td class="py-3 px-4 text-white font-semibold">{{ goleador.nombre || 'N/A' }}</td>
+            <td class="py-3 px-4 text-green-400">{{ goleador.equipo || 'N/A' }}</td>
             <td class="py-3 px-4 text-center font-bold text-yellow-400 text-lg">{{ goleador.goles || 0 }}</td>
             <td class="py-3 px-4 text-purple-400">{{ goleador.liga?.nombre || 'N/A' }}</td>
           </tr>

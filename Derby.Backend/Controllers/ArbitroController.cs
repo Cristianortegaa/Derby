@@ -12,17 +12,18 @@ namespace Derby.Backend.Controllers;
 public class ArbitroController : ControllerBase
 {
     private readonly IArbitroService _service;
+    private readonly IEventoPartidoService _eventoService;
     private readonly DerbyContext _context;
     private readonly ILogger<ArbitroController> _logger;
 
-    public ArbitroController(IArbitroService service, DerbyContext context, ILogger<ArbitroController> logger)
+    public ArbitroController(IArbitroService service, IEventoPartidoService eventoService, DerbyContext context, ILogger<ArbitroController> logger)
     {
         _service = service;
+        _eventoService = eventoService;
         _context = context;
         _logger = logger;
     }
 
-    // CRUD Básico para Gestión de Árbitros (Admin)
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ArbitroResponseDto>>> ObtenerTodos()
     {
@@ -58,7 +59,6 @@ public class ArbitroController : ControllerBase
         return resultado.IsSuccess ? Ok(resultado.Value) : NotFound(resultado.Error);
     }
 
-    // Mis Partidos
     [HttpGet("{arbitroId}/partidos")]
     public async Task<ActionResult<List<Partido>>> ObtenerMisPartidos(int arbitroId)
     {
@@ -70,7 +70,6 @@ public class ArbitroController : ControllerBase
         return Ok(partidos);
     }
 
-    // Partidos Pendientes
     [HttpGet("{arbitroId}/partidos/pendientes")]
     public async Task<ActionResult<List<Partido>>> ObtenerPartidosPendientes(int arbitroId)
     {
@@ -82,7 +81,6 @@ public class ArbitroController : ControllerBase
         return Ok(partidos);
     }
 
-    // Historial de Partidos
     [HttpGet("{arbitroId}/historial")]
     public async Task<ActionResult<List<Partido>>> ObtenerHistorialPartidos(int arbitroId)
     {
@@ -95,7 +93,6 @@ public class ArbitroController : ControllerBase
         return Ok(partidos);
     }
 
-    // Crear Acta
     [HttpPost("actas")]
     public async Task<IActionResult> CrearActa([FromBody] Partido partido)
     {
@@ -106,9 +103,42 @@ public class ArbitroController : ControllerBase
         p.GolesLocal = partido.GolesLocal;
         p.GolesVisitante = partido.GolesVisitante;
         p.Estado = "Finalizado";
-        
+
         _context.Partidos.Update(p);
         await _context.SaveChangesAsync();
         return Ok(p);
+    }
+
+    [HttpGet("partidos/{partidoId}/eventos")]
+    public async Task<IActionResult> ObtenerEventos(int partidoId)
+    {
+        var eventos = await _eventoService.ObtenerEventosAsync(partidoId);
+        return Ok(eventos);
+    }
+
+    [HttpPost("partidos/{partidoId}/eventos")]
+    public async Task<IActionResult> AñadirEvento(int partidoId, [FromBody] EventoPartidoRequestDto dto)
+    {
+        var evento = await _eventoService.AñadirEventoAsync(partidoId, dto);
+        if (evento == null)
+            return BadRequest(new { error = "TipoEvento no válido. Usa: Gol, TarjetaAmarilla o TarjetaRoja" });
+        return Ok(evento);
+    }
+
+    [HttpDelete("partidos/{partidoId}/eventos/{eventoId}")]
+    public async Task<IActionResult> EliminarEvento(int partidoId, int eventoId)
+    {
+        var eliminado = await _eventoService.EliminarEventoAsync(eventoId);
+        return eliminado ? Ok() : NotFound(new { error = "Evento no encontrado" });
+    }
+
+    // Cerrar acta
+    [HttpPost("partidos/{partidoId}/cerrar")]
+    public async Task<IActionResult> CerrarActa(int partidoId)
+    {
+        var partido = await _eventoService.CerrarActaAsync(partidoId);
+        if (partido == null)
+            return NotFound(new { error = "Partido no encontrado" });
+        return Ok(partido);
     }
 }

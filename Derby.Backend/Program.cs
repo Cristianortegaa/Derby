@@ -46,6 +46,9 @@ builder.Services.AddScoped<ICompeticionService, CompeticionService>();
 builder.Services.AddScoped<IArbitroRepository, ArbitroRepository>();
 builder.Services.AddScoped<IArbitroService, ArbitroService>();
 
+builder.Services.AddScoped<IEventoPartidoRepository, EventoPartidoRepository>();
+builder.Services.AddScoped<IEventoPartidoService, EventoPartidoService>();
+
 builder.Services.AddScoped<ILigaRepository, LigaRepository>();
 builder.Services.AddScoped<ILigaService, LigaService>();
 

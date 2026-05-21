@@ -87,6 +87,11 @@ export class CompeticionesService {
 
   obtenerClasificacionPorLiga(ligaId: number): Observable<EquipoClasificacionResponseDto[]> {
     return this.http.get<EquipoClasificacionResponseDto[]>(`${this.apiUrl}/ligas/${ligaId}/clasificacion`);
+
+  }
+
+  obtenerGoleadoresPorLiga(ligaId: number): Observable<GoleadorResponseDto[]> {
+    return this.http.get<GoleadorResponseDto[]>(`${this.apiUrl}/ligas/${ligaId}/goleadores`);
   }
 
   buscarCompeticiones(

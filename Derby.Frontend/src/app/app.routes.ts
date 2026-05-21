@@ -16,6 +16,9 @@ import { AdminCompeticionDetail } from './components/components/admin/admin-comp
 import { AdminEquipos } from './components/components/admin/admin-equipos/admin-equipos';
 import { AbitroDashboard } from './components/components/arbitro/arbitro-dashboard/arbitro-dashboard';
 import { AdminEquipoDetail } from './components/components/admin/admin-equipo-detail/admin-equipo-detail';
+import { AbitroMisPartidos } from './components/components/arbitro/arbitro-mis-partidos/arbitro-mis-partidos';
+import { AbitroActa } from './components/components/arbitro/arbitro-acta/arbitro-acta';
+import { AbitroHistorial } from './components/components/arbitro/arbitro-historial/arbitro-historial';
 import { RoleGuard } from './guards/role.guard';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -104,6 +107,25 @@ export const routes: Routes = [
   {
     path: 'arbitro',
     component: AbitroDashboard,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { rol: 'Arbitro' }
+  },
+
+  {
+    path: 'arbitro/mis-partidos',
+    component: AbitroMisPartidos,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { rol: 'Arbitro' }
+  },
+  {
+    path: 'arbitro/acta/:partidoId',
+    component: AbitroActa,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { rol: 'Arbitro' }
+  },
+  {
+    path: 'arbitro/historial',
+    component: AbitroHistorial,
     canActivate: [AuthGuard, RoleGuard],
     data: { rol: 'Arbitro' }
   },

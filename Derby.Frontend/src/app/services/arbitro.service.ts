@@ -10,7 +10,6 @@ export class ArbitroService {
 
   constructor(private http: HttpClient) {}
 
-  // Mis Partidos
   obtenerMisPartidos(arbitroId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/partidos`);
   }
@@ -19,28 +18,23 @@ export class ArbitroService {
     return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/partidos/pendientes`);
   }
 
-  // Actas
-  obtenerActasDelArbitro(arbitroId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/actas`);
+
+  obtenerEventos(partidoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/arbitro/partidos/${partidoId}/eventos`);
   }
 
-  obtenerActa(partideId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/partidos/${partideId}/acta`);
+  añadirEvento(partidoId: number, dto: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/arbitro/partidos/${partidoId}/eventos`, dto);
   }
 
-  crearActa(datos: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/actas`, datos);
+  eliminarEvento(partidoId: number, eventoId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/arbitro/partidos/${partidoId}/eventos/${eventoId}`);
   }
 
-  actualizarActa(id: number, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/actas/${id}`, datos);
+  cerrarActa(partidoId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/arbitro/partidos/${partidoId}/cerrar`, {});
   }
 
-  enviarActa(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/actas/${id}/enviar`, {});
-  }
-
-  // Historial
   obtenerHistorialPartidos(arbitroId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/historial`);
   }
