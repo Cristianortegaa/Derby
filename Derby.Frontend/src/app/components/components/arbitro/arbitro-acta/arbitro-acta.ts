@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
@@ -28,19 +28,37 @@ export class AbitroActa implements OnInit {
     tipoEvento: 'Gol'
   };
 
+  dropdownAbierto = false;
+  jugadorSeleccionadoNombre = 'Selecciona jugador';
+  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Cerrar Acta', onConfirm: () => {} };
+
+  abrirConfirm(titulo: string, mensaje: string, textoConfirmar: string, accion: () => void) {
+    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+  }
+  cerrarConfirm() { this.modalConfirm.mostrar = false; }
+  confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
+
+  seleccionarJugador(id: number, nombre: string) {
+    this.nuevoEvento.jugadorId = id;
+    this.jugadorSeleccionadoNombre = nombre;
+    this.dropdownAbierto = false;
+    this.cdr.detectChanges();
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private arbitroService: ArbitroService,
     private adminService: AdminService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.partidoId = Number(this.route.snapshot.paramMap.get('partidoId'));
     const usuario = this.authService.obtenerUsuarioActual();
     if (usuario) {
-      this.cargarPartido(usuario.id);
+      this.cargarPartido(usuario.arbitroId ?? 0);
     }
   }
 
@@ -54,8 +72,9 @@ export class AbitroActa implements OnInit {
           this.cargarEventos();
         }
         this.cargando = false;
+        this.cdr.detectChanges();
       },
-      error: () => { this.cargando = false; }
+      error: () => { this.cargando = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -65,6 +84,7 @@ export class AbitroActa implements OnInit {
         this.adminService.obtenerJugadores(this.partido.equipoVisitanteId).subscribe({
           next: (jugadoresVisitante) => {
             this.jugadores = [...jugadoresLocal, ...jugadoresVisitante];
+            this.cdr.detectChanges();
           }
         });
       }
@@ -73,20 +93,28 @@ export class AbitroActa implements OnInit {
 
   cargarEventos() {
     this.arbitroService.obtenerEventos(this.partidoId).subscribe({
-      next: (data) => { this.eventos = data; }
+      next: (data) => {
+        this.eventos = data;
+        this.cdr.detectChanges();
+      }
     });
   }
 
-  añadirEvento() {
+  agregarEvento() {
     if (this.nuevoEvento.jugadorId === 0 || this.nuevoEvento.minuto <= 0) return;
     this.cargandoEvento = true;
     this.arbitroService.añadirEvento(this.partidoId, this.nuevoEvento).subscribe({
       next: () => {
-        this.cargarEventos();
         this.nuevoEvento = { jugadorId: 0, minuto: 0, tipoEvento: 'Gol' };
+        this.jugadorSeleccionadoNombre = 'Selecciona jugador';
         this.cargandoEvento = false;
+        this.cdr.detectChanges();
+        this.cargarEventos();
       },
-      error: () => { this.cargandoEvento = false; }
+      error: () => {
+        this.cargandoEvento = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -97,17 +125,23 @@ export class AbitroActa implements OnInit {
   }
 
   cerrarActa() {
-    if (!confirm('¿Seguro que quieres cerrar el acta? Esta acción no se puede deshacer.')) return;
-    this.arbitroService.cerrarActa(this.partidoId).subscribe({
-      next: () => { this.router.navigate(['/arbitro/historial']); }
-    });
+    this.abrirConfirm(
+      'Cerrar Acta',
+      '¿Seguro que quieres cerrar el acta? Esta acción no se puede deshacer.',
+      'Cerrar Acta',
+      () => {
+        this.arbitroService.cerrarActa(this.partidoId).subscribe({
+          next: () => { this.router.navigate(['/arbitro/historial']); }
+        });
+      }
+    );
   }
 
   getIconoEvento(tipo: string): string {
     switch (tipo) {
       case 'Gol': return 'fas fa-futbol text-green-500';
-      case 'Tarjeta Amarilla': return 'fas fa-square text-yellow-500';
-      case 'Tarjeta Roja': return 'fas fa-square text-red-500';
+      case 'TarjetaAmarilla': return 'fas fa-square text-yellow-500';
+      case 'TarjetaRoja': return 'fas fa-square text-red-500';
       default: return 'fas fa-question';
     }
   }

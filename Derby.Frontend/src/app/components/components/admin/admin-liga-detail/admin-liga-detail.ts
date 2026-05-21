@@ -24,10 +24,10 @@ export class AdminLigaDetail implements OnInit {
   filtroEquipo = '';
 
   notificacion = { mostrar: false, tipo: 'exito' as 'exito' | 'error', mensaje: '' };
-  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Confirmar', onConfirm: () => {} };
+  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Confirmar', tipo: 'danger' as 'danger' | 'success', onConfirm: () => {} };
 
-  abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Confirmar') {
-    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+  abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Confirmar', tipo: 'danger' | 'success' = 'danger') {
+    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, tipo, onConfirm: accion };
   }
   cerrarConfirm() { this.modalConfirm.mostrar = false; }
   confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
@@ -124,6 +124,6 @@ export class AdminLigaDetail implements OnInit {
           this.mostrarNotificacion('error', err?.error?.error || 'Error al generar calendario');
         }
       });
-    }, 'Generar');
+    }, 'Generar', 'success');
   }
 }

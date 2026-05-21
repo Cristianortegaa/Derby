@@ -1,5 +1,6 @@
 ﻿﻿using Derby.Backend.Dtos;
 using Derby.Backend.Errors;
+using Derby.Backend.Mappers;
 using Derby.Backend.Models;
 using Derby.Backend.Repositories;
 using CSharpFunctionalExtensions;
@@ -54,7 +55,7 @@ public class UsuarioService : IUsuarioService
 
         _logger.LogInformation("Usuario registrado exitosamente: {Email}", dto.Email);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(MapToDto(usuarioCreado));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioCreado.ToDto(GenerarTokenSimple(usuarioCreado.Id)));
     }
 
     public async Task<Result<UsuarioResponseDto, DerbyError>> LoginAsync(UsuarioRequestDto dto)
@@ -81,7 +82,7 @@ public class UsuarioService : IUsuarioService
 
         _logger.LogInformation("Login exitoso: {Email}", dto.Email);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(MapToDto(usuario));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenSimple(usuario.Id)));
     }
 
     public async Task<Result<List<UsuarioResponseDto>, DerbyError>> ObtenerTodosAsync()
@@ -89,7 +90,7 @@ public class UsuarioService : IUsuarioService
         try
         {
             var usuarios = await _repository.ObtenerTodosAsync();
-            var usuariosDto = usuarios.Select(MapToDto).ToList();
+            var usuariosDto = usuarios.Select(u => u.ToDto(GenerarTokenSimple(u.Id))).ToList();
             return Result.Success<List<UsuarioResponseDto>, DerbyError>(usuariosDto);
         }
         catch (Exception ex)
@@ -110,7 +111,7 @@ public class UsuarioService : IUsuarioService
                 new NotFoundError("Usuario no encontrado"));
         }
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(MapToDto(usuario));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenSimple(usuario.Id)));
     }
 
     public async Task<Result<UsuarioResponseDto, DerbyError>> ActualizarAsync(int id, UsuarioRequestDto dto)
@@ -150,7 +151,7 @@ public class UsuarioService : IUsuarioService
         var usuarioActualizado = await _repository.ActualizarAsync(usuario);
         _logger.LogInformation("Usuario actualizado exitosamente: {Id}", id);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(MapToDto(usuarioActualizado));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioActualizado.ToDto(GenerarTokenSimple(usuarioActualizado.Id)));
     }
 
     public async Task<Result<bool, DerbyError>> EliminarAsync(int id)
@@ -193,17 +194,6 @@ public class UsuarioService : IUsuarioService
             "administrador" => Rol.Administrador,
             "arbitro" => Rol.Arbitro,
             _ => Rol.Aficionado
-        };
-    }
-
-    private UsuarioResponseDto MapToDto(Usuario usuario)
-    {
-        return new UsuarioResponseDto
-        {
-            Id = usuario.Id,
-            Email = usuario.Email,
-            Rol = usuario.Rol.ToString(),
-            Token = GenerarTokenSimple(usuario.Id)
         };
     }
 

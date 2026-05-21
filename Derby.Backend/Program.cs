@@ -58,7 +58,7 @@ builder.Services.AddScoped<IJugadorService, JugadorService>();
 var app = builder.Build();
 
 app.Urls.Clear();
-app.Urls.Add("http://localhost:5101");
+app.Urls.Add("http://0.0.0.0:5101");
 
 if (app.Environment.IsDevelopment())
 {
@@ -67,15 +67,24 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    try
+    var context = scope.ServiceProvider.GetRequiredService<DerbyContext>();
+    var migrated = false;
+    for (int i = 0; i < 10; i++)
     {
-        var context = scope.ServiceProvider.GetRequiredService<DerbyContext>();
-        await context.Database.MigrateAsync();
-        await DataSeeder.SeedAsync(context);
+        try
+        {
+            await context.Database.MigrateAsync();
+            await DataSeeder.SeedAsync(context);
+            migrated = true;
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"BD no lista, reintentando en 3s... ({i + 1}/10): {ex.Message}");
+            await Task.Delay(3000);
+        }
     }
-    catch (Exception)
-    {
-    }
+    if (!migrated) Console.WriteLine("No se pudo conectar a la BD tras 10 intentos.");
 }
 
 app.UseCors("AllowAngular");

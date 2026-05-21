@@ -162,10 +162,13 @@
        class="fixed inset-0 z-50 flex items-center justify-center p-4"
        (click)="cerrarConfirm()">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-    <div class="relative z-10 w-full max-w-md bg-slate-900 rounded-2xl border border-red-500/30 p-6 shadow-2xl"
+    <div class="relative z-10 w-full max-w-md bg-slate-900 rounded-2xl p-6 shadow-2xl"
+         [ngClass]="modalConfirm.tipo === 'success' ? 'border border-green-500/30' : 'border border-red-500/30'"
          (click)="$event.stopPropagation()">
-      <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 mx-auto mb-5">
-        <i class="fas fa-triangle-exclamation text-red-400 text-xl"></i>
+      <div class="flex items-center justify-center w-14 h-14 rounded-full mx-auto mb-5"
+           [ngClass]="modalConfirm.tipo === 'success' ? 'bg-green-500/15 border border-green-500/30' : 'bg-red-500/15 border border-red-500/30'">
+        <i class="text-xl"
+           [ngClass]="modalConfirm.tipo === 'success' ? 'fas fa-check text-green-400' : 'fas fa-triangle-exclamation text-red-400'"></i>
       </div>
       <h3 class="text-lg font-bold text-white text-center mb-2">{{ modalConfirm.titulo }}</h3>
       <p class="text-gray-400 text-sm text-center leading-relaxed mb-6">{{ modalConfirm.mensaje }}</p>
@@ -173,7 +176,8 @@
         <button (click)="cerrarConfirm()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg border border-slate-600 transition-all">
           Cancelar
         </button>
-        <button (click)="confirmar()" class="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold rounded-lg transition-all">
+        <button (click)="confirmar()" class="flex-1 px-4 py-2 text-white font-semibold rounded-lg transition-all"
+                [ngClass]="modalConfirm.tipo === 'success' ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600' : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600'">
           {{ modalConfirm.textoConfirmar }}
         </button>
       </div>

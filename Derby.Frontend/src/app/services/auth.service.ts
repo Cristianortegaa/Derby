@@ -8,6 +8,7 @@ export interface Usuario {
   email: string;
   rol: string;
   token: string;
+  arbitroId?: number;
 }
 
 export interface LoginRequest {

@@ -11,11 +11,11 @@ export class ArbitroService {
   constructor(private http: HttpClient) {}
 
   obtenerMisPartidos(arbitroId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/partidos`);
+    return this.http.get<any[]>(`${this.apiUrl}/arbitro/${arbitroId}/partidos`);
   }
 
   obtenerPartidosPendientes(arbitroId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/partidos/pendientes`);
+    return this.http.get<any[]>(`${this.apiUrl}/arbitro/${arbitroId}/partidos/pendientes`);
   }
 
 
@@ -36,7 +36,7 @@ export class ArbitroService {
   }
 
   obtenerHistorialPartidos(arbitroId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/arbitros/${arbitroId}/historial`);
+    return this.http.get<any[]>(`${this.apiUrl}/arbitro/${arbitroId}/historial`);
   }
 }
 

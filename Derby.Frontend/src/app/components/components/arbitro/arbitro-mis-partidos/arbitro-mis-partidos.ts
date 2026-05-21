@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../navbar/navbar.component';
@@ -19,13 +19,14 @@ export class AbitroMisPartidos implements OnInit {
 
   constructor(
     private arbitroService: ArbitroService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     const usuario = this.authService.obtenerUsuarioActual();
     if (usuario) {
-      this.arbitroId = usuario.id;
+      this.arbitroId = usuario.arbitroId ?? 0;
       this.cargarPartidos();
     }
   }
@@ -36,6 +37,7 @@ export class AbitroMisPartidos implements OnInit {
       next: (data) => {
         this.partidos = data;
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error cargando partidos:', error);
