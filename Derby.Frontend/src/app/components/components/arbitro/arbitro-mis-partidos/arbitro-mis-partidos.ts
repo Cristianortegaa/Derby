@@ -33,8 +33,11 @@ export class AbitroMisPartidos implements OnInit {
 
   cargarPartidos() {
     this.cargando = true;
-    this.arbitroService.obtenerMisPartidos(this.arbitroId).subscribe({
+    this.arbitroService.obtenerPartidosPendientes(this.arbitroId).subscribe({
       next: (data) => {
+        data.sort((a: any, b: any) =>
+          new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime()
+        );
         this.partidos = data;
         this.cargando = false;
         this.cdr.detectChanges();
@@ -56,6 +59,39 @@ export class AbitroMisPartidos implements OnInit {
         return 'bg-green-500/20 text-green-400';
       default:
         return 'bg-gray-500/20 text-gray-400';
+    }
+  }
+
+  modalDetalle: any = { mostrar: false, partido: null };
+  eventosDetalle: any[] = [];
+  cargandoEventos = false;
+
+  abrirDetalle(partido: any) {
+    this.modalDetalle = { mostrar: true, partido };
+    this.eventosDetalle = [];
+    this.cargandoEventos = true;
+    this.arbitroService.obtenerEventos(partido.id).subscribe({
+      next: (data) => {
+        this.eventosDetalle = data;
+        this.cargandoEventos = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoEventos = false;
+      }
+    });
+  }
+
+  cerrarDetalle() {
+    this.modalDetalle.mostrar = false;
+  }
+
+  getIconoEvento(tipo: string): string {
+    switch (tipo) {
+      case 'Gol': return 'fas fa-futbol text-green-400';
+      case 'TarjetaAmarilla': return 'fas fa-square text-yellow-400';
+      case 'TarjetaRoja': return 'fas fa-square text-red-500';
+      default: return 'fas fa-circle text-gray-400';
     }
   }
 }

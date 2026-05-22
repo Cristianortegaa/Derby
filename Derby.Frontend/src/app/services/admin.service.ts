@@ -89,7 +89,11 @@ export class AdminService {
 
   // Actas
   obtenerActas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/actas`);
+    return this.http.get<any[]>(`${this.apiUrl}/admin/actas`);
+  }
+
+  obtenerEventosPartido(partidoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/arbitro/partidos/${partidoId}/eventos`);
   }
 
   crearActa(datos: any): Observable<any> {
@@ -97,7 +101,7 @@ export class AdminService {
   }
 
   actualizarActa(id: number, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/actas/${id}`, datos);
+    return this.http.put(`${this.apiUrl}/admin/actas/${id}`, datos);
   }
 
   eliminarActa(id: number): Observable<any> {

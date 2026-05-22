@@ -20,6 +20,8 @@ export class AdminLigaDetail implements OnInit {
 
   equiposLiga: any[] = [];
   todosEquipos: any[] = [];
+  partidos: any[] = [];
+  arbitros: any[] = [];
   equipoSeleccionado: number = 0;
   filtroEquipo = '';
 
@@ -48,11 +50,15 @@ export class AdminLigaDetail implements OnInit {
     Promise.all([
       this.adminService.obtenerLigas().toPromise(),
       this.adminService.obtenerEquiposSinLiga().toPromise(),
-      this.adminService.obtenerEquiposLiga(this.ligaId).toPromise()
-    ]).then(([ligas, equipos, equiposLiga]) => {
+      this.adminService.obtenerEquiposLiga(this.ligaId).toPromise(),
+      this.adminService.obtenerPartidos().toPromise(),
+      this.adminService.obtenerArbitros().toPromise()
+    ]).then(([ligas, equipos, equiposLiga, partidos, arbitros]) => {
       this.liga = (ligas || []).find((l: any) => l.id === this.ligaId) || null;
       this.todosEquipos = equipos || [];
       this.equiposLiga = equiposLiga || [];
+      this.partidos = (partidos || []).filter((p: any) => p.ligaId === this.ligaId);
+      this.arbitros = arbitros || [];
       this.cargando = false;
       this.cdr.detectChanges();
     }).catch(() => {

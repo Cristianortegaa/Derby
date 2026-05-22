@@ -1,9 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../../../navbar/navbar.component';
-import { AdminService } from '../../../../services/admin.service';
+﻿import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterLink} from '@angular/router';
+import {NavbarComponent} from '../../../navbar/navbar.component';
+import {AdminService} from '../../../../services/admin.service';
 
 @Component({
   selector: 'app-admin-actas',
@@ -15,16 +15,14 @@ import { AdminService } from '../../../../services/admin.service';
 export class AdminActas implements OnInit {
   actas: any[] = [];
   cargando = false;
+  editando: any = null;
+  formulario = {golesLocal: 0, golesVisitante: 0};
+  eventos: any[] = [];
 
-  modalConfirm = { mostrar: false, titulo: '', mensaje: '', textoConfirmar: 'Eliminar', onConfirm: () => {} };
+  notificacion = {mostrar: false, tipo: 'exito' as 'exito' | 'error', mensaje: ''};
 
-  abrirConfirm(titulo: string, mensaje: string, accion: () => void, textoConfirmar = 'Eliminar') {
-    this.modalConfirm = { mostrar: true, titulo, mensaje, textoConfirmar, onConfirm: accion };
+  constructor(private adminService: AdminService) {
   }
-  cerrarConfirm() { this.modalConfirm.mostrar = false; }
-  confirmar() { this.modalConfirm.onConfirm(); this.cerrarConfirm(); }
-
-  constructor(private adminService: AdminService) {}
 
   ngOnInit() {
     this.cargarActas();
@@ -37,20 +35,41 @@ export class AdminActas implements OnInit {
         this.actas = data;
         this.cargando = false;
       },
-      error: (error) => {
-        console.error('Error cargando actas:', error);
+      error: () => {
         this.cargando = false;
       }
     });
   }
 
-  eliminarActa(id: number) {
-    this.abrirConfirm('Eliminar acta', '¿Estás seguro de eliminar esta acta?', () => {
-      this.adminService.eliminarActa(id).subscribe({
-        next: () => this.cargarActas(),
-        error: (error) => console.error('Error eliminando:', error)
-      });
+  abrirEditar(acta: any) {
+    this.editando = acta;
+    this.formulario = {golesLocal: acta.golesLocal ?? 0, golesVisitante: acta.golesVisitante ?? 0};
+    this.eventos = [];
+    this.adminService.obtenerEventosPartido(acta.id).subscribe({
+      next: (data) => this.eventos = data,
+      error: () => this.eventos = []
     });
+  }
+
+  cerrarEditar() {
+    this.editando = null;
+    this.eventos = [];
+  }
+
+  guardar() {
+    this.adminService.actualizarActa(this.editando.id, this.formulario).subscribe({
+      next: () => {
+        this.mostrarNotificacion('exito', 'Acta actualizada correctamente');
+        this.cerrarEditar();
+        this.cargarActas();
+      },
+      error: () => this.mostrarNotificacion('error', 'Error al actualizar el acta')
+    });
+  }
+
+  mostrarNotificacion(tipo: 'exito' | 'error', mensaje: string) {
+    this.notificacion = {mostrar: true, tipo, mensaje};
+    setTimeout(() => this.notificacion.mostrar = false, 3000);
   }
 }
 

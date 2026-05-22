@@ -1,87 +1,121 @@
 ﻿<div class="w-full min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-950 to-slate-900 text-white relative">
 
   <app-navbar></app-navbar>
-
   <div class="h-20"></div>
 
-  <div class="absolute top-0 left-0 w-80 h-80 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
-  <div class="absolute bottom-0 right-0 w-80 h-80 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-red-500 opacity-10 blur-3xl rounded-full pointer-events-none"></div>
 
-  <div class="relative z-10 px-6 md:px-12 py-6 max-w-7xl mx-auto w-full">
-    <h1 class="text-3xl md:text-4xl font-black mb-2 text-white mt-2">Gestionar Actas</h1>
-    <p class="text-gray-500 text-sm md:text-base font-medium">Visualiza y gestiona todas las actas de partidos</p>
-    <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
-  </div>
+  <div class="relative z-10 px-6 md:px-12 py-8 max-w-7xl mx-auto w-full">
 
-  <main class="relative z-10 flex-1 px-6 md:px-12 pb-20 max-w-7xl mx-auto w-full">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-black mb-1 text-white">Actas</h1>
+        <p class="text-gray-500 text-sm font-medium">Partidos finalizados — edita el resultado si hay algún error</p>
+        <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
+      </div>
+      <a routerLink="/admin" class="flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-blue-500/40 rounded-lg text-white hover:border-blue-400/80 hover:bg-slate-800 transition-all text-sm font-semibold">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
+    </div>
 
-    <!-- TABLA DE ACTAS -->
-    <div class="bg-slate-900/80 backdrop-blur-md border border-blue-500/40 rounded-xl p-6 shadow-lg overflow-x-auto">
-      @if (actas.length > 0) {
-        <table class="w-full text-left">
+    <div class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6">
+
+      <div *ngIf="cargando" class="text-center py-8">
+        <p class="text-gray-400">Cargando actas...</p>
+      </div>
+
+      <div *ngIf="!cargando && actas.length === 0" class="text-center py-8">
+        <i class="fas fa-inbox text-4xl text-gray-600 mb-3"></i>
+        <p class="text-gray-400">No hay partidos finalizados</p>
+      </div>
+
+      <div *ngIf="!cargando && actas.length > 0" class="overflow-x-auto">
+        <table class="w-full">
           <thead>
-            <tr class="border-b border-blue-500/20">
-              <th class="pb-3 text-sm font-bold text-red-400">Partido</th>
-              <th class="pb-3 text-sm font-bold text-blue-400">Árbitro</th>
-              <th class="pb-3 text-sm font-bold text-amber-400">Fecha</th>
-              <th class="pb-3 text-sm font-bold text-emerald-400">Estado</th>
-              <th class="pb-3 text-sm font-bold text-gray-400">Acciones</th>
-            </tr>
+          <tr class="border-b border-slate-700/50">
+            <th class="text-left py-3 px-4 text-blue-400 font-bold">Liga</th>
+            <th class="text-left py-3 px-4 text-yellow-400 font-bold">Jornada</th>
+            <th class="text-left py-3 px-4 text-white font-bold">Local</th>
+            <th class="text-center py-3 px-4 text-green-400 font-bold">Resultado</th>
+            <th class="text-left py-3 px-4 text-white font-bold">Visitante</th>
+            <th class="text-left py-3 px-4 text-gray-400 font-bold">Árbitro</th>
+            <th class="text-left py-3 px-4 text-gray-400 font-bold">Fecha</th>
+            <th class="text-center py-3 px-4 text-red-400 font-bold">Acciones</th>
+          </tr>
           </thead>
           <tbody>
-            @for (acta of actas; track acta.id) {
-              <tr class="border-b border-blue-500/10 hover:bg-slate-800/50 transition-all">
-                <td class="py-3 text-white">{{ acta.partido }}</td>
-                <td class="py-3 text-gray-400">{{ acta.arbitro }}</td>
-                <td class="py-3 text-gray-400">{{ acta.fecha | date: 'dd/MM/yyyy' }}</td>
-                <td class="py-3">
-                  <span class="text-xs font-bold px-2 py-1 rounded-md"
-                        [class]="acta.estado === 'Completada' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'">
-                    {{ acta.estado }}
-                  </span>
-                </td>
-                <td class="py-3 flex gap-2">
-                  <button class="text-blue-400 hover:text-blue-300 transition-all">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button (click)="eliminarActa(acta.id)" class="text-red-400 hover:text-red-300 transition-all">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            }
+          <tr *ngFor="let acta of actas" class="border-b border-slate-700/30 hover:bg-slate-800/50">
+            <td class="py-3 px-4 text-gray-400">{{ acta.liga?.nombre || 'N/A' }}</td>
+            <td class="py-3 px-4 text-yellow-400 font-bold">J{{ acta.jornada }}</td>
+            <td class="py-3 px-4 text-white font-semibold">{{ acta.equipoLocal?.nombre || 'N/A' }}</td>
+            <td class="py-3 px-4 text-center text-green-400 font-bold text-lg">{{ acta.golesLocal }} - {{ acta.golesVisitante }}</td>
+            <td class="py-3 px-4 text-white font-semibold">{{ acta.equipoVisitante?.nombre || 'N/A' }}</td>
+            <td class="py-3 px-4 text-gray-400 text-sm">{{ acta.arbitro ? acta.arbitro.nombre + ' ' + acta.arbitro.apellidos : 'Sin árbitro' }}</td>
+            <td class="py-3 px-4 text-gray-400 text-sm">{{ acta.fechaHora ? (acta.fechaHora | date:'dd/MM/yyyy HH:mm') : 'Sin fecha' }}</td>
+            <td class="py-3 px-4 text-center">
+              <button (click)="abrirEditar(acta)" class="px-3 py-1 text-blue-300 border border-blue-500/40 rounded hover:bg-blue-500/20 text-xs">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+            </td>
+          </tr>
           </tbody>
         </table>
-      } @else {
-        <div class="text-center py-8">
-          <p class="text-gray-400">No hay actas registradas</p>
-        </div>
-      }
+      </div>
     </div>
-  </main>
+  </div>
 
-  <!-- Modal confirmación -->
-  <div *ngIf="modalConfirm.mostrar"
-       class="fixed inset-0 z-50 flex items-center justify-center p-4"
-       (click)="cerrarConfirm()">
+  <!-- Modal editar -->
+  <div *ngIf="editando" class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="cerrarEditar()">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-    <div class="relative z-10 w-full max-w-md bg-slate-900 rounded-2xl border border-red-500/30 p-6 shadow-2xl"
-         (click)="$event.stopPropagation()">
-      <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-500/15 border border-red-500/30 mx-auto mb-5">
-        <i class="fas fa-triangle-exclamation text-red-400 text-xl"></i>
+    <div class="relative z-10 w-full max-w-sm bg-slate-900 rounded-2xl border border-blue-500/30 p-6 shadow-2xl overflow-y-auto max-h-[90vh]" (click)="$event.stopPropagation()">
+      <h3 class="text-lg font-bold text-white mb-1">Editar Acta</h3>
+      <p class="text-gray-400 text-sm mb-4">{{ editando.equipoLocal?.nombre }} vs {{ editando.equipoVisitante?.nombre }}</p>
+
+      <!-- Eventos del partido -->
+      <div class="mb-5">
+        <p class="text-xs text-gray-500 font-semibold uppercase mb-2">Eventos del partido</p>
+        <div *ngIf="eventos.length === 0" class="text-gray-500 text-sm text-center py-2">Sin eventos registrados</div>
+        <div class="space-y-1 max-h-40 overflow-y-auto">
+          <div *ngFor="let evento of eventos" class="flex items-center gap-3 px-3 py-2 bg-slate-800/60 rounded-lg text-sm">
+            <span class="text-gray-400 w-8 text-center font-bold">{{ evento.minuto }}'</span>
+            <i class="w-4 text-center"
+               [ngClass]="{
+                 'fas fa-futbol text-green-400': evento.tipoEvento === 'Gol',
+                 'fas fa-square text-yellow-400': evento.tipoEvento === 'TarjetaAmarilla',
+                 'fas fa-square text-red-500': evento.tipoEvento === 'TarjetaRoja'
+               }"></i>
+            <span class="text-white flex-1">{{ evento.jugador?.nombre }}</span>
+            <span class="text-gray-500 text-xs">{{ evento.tipoEvento }}</span>
+          </div>
+        </div>
       </div>
-      <h3 class="text-lg font-bold text-white text-center mb-2">{{ modalConfirm.titulo }}</h3>
-      <p class="text-gray-400 text-sm text-center leading-relaxed mb-6">{{ modalConfirm.mensaje }}</p>
+
+      <div class="flex items-center gap-4 justify-center mb-6">
+        <div class="text-center">
+          <p class="text-xs text-gray-400 mb-1">{{ editando.equipoLocal?.nombre }}</p>
+          <input type="number" [(ngModel)]="formulario.golesLocal" min="0"
+                 class="w-16 text-center text-2xl font-black bg-slate-800 border border-blue-500/40 rounded-lg text-white py-2 outline-none focus:border-blue-400"/>
+        </div>
+        <span class="text-2xl font-black text-gray-500">-</span>
+        <div class="text-center">
+          <p class="text-xs text-gray-400 mb-1">{{ editando.equipoVisitante?.nombre }}</p>
+          <input type="number" [(ngModel)]="formulario.golesVisitante" min="0"
+                 class="w-16 text-center text-2xl font-black bg-slate-800 border border-blue-500/40 rounded-lg text-white py-2 outline-none focus:border-blue-400"/>
+        </div>
+      </div>
+
       <div class="flex gap-3">
-        <button (click)="cerrarConfirm()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg border border-slate-600 transition-all">
-          Cancelar
-        </button>
-        <button (click)="confirmar()" class="flex-1 px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold rounded-lg transition-all">
-          <i class="fas fa-trash text-xs mr-1"></i> {{ modalConfirm.textoConfirmar }}
-        </button>
+        <button (click)="cerrarEditar()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg border border-slate-600">Cancelar</button>
+        <button (click)="guardar()" class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg">Guardar</button>
       </div>
     </div>
+  </div>
+
+  <!-- Notificación -->
+  <div *ngIf="notificacion.mostrar" class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-semibold shadow-2xl"
+       [ngClass]="notificacion.tipo === 'exito' ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'">
+    {{ notificacion.mensaje }}
   </div>
 
 </div>
-

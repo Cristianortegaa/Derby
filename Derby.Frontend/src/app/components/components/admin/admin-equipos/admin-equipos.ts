@@ -148,7 +148,7 @@ export class AdminEquipos implements OnInit {
     if (this.filtroLiga) {
       resultado = resultado.filter(e => e.ligaNombre === this.filtroLiga);
     }
-    this.equiposFiltrados = resultado;
+    this.equiposFiltrados = resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
   }
 
   get ligas(): string[] {

@@ -11,7 +11,8 @@ public class LigaService : ILigaService
     private readonly IPartidoRepository _partidoRepository;
     private readonly IEventoPartidoRepository _eventoRepository;
 
-    public LigaService(ILigaRepository ligaRepository, IPartidoRepository partidoRepository, IEventoPartidoRepository eventoRepository)
+    public LigaService(ILigaRepository ligaRepository, IPartidoRepository partidoRepository,
+        IEventoPartidoRepository eventoRepository)
     {
         _ligaRepository = ligaRepository;
         _partidoRepository = partidoRepository;
@@ -32,6 +33,10 @@ public class LigaService : ILigaService
     {
         if (await _ligaRepository.EquipoExisteAsync(ligaId, equipoId))
             throw new Exception("El equipo ya está en esta liga");
+
+        var equiposLiga = await _ligaRepository.ObtenerEquiposAsync(ligaId);
+        if (equiposLiga.Count >= 20)
+            throw new Exception("La liga ya tiene el máximo de 20 equipos");
 
         var equiposSinLiga = await _ligaRepository.ObtenerEquiposSinLigaAsync();
         if (!equiposSinLiga.Any(e => e.Id == equipoId))
@@ -106,30 +111,62 @@ public class LigaService : ILigaService
         int n = lista.Count;
         var partidos = new List<Partido>();
 
+        var hoyLocal = DateTime.Today;
+        int diasHastaSabado = ((int)DayOfWeek.Saturday - (int)hoyLocal.DayOfWeek + 7) % 7;
+        if (diasHastaSabado == 0) diasHastaSabado = 7;
+        var fechaBaseLocal = hoyLocal.AddDays(diasHastaSabado); 
+
         for (int ronda = 0; ronda < n - 1; ronda++)
         {
+            int jornadaIda = ronda + 1;
+            int jornadaVuelta = ronda + 1 + (n - 1);
+
             for (int i = 0; i < n / 2; i++)
             {
                 var local = lista[i];
                 var visitante = lista[n - 1 - i];
+
+                var fechaJornadaIdaLocal = fechaBaseLocal.AddDays(7 * (jornadaIda - 1));
+                var fechaJornadaVueltaLocal = fechaBaseLocal.AddDays(7 * (jornadaVuelta - 1));
+
+                int partidosPorDia = 5; // 14, 16, 18, 20, 22
+                int indice = i;
+
+                bool esDomingo = indice >= partidosPorDia;
+                int indiceDia = esDomingo ? indice - partidosPorDia : indice;
+
+                var fechaPartidoIdaLocal = fechaJornadaIdaLocal
+                    .AddDays(esDomingo ? 1 : 0)
+                    .AddHours(14 + 2 * indiceDia);
+
+                var fechaPartidoVueltaLocal = fechaJornadaVueltaLocal
+                    .AddDays(esDomingo ? 1 : 0)
+                    .AddHours(14 + 2 * indiceDia);
+
+                var fechaPartidoIdaUtc =
+                    DateTime.SpecifyKind(fechaPartidoIdaLocal, DateTimeKind.Local).ToUniversalTime();
+                var fechaPartidoVueltaUtc =
+                    DateTime.SpecifyKind(fechaPartidoVueltaLocal, DateTimeKind.Local).ToUniversalTime();
 
                 if (local != null && visitante != null)
                 {
                     partidos.Add(new Partido
                     {
                         LigaId = ligaId,
-                        Jornada = ronda + 1,
+                        Jornada = jornadaIda,
                         EquipoLocalId = local.Id,
                         EquipoVisitanteId = visitante.Id,
-                        Estado = "Pendiente"
+                        Estado = "Pendiente",
+                        FechaHora = fechaPartidoIdaUtc
                     });
                     partidos.Add(new Partido
                     {
                         LigaId = ligaId,
-                        Jornada = ronda + 1 + (n - 1),
+                        Jornada = jornadaVuelta,
                         EquipoLocalId = visitante.Id,
                         EquipoVisitanteId = local.Id,
-                        Estado = "Pendiente"
+                        Estado = "Pendiente",
+                        FechaHora = fechaPartidoVueltaUtc
                     });
                 }
             }

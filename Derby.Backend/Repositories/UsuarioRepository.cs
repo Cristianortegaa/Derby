@@ -26,12 +26,12 @@ public class UsuarioRepository : IUsuarioRepository
 
     public async Task<Usuario?> ObtenerPorEmailAsync(string email)
     {
-        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Usuarios.Include(u => u.Arbitro).FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<Usuario?> ObtenerPorIdAsync(int id)
     {
-        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+        return await _context.Usuarios.Include(u => u.Arbitro).FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<Usuario> CrearAsync(Usuario usuario)

@@ -13,11 +13,13 @@ import { AuthService } from '../../../../services/auth.service';
 })
 export class AbitroDashboard implements OnInit {
 
+  usuario: any = null;
+
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    const usuario = this.authService.obtenerUsuarioActual();
-    if (!usuario || usuario.rol !== 'Arbitro') {
+    this.usuario = this.authService.obtenerUsuarioActual();
+    if (!this.usuario || this.usuario.rol !== 'Arbitro') {
       this.router.navigate(['/']);
     }
   }

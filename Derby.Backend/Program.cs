@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Derby.Backend.Data;
+using Derby.Backend.Data;
 using Derby.Backend.Repositories;
 using Derby.Backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
 builder.Services.AddOpenApi();

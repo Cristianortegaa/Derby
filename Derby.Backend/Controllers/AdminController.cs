@@ -1,6 +1,7 @@
 ﻿using Derby.Backend.Data;
 using Derby.Backend.Dtos;
 using Derby.Backend.Models;
+using Derby.Backend.Repositories;
 using Derby.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,14 +17,16 @@ public class AdminController : ControllerBase
     private readonly ILigaService _ligaService;
     private readonly IJugadorService _jugadorService;
     private readonly IEquipoService _equipoService;
+    private readonly IPartidoRepository _partidoRepository;
 
-    public AdminController(DerbyContext context, ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IEquipoService equipoService)
+    public AdminController(DerbyContext context, ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IEquipoService equipoService, IPartidoRepository partidoRepository)
     {
         _context = context;
         _logger = logger;
         _ligaService = ligaService;
         _jugadorService = jugadorService;
         _equipoService = equipoService;
+        _partidoRepository = partidoRepository;
     }
 
     // ─── Competiciones ────────────────────────────────────────────────────────
@@ -372,5 +375,23 @@ public class AdminController : ControllerBase
         {
             return BadRequest(new { error = ex.Message });
         }
+    }
+
+    // ─── Actas ────────────────────────────────────────────────────────────────
+
+    [HttpGet("actas")]
+    public async Task<IActionResult> ObtenerActas()
+    {
+        var partidos = await _partidoRepository.ObtenerFinalizadosAsync();
+        return Ok(partidos);
+    }
+
+    [HttpPut("actas/{partidoId}")]
+    public async Task<IActionResult> EditarActa(int partidoId, [FromBody] Partido datos)
+    {
+        var partido = await _partidoRepository.ActualizarGolesAsync(partidoId, datos.GolesLocal, datos.GolesVisitante);
+        if (partido == null)
+            return NotFound(new { error = "Partido no encontrado" });
+        return Ok(partido);
     }
 }

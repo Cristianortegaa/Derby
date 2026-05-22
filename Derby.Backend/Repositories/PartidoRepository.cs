@@ -120,4 +120,26 @@ public class PartidoRepository : IPartidoRepository
         _context.Partidos.AddRange(partidos);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Partido>> ObtenerFinalizadosAsync()
+    {
+        return await _context.Partidos
+            .Where(p => p.Estado == "Finalizado")
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .Include(p => p.Liga)
+            .Include(p => p.Arbitro)
+            .OrderByDescending(p => p.FechaHora)
+            .ToListAsync();
+    }
+
+    public async Task<Partido?> ActualizarGolesAsync(int id, int? golesLocal, int? golesVisitante)
+    {
+        var partido = await _context.Partidos.FindAsync(id);
+        if (partido == null) return null;
+        partido.GolesLocal = golesLocal;
+        partido.GolesVisitante = golesVisitante;
+        await _context.SaveChangesAsync();
+        return partido;
+    }
 }

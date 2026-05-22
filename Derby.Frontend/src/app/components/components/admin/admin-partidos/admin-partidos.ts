@@ -98,6 +98,9 @@ export class AdminPartidosComponent implements OnInit {
       const matchEstado = !this.filtroEstado || p.estado === this.filtroEstado;
       const matchJornada = !this.filtroJornada || p.jornada === jornada;
       return matchLiga && matchEstado && matchJornada;
+    }).sort((a, b) => {
+      if (a.jornada !== b.jornada) return a.jornada - b.jornada;
+      return new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime();
     });
   }
 
@@ -167,6 +170,13 @@ export class AdminPartidosComponent implements OnInit {
       fechaHora: undefined,
       arbitroId: undefined
     };
+  }
+
+  asignarArbitro(partido: any) {
+    this.adminService.actualizarPartido(partido.id, partido).subscribe({
+      next: () => this.mostrarNotificacion('exito', 'Árbitro asignado'),
+      error: () => this.mostrarNotificacion('error', 'Error al asignar árbitro')
+    });
   }
 
   obtenerDescripcionPartido(partido: any): string {

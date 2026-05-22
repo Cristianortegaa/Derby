@@ -64,7 +64,7 @@ export class AbitroActa implements OnInit {
 
   cargarPartido(arbitroId: number) {
     this.cargando = true;
-    this.arbitroService.obtenerMisPartidos(arbitroId).subscribe({
+    this.arbitroService.obtenerPartidosPendientes(arbitroId).subscribe({
       next: (partidos) => {
         this.partido = partidos.find((p: any) => p.id === this.partidoId);
         if (this.partido) {

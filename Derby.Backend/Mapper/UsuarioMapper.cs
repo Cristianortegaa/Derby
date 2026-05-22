@@ -13,7 +13,8 @@ public static class UsuarioMapper
             Email = usuario.Email,
             Rol = usuario.Rol.ToString(),
             Token = token,
-            ArbitroId = usuario.ArbitroId
+            ArbitroId = usuario.ArbitroId,
+            NombreArbitro = usuario.Arbitro != null ? $"{usuario.Arbitro.Nombre} {usuario.Arbitro.Apellidos}" : null
         };
     }
 }
