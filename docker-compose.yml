@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16
+    container_name: derby-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: DerbyDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - derby-db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./Derby.Backend
+      dockerfile: Dockerfile
+    container_name: derby-backend
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=DerbyDb;Username=postgres;Password=postgres
+    ports:
+      - "5101:5101"
+    depends_on:
+      - db
+
+volumes:
+  derby-db-data:
