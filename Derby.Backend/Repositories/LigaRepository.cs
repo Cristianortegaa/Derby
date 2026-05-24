@@ -76,5 +76,54 @@ public class LigaRepository : ILigaRepository
     {
         return await _context.Partidos.AnyAsync(p => p.LigaId == ligaId);
     }
+
+    public async Task<List<Liga>> ObtenerTodasAsync()
+    {
+        return await _context.Ligas
+            .Include(l => l.Partidos)
+            .ToListAsync();
+    }
+
+    public async Task<Liga> CrearAsync(Liga liga)
+    {
+        _context.Ligas.Add(liga);
+        await _context.SaveChangesAsync();
+        return liga;
+    }
+
+    public async Task<Liga?> ActualizarAsync(int id, Liga liga)
+    {
+        var existing = await _context.Ligas.FindAsync(id);
+        if (existing == null)
+            return null;
+
+        existing.Nombre = liga.Nombre;
+        existing.CompeticionId = liga.CompeticionId;
+        existing.Grupo = liga.Grupo;
+        existing.Jornadas = liga.Jornadas;
+        existing.JornadaActual = liga.JornadaActual;
+        existing.Estado = liga.Estado;
+
+        await _context.SaveChangesAsync();
+        return existing;
+    }
+
+    public async Task<bool> EliminarAsync(int id)
+    {
+        var liga = await _context.Ligas.FindAsync(id);
+        if (liga == null)
+            return false;
+
+        _context.Ligas.Remove(liga);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<List<LigaEquipo>> ObtenerTodasAsignacionesAsync()
+    {
+        return await _context.LigaEquipos
+            .Include(le => le.Liga)
+            .ToListAsync();
+    }
 }
 

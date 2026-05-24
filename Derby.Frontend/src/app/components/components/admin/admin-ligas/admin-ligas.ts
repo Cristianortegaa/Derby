@@ -92,8 +92,8 @@ export class AdminLigas implements OnInit {
   }
 
   getProgreso(liga: any): number {
-    if (!liga.jornadas || liga.jornadas === 0) return 0;
-    return Math.round((liga.jornadaActual / liga.jornadas) * 100);
+    if (!liga.totalPartidos) return 0;
+    return Math.round((liga.partidosFinalizados / liga.totalPartidos) * 100);
   }
 
   getNombreComp(competicionId: number): string {

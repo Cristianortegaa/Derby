@@ -60,6 +60,35 @@ public class CompeticionService : ICompeticionService
             .ToList();
     }
 
+    public async Task<List<CompeticionResponseDto>> ObtenerTodasAsync()
+    {
+        var competiciones = await _competicionRepository.ObtenerTodasAsync();
+        return competiciones.Select(c => c.ToDto()).ToList();
+    }
+
+    public async Task<CompeticionResponseDto?> ObtenerPorIdAsync(int id)
+    {
+        var competicion = await _competicionRepository.ObtenerPorIdAsync(id);
+        return competicion?.ToDto();
+    }
+
+    public async Task<CompeticionResponseDto> CrearAsync(Competicion competicion)
+    {
+        var creada = await _competicionRepository.CrearAsync(competicion);
+        return creada.ToDto();
+    }
+
+    public async Task<CompeticionResponseDto?> ActualizarAsync(int id, Competicion competicion)
+    {
+        var actualizada = await _competicionRepository.ActualizarAsync(id, competicion);
+        return actualizada?.ToDto();
+    }
+
+    public async Task<bool> EliminarAsync(int id)
+    {
+        return await _competicionRepository.EliminarAsync(id);
+    }
+
     public async Task<List<Competicion>> BuscarCompeticionesAsync(string? temporada, string? tipoJuego, string? competicion, string? grupo)
     {
         return await _competicionRepository.FiltrarAsync(temporada, tipoJuego, competicion, grupo);

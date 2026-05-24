@@ -35,7 +35,7 @@
 
     <div class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6">
       <div class="mb-6 flex items-center justify-between">
-        <h2 class="text-lg font-bold text-red-400"><i class="fas fa-bullseye mr-2"></i>Top Goleadores ({{ goleadoresFiltrados.length }})</h2>
+        <h2 class="text-lg font-bold text-red-400"><i class="fas fa-futbol mr-2"></i>Top Goleadores ({{ goleadoresFiltrados.length }})</h2>
         <div class="relative">
           <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
           <input type="text" [(ngModel)]="busquedaBuscador" (input)="aplicarFiltro()" placeholder="Buscar goleador..."
@@ -60,7 +60,6 @@
             <th class="text-left py-3 px-4 text-white font-bold">Jugador</th>
             <th class="text-left py-3 px-4 text-green-400 font-bold">Equipo</th>
             <th class="text-center py-3 px-4 text-yellow-400 font-bold">Goles</th>
-            <th class="text-left py-3 px-4 text-purple-400 font-bold">Liga</th>
           </tr>
           </thead>
           <tbody>
@@ -69,7 +68,6 @@
             <td class="py-3 px-4 text-white font-semibold">{{ goleador.nombre || 'N/A' }}</td>
             <td class="py-3 px-4 text-green-400">{{ goleador.equipo || 'N/A' }}</td>
             <td class="py-3 px-4 text-center font-bold text-yellow-400 text-lg">{{ goleador.goles || 0 }}</td>
-            <td class="py-3 px-4 text-purple-400">{{ goleador.liga?.nombre || 'N/A' }}</td>
           </tr>
           </tbody>
         </table>

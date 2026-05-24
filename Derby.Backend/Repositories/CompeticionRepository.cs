@@ -57,6 +57,8 @@ public class CompeticionRepository : ICompeticionRepository
 
         existing.Nombre = competicion.Nombre;
         existing.Temporada = competicion.Temporada;
+        existing.Descripcion = competicion.Descripcion;
+        existing.Estado = competicion.Estado;
         existing.TipoJuego = competicion.TipoJuego;
         existing.Grupo = competicion.Grupo;
 

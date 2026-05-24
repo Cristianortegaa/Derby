@@ -37,7 +37,7 @@ public class DerbyContext : DbContext
 
         modelBuilder.Entity<Partido>()
             .HasOne(p => p.Liga)
-            .WithMany()
+            .WithMany(l => l.Partidos)
             .HasForeignKey(p => p.LigaId)
             .OnDelete(DeleteBehavior.Cascade);
 

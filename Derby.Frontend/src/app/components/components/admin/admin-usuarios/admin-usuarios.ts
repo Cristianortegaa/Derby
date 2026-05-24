@@ -39,7 +39,9 @@ export class AdminUsuarios implements OnInit {
   formulario = {
     email: '',
     contrasena: '',
-    rol: 'Aficionado'
+    rol: 'Aficionado',
+    nombre: '',
+    apellidos: ''
   };
 
   constructor(
@@ -108,7 +110,9 @@ export class AdminUsuarios implements OnInit {
       this.formulario = {
         email: usuario.email,
         contrasena: '',
-        rol: usuario.rol
+        rol: usuario.rol,
+        nombre: usuario.nombreArbitro?.split(' ')[0] || '',
+        apellidos: usuario.nombreArbitro?.split(' ').slice(1).join(' ') || ''
       };
     } else {
       this.editandoId = null;
@@ -188,7 +192,9 @@ export class AdminUsuarios implements OnInit {
     this.formulario = {
       email: '',
       contrasena: '',
-      rol: 'Aficionado'
+      rol: 'Aficionado',
+      nombre: '',
+      apellidos: ''
     };
   }
 }

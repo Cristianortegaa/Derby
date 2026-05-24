@@ -54,6 +54,8 @@ builder.Services.AddScoped<IEventoPartidoService, EventoPartidoService>();
 builder.Services.AddScoped<ILigaRepository, LigaRepository>();
 builder.Services.AddScoped<ILigaService, LigaService>();
 
+builder.Services.AddScoped<IPartidoService, PartidoService>();
+
 builder.Services.AddScoped<IJugadorRepository, JugadorRepository>();
 builder.Services.AddScoped<IJugadorService, JugadorService>();
 

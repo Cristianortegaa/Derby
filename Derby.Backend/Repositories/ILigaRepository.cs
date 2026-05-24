@@ -12,4 +12,9 @@ public interface ILigaRepository
     Task QuitarEquipoAsync(int ligaId, int equipoId);
     Task ActualizarJornadasAsync(int ligaId, int jornadas);
     Task<bool> TienePartidosAsync(int ligaId);
+    Task<List<Liga>> ObtenerTodasAsync();
+    Task<Liga> CrearAsync(Liga liga);
+    Task<Liga?> ActualizarAsync(int id, Liga liga);
+    Task<bool> EliminarAsync(int id);
+    Task<List<LigaEquipo>> ObtenerTodasAsignacionesAsync();
 }

@@ -9,24 +9,16 @@ using System.Text;
 
 namespace Derby.Backend.Services;
 
-public interface IUsuarioService
-{
-    Task<Result<UsuarioResponseDto, DerbyError>> RegistrarAsync(RegistroRequestDto dto);
-    Task<Result<UsuarioResponseDto, DerbyError>> LoginAsync(UsuarioRequestDto dto);
-    Task<Result<List<UsuarioResponseDto>, DerbyError>> ObtenerTodosAsync();
-    Task<Result<UsuarioResponseDto, DerbyError>> ObtenerPorIdAsync(int id);
-    Task<Result<UsuarioResponseDto, DerbyError>> ActualizarAsync(int id, UsuarioRequestDto dto);
-    Task<Result<bool, DerbyError>> EliminarAsync(int id);
-}
-
 public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioRepository _repository;
+    private readonly IArbitroRepository _arbitroRepository;
     private readonly ILogger<UsuarioService> _logger;
 
-    public UsuarioService(IUsuarioRepository repository, ILogger<UsuarioService> logger)
+    public UsuarioService(IUsuarioRepository repository, IArbitroRepository arbitroRepository, ILogger<UsuarioService> logger)
     {
         _repository = repository;
+        _arbitroRepository = arbitroRepository;
         _logger = logger;
     }
 
@@ -50,6 +42,18 @@ public class UsuarioService : IUsuarioService
             Contraseña = HashPassword(dto.Contrasena),
             Rol = DeterminarRol(dto.Rol)
         };
+
+        if (usuario.Rol == Rol.Arbitro)
+        {
+            var arbitro = new Arbitro
+            {
+                Nombre = dto.Nombre,
+                Apellidos = dto.Apellidos,
+                NumeroColegiado = string.Empty
+            };
+            var arbitroCreado = await _arbitroRepository.CrearAsync(arbitro);
+            usuario.ArbitroId = arbitroCreado.Id;
+        }
 
         var usuarioCreado = await _repository.CrearAsync(usuario);
 

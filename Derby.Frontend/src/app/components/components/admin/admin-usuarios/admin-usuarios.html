@@ -86,6 +86,33 @@
             <option *ngFor="let rol of roles" [value]="rol">{{ rol }}</option>
           </select>
         </div>
+        <!-- Nombre (solo Árbitro) -->
+        <div *ngIf="formulario.rol === 'Arbitro'">
+          <label class="block text-white text-sm font-semibold mb-2">
+            <span class="text-red-400">*</span> Nombre
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="formulario.nombre"
+            name="nombre"
+            placeholder="Nombre del árbitro"
+            class="w-full px-4 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-all"
+          />
+        </div>
+
+        <!-- Apellidos (solo Árbitro) -->
+        <div *ngIf="formulario.rol === 'Arbitro'">
+          <label class="block text-white text-sm font-semibold mb-2">
+            <span class="text-red-400">*</span> Apellidos
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="formulario.apellidos"
+            name="apellidos"
+            placeholder="Apellidos del árbitro"
+            class="w-full px-4 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm placeholder-gray-500 focus:border-blue-400 focus:outline-none transition-all"
+          />
+        </div>
       </form>
 
       <!-- Botones de acción -->

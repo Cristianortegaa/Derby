@@ -17,6 +17,8 @@ import { AuthService } from '../../../../services/auth.service';
 export class AbitroActa implements OnInit {
   partido: any = null;
   jugadores: any[] = [];
+  jugadoresLocal: any[] = [];
+  jugadoresVisitante: any[] = [];
   eventos: any[] = [];
   cargando = false;
   cargandoEvento = false;
@@ -81,8 +83,10 @@ export class AbitroActa implements OnInit {
   cargarJugadores() {
     this.adminService.obtenerJugadores(this.partido.equipoLocalId).subscribe({
       next: (jugadoresLocal) => {
+        this.jugadoresLocal = jugadoresLocal;
         this.adminService.obtenerJugadores(this.partido.equipoVisitanteId).subscribe({
           next: (jugadoresVisitante) => {
+            this.jugadoresVisitante = jugadoresVisitante;
             this.jugadores = [...jugadoresLocal, ...jugadoresVisitante];
             this.cdr.detectChanges();
           }
@@ -101,7 +105,7 @@ export class AbitroActa implements OnInit {
   }
 
   agregarEvento() {
-    if (this.nuevoEvento.jugadorId === 0 || this.nuevoEvento.minuto <= 0) return;
+    if (this.nuevoEvento.jugadorId === 0 || this.nuevoEvento.minuto <= 0 || this.nuevoEvento.minuto > 120) return;
     this.cargandoEvento = true;
     this.arbitroService.añadirEvento(this.partidoId, this.nuevoEvento).subscribe({
       next: () => {

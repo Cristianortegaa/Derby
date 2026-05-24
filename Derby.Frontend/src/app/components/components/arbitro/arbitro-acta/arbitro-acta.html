@@ -62,7 +62,7 @@
                   <i class="fas fa-shield-halved mr-1"></i>{{ partido.equipoLocal?.nombre }}
                 </span>
               </div>
-              <div *ngFor="let j of jugadores | slice:0:11"
+              <div *ngFor="let j of jugadoresLocal"
                    (click)="seleccionarJugador(j.id, j.nombre)"
                    class="px-4 py-2 text-sm text-gray-300 hover:bg-blue-600/20 hover:text-white cursor-pointer transition-colors">
                 {{ j.nombre }}
@@ -73,7 +73,7 @@
                   <i class="fas fa-shield-halved mr-1"></i>{{ partido.equipoVisitante?.nombre }}
                 </span>
               </div>
-              <div *ngFor="let j of jugadores | slice:11"
+              <div *ngFor="let j of jugadoresVisitante"
                    (click)="seleccionarJugador(j.id, j.nombre)"
                    class="px-4 py-2 text-sm text-gray-300 hover:bg-red-600/20 hover:text-white cursor-pointer transition-colors">
                 {{ j.nombre }}

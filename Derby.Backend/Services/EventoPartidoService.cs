@@ -1,29 +1,19 @@
-using Derby.Backend.Data;
 using Derby.Backend.Dtos;
 using Derby.Backend.Mappers;
 using Derby.Backend.Models;
 using Derby.Backend.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace Derby.Backend.Services;
-
-public interface IEventoPartidoService
-{
-    Task<List<EventoPartidoResponseDto>> ObtenerEventosAsync(int partidoId);
-    Task<EventoPartidoResponseDto?> AñadirEventoAsync(int partidoId, EventoPartidoRequestDto dto);
-    Task<bool> EliminarEventoAsync(int eventoId);
-    Task<Partido?> CerrarActaAsync(int partidoId);
-}
 
 public class EventoPartidoService : IEventoPartidoService
 {
     private readonly IEventoPartidoRepository _eventoRepository;
-    private readonly DerbyContext _context;
+    private readonly IPartidoRepository _partidoRepository;
 
-    public EventoPartidoService(IEventoPartidoRepository eventoRepository, DerbyContext context)
+    public EventoPartidoService(IEventoPartidoRepository eventoRepository, IPartidoRepository partidoRepository)
     {
         _eventoRepository = eventoRepository;
-        _context = context;
+        _partidoRepository = partidoRepository;
     }
 
     public async Task<List<EventoPartidoResponseDto>> ObtenerEventosAsync(int partidoId)
@@ -56,29 +46,22 @@ public class EventoPartidoService : IEventoPartidoService
 
     public async Task<Partido?> CerrarActaAsync(int partidoId)
     {
-        var partido = await _context.Partidos
-            .Include(p => p.EquipoLocal)
-            .Include(p => p.EquipoVisitante)
-            .FirstOrDefaultAsync(p => p.Id == partidoId);
-
+        var partido = await _partidoRepository.ObtenerPorIdAsync(partidoId);
         if (partido == null)
             return null;
 
         var eventos = await _eventoRepository.ObtenerPorPartidoAsync(partidoId);
 
-        partido.GolesLocal = eventos.Count(e =>
+        var golesLocal = eventos.Count(e =>
             e.TipoEvento == TipoEvento.Gol &&
             e.Jugador != null &&
             e.Jugador.EquipoId == partido.EquipoLocalId);
 
-        partido.GolesVisitante = eventos.Count(e =>
+        var golesVisitante = eventos.Count(e =>
             e.TipoEvento == TipoEvento.Gol &&
             e.Jugador != null &&
             e.Jugador.EquipoId == partido.EquipoVisitanteId);
 
-        partido.Estado = "Finalizado";
-
-        await _context.SaveChangesAsync();
-        return partido;
+        return await _partidoRepository.FinalizarAsync(partidoId, golesLocal, golesVisitante);
     }
 }

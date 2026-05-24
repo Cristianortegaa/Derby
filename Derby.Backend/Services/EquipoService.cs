@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using Microsoft.Extensions.Logging; 
+using Microsoft.Extensions.Logging;
 using Derby.Backend.Dtos;
 using Derby.Backend.Errors;
 using Derby.Backend.Mappers;
@@ -11,20 +11,31 @@ namespace Derby.Backend.Services;
 public class EquipoService : IEquipoService
 {
     private readonly IEquipoRepository _repository;
-    private readonly ILogger<EquipoService> _logger; 
+    private readonly ILigaRepository _ligaRepository;
+    private readonly ILogger<EquipoService> _logger;
 
-    public EquipoService(IEquipoRepository repository, ILogger<EquipoService> logger)
+    public EquipoService(IEquipoRepository repository, ILigaRepository ligaRepository, ILogger<EquipoService> logger)
     {
         _repository = repository;
+        _ligaRepository = ligaRepository;
         _logger = logger;
     }
 
     public async Task<Result<IEnumerable<EquipoResponseDto>, DerbyError>> ObtenerTodosAsync()
     {
         _logger.LogInformation("Servicio: Solicitando la lista completa de equipos.");
-        var equipos = await _repository.ObtenerTodosConLigaAsync();
+        var equipos = (await _repository.ObtenerTodosAsync()).ToList();
+        var asignaciones = await _ligaRepository.ObtenerTodasAsignacionesAsync();
+
+        foreach (var equipo in equipos)
+        {
+            var asignacion = asignaciones.FirstOrDefault(a => a.EquipoId == equipo.Id);
+            if (asignacion?.Liga != null)
+                equipo.LigaNombre = asignacion.Liga.Nombre;
+        }
+
         var dtos = equipos.Select(e => e.ToDto());
-        _logger.LogInformation("Servicio: Se han obtenido {Cantidad} equipos correctamente.", equipos.Count());
+        _logger.LogInformation("Servicio: Se han obtenido {Cantidad} equipos correctamente.", equipos.Count);
         return Result.Success<IEnumerable<EquipoResponseDto>, DerbyError>(dtos);
     }
 

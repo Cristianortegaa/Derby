@@ -29,6 +29,12 @@ public class RegistroRequestDto
     [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
     
+    [JsonPropertyName("nombre")]
+    public string Nombre { get; set; } = string.Empty;
+
+    [JsonPropertyName("apellidos")]
+    public string Apellidos { get; set; } = string.Empty;
+    
     [JsonPropertyName("contrasena")]
     public string Contrasena { get; set; } = string.Empty;
     

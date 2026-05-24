@@ -5,6 +5,11 @@ namespace Derby.Backend.Services;
 
 public interface ILigaService
 {
+    Task<List<LigaResponseDto>> ObtenerTodasAsync();
+    Task<LigaResponseDto?> ObtenerPorIdAsync(int id);
+    Task<LigaResponseDto> CrearAsync(LigaRequestDto dto);
+    Task<LigaResponseDto?> ActualizarAsync(int id, LigaRequestDto dto);
+    Task<bool> EliminarAsync(int id);
     Task<List<Equipo>> ObtenerEquiposAsync(int ligaId);
     Task<List<Equipo>> ObtenerEquiposSinLigaAsync();
     Task AgregarEquipoAsync(int ligaId, int equipoId);

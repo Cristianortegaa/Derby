@@ -73,14 +73,14 @@
           <tr *ngFor="let equipo of clasificaciones; let i = index" class="border-b border-slate-700/30 hover:bg-slate-800/50">
             <td class="py-3 px-4 font-bold text-yellow-400">{{ i + 1 }}</td>
             <td class="py-3 px-4 text-white font-semibold">{{ equipo.nombre }}</td>
-            <td class="py-3 px-4 text-center text-blue-400">{{ equipo.pj || 0 }}</td>
-            <td class="py-3 px-4 text-center text-green-400 font-bold">{{ equipo.g || 0 }}</td>
-            <td class="py-3 px-4 text-center text-gray-400">{{ equipo.e || 0 }}</td>
-            <td class="py-3 px-4 text-center text-red-400">{{ equipo.p || 0 }}</td>
-            <td class="py-3 px-4 text-center text-purple-400">{{ equipo.gf || 0 }}</td>
-            <td class="py-3 px-4 text-center text-orange-400">{{ equipo.gc || 0 }}</td>
-            <td class="py-3 px-4 text-center text-yellow-400">{{ (equipo.gf || 0) - (equipo.gc || 0) }}</td>
-            <td class="py-3 px-4 text-center text-pink-400 font-bold text-lg">{{ equipo.pts || 0 }}</td>
+            <td class="py-3 px-4 text-center text-blue-400">{{ equipo.partidosJugados || 0 }}</td>
+            <td class="py-3 px-4 text-center text-green-400 font-bold">{{ equipo.ganancias || 0 }}</td>
+            <td class="py-3 px-4 text-center text-gray-400">{{ equipo.empates || 0 }}</td>
+            <td class="py-3 px-4 text-center text-red-400">{{ equipo.derrotas || 0 }}</td>
+            <td class="py-3 px-4 text-center text-purple-400">{{ equipo.golesAFavor || 0 }}</td>
+            <td class="py-3 px-4 text-center text-orange-400">{{ equipo.golesEnContra || 0 }}</td>
+            <td class="py-3 px-4 text-center text-yellow-400">{{ (equipo.golesAFavor || 0) - (equipo.golesEnContra || 0) }}</td>
+            <td class="py-3 px-4 text-center text-pink-400 font-bold text-lg">{{ equipo.puntos || 0 }}</td>
           </tr>
           </tbody>
         </table>

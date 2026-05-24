@@ -75,6 +75,53 @@ public class LigaService : ILigaService
         return CalcularClasificacion(partidos);
     }
 
+    public async Task<List<LigaResponseDto>> ObtenerTodasAsync()
+    {
+        var ligas = await _ligaRepository.ObtenerTodasAsync();
+        return ligas.Select(l => l.ToDto()).ToList();
+    }
+
+    public async Task<LigaResponseDto?> ObtenerPorIdAsync(int id)
+    {
+        var liga = await _ligaRepository.ObtenerPorIdAsync(id);
+        return liga?.ToDto();
+    }
+
+    public async Task<LigaResponseDto> CrearAsync(LigaRequestDto dto)
+    {
+        var liga = new Liga
+        {
+            Nombre = dto.Nombre,
+            CompeticionId = dto.CompeticionId,
+            Grupo = dto.Grupo,
+            Jornadas = dto.Jornadas,
+            JornadaActual = dto.JornadaActual,
+            Estado = dto.Estado
+        };
+        var creada = await _ligaRepository.CrearAsync(liga);
+        return creada.ToDto();
+    }
+
+    public async Task<LigaResponseDto?> ActualizarAsync(int id, LigaRequestDto dto)
+    {
+        var liga = new Liga
+        {
+            Nombre = dto.Nombre,
+            CompeticionId = dto.CompeticionId,
+            Grupo = dto.Grupo,
+            Jornadas = dto.Jornadas,
+            JornadaActual = dto.JornadaActual,
+            Estado = dto.Estado
+        };
+        var actualizada = await _ligaRepository.ActualizarAsync(id, liga);
+        return actualizada?.ToDto();
+    }
+
+    public async Task<bool> EliminarAsync(int id)
+    {
+        return await _ligaRepository.EliminarAsync(id);
+    }
+
     public async Task<List<GoleadorResponseDto>> ObtenerGoleadoresAsync(int ligaId)
     {
         var goles = await _eventoRepository.ObtenerGolesPorLigaAsync(ligaId);
@@ -129,7 +176,7 @@ public class LigaService : ILigaService
                 var fechaJornadaIdaLocal = fechaBaseLocal.AddDays(7 * (jornadaIda - 1));
                 var fechaJornadaVueltaLocal = fechaBaseLocal.AddDays(7 * (jornadaVuelta - 1));
 
-                int partidosPorDia = 5; // 14, 16, 18, 20, 22
+                int partidosPorDia = 5; 
                 int indice = i;
 
                 bool esDomingo = indice >= partidosPorDia;

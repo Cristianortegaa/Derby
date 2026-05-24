@@ -92,6 +92,7 @@ public class PartidoRepository : IPartidoRepository
         existing.EquipoVisitanteId = partido.EquipoVisitanteId;
         existing.Jornada = partido.Jornada;
         existing.LigaId = partido.LigaId;
+        existing.ArbitroId = partido.ArbitroId;
 
         await _context.SaveChangesAsync();
         return existing;
@@ -121,6 +122,17 @@ public class PartidoRepository : IPartidoRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task<List<Partido>> ObtenerTodosAsync()
+    {
+        return await _context.Partidos
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .Include(p => p.Liga)
+            .Include(p => p.Arbitro)
+            .OrderBy(p => p.FechaHora)
+            .ToListAsync();
+    }
+
     public async Task<List<Partido>> ObtenerFinalizadosAsync()
     {
         return await _context.Partidos
@@ -139,6 +151,24 @@ public class PartidoRepository : IPartidoRepository
         if (partido == null) return null;
         partido.GolesLocal = golesLocal;
         partido.GolesVisitante = golesVisitante;
+        await _context.SaveChangesAsync();
+        return partido;
+    }
+
+    public async Task<Partido?> FinalizarAsync(int partidoId, int golesLocal, int golesVisitante)
+    {
+        var partido = await _context.Partidos
+            .Include(p => p.EquipoLocal)
+            .Include(p => p.EquipoVisitante)
+            .FirstOrDefaultAsync(p => p.Id == partidoId);
+
+        if (partido == null)
+            return null;
+
+        partido.GolesLocal = golesLocal;
+        partido.GolesVisitante = golesVisitante;
+        partido.Estado = "Finalizado";
+
         await _context.SaveChangesAsync();
         return partido;
     }

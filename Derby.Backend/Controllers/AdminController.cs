@@ -1,10 +1,9 @@
-﻿using Derby.Backend.Data;
-using Derby.Backend.Dtos;
+﻿using Derby.Backend.Dtos;
+using Derby.Backend.Mappers;
 using Derby.Backend.Models;
 using Derby.Backend.Repositories;
 using Derby.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Derby.Backend.Controllers;
 
@@ -12,173 +11,106 @@ namespace Derby.Backend.Controllers;
 [ApiController]
 public class AdminController : ControllerBase
 {
-    private readonly DerbyContext _context;
     private readonly ILogger<AdminController> _logger;
     private readonly ILigaService _ligaService;
     private readonly IJugadorService _jugadorService;
-    private readonly IEquipoService _equipoService;
     private readonly IPartidoRepository _partidoRepository;
+    private readonly ICompeticionService _competicionService;
+    private readonly IArbitroService _arbitroService;
+    private readonly IPartidoService _partidoService;
 
-    public AdminController(DerbyContext context, ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IEquipoService equipoService, IPartidoRepository partidoRepository)
+    public AdminController(ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IPartidoRepository partidoRepository, ICompeticionService competicionService, IArbitroService arbitroService, IPartidoService partidoService)
     {
-        _context = context;
         _logger = logger;
         _ligaService = ligaService;
         _jugadorService = jugadorService;
-        _equipoService = equipoService;
         _partidoRepository = partidoRepository;
+        _competicionService = competicionService;
+        _arbitroService = arbitroService;
+        _partidoService = partidoService;
     }
 
     // ─── Competiciones ────────────────────────────────────────────────────────
 
     [HttpGet("competiciones")]
-    public async Task<ActionResult<List<Competicion>>> ObtenerCompeticiones()
+    public async Task<ActionResult<List<CompeticionResponseDto>>> ObtenerCompeticiones()
     {
-        var competiciones = await _context.Competiciones.ToListAsync();
+        var competiciones = await _competicionService.ObtenerTodasAsync();
         return Ok(competiciones);
     }
 
     [HttpPost("competiciones")]
-    public async Task<ActionResult<Competicion>> CrearCompeticion([FromBody] Competicion competicion)
+    public async Task<ActionResult<CompeticionResponseDto>> CrearCompeticion([FromBody] Competicion competicion)
     {
-        _context.Competiciones.Add(competicion);
-        await _context.SaveChangesAsync();
-        return Created($"api/admin/competiciones/{competicion.Id}", competicion);
+        var creada = await _competicionService.CrearAsync(competicion);
+        return Created($"api/admin/competiciones/{creada.Id}", creada);
     }
 
     [HttpPut("competiciones/{id}")]
     public async Task<IActionResult> ActualizarCompeticion(int id, [FromBody] Competicion competicion)
     {
-        var comp = await _context.Competiciones.FindAsync(id);
-        if (comp == null)
+        var actualizada = await _competicionService.ActualizarAsync(id, competicion);
+        if (actualizada == null)
             return NotFound(new { error = "Competición no encontrada" });
 
-        comp.Nombre = competicion.Nombre;
-        comp.Temporada = competicion.Temporada;
-        comp.Descripcion = competicion.Descripcion;
-        comp.Estado = competicion.Estado;
-        comp.TipoJuego = competicion.TipoJuego;
-        comp.Grupo = competicion.Grupo;
-
-        await _context.SaveChangesAsync();
-        return Ok(comp);
+        return Ok(actualizada);
     }
 
     [HttpDelete("competiciones/{id}")]
     public async Task<IActionResult> EliminarCompeticion(int id)
     {
-        var comp = await _context.Competiciones.FindAsync(id);
-        if (comp == null)
+        var eliminada = await _competicionService.EliminarAsync(id);
+        if (!eliminada)
             return NotFound(new { error = "Competición no encontrada" });
 
-        _context.Competiciones.Remove(comp);
-        await _context.SaveChangesAsync();
         return NoContent();
     }
 
     // ─── Ligas ────────────────────────────────────────────────────────────────
 
     [HttpGet("ligas")]
-    public async Task<ActionResult<List<Liga>>> ObtenerLigas()
+    public async Task<ActionResult<List<LigaResponseDto>>> ObtenerLigas()
     {
-        var ligas = await _context.Ligas.ToListAsync();
+        var ligas = await _ligaService.ObtenerTodasAsync();
         return Ok(ligas);
     }
 
     [HttpGet("ligas/{id}")]
-    public async Task<ActionResult<Liga>> ObtenerLiga(int id)
+    public async Task<ActionResult<LigaResponseDto>> ObtenerLiga(int id)
     {
-        var liga = await _context.Ligas.FindAsync(id);
+        var liga = await _ligaService.ObtenerPorIdAsync(id);
         if (liga == null)
             return NotFound(new { error = "Liga no encontrada" });
         return Ok(liga);
     }
 
     [HttpPost("ligas")]
-    public async Task<ActionResult<Liga>> CrearLiga([FromBody] Liga liga)
+    public async Task<ActionResult<LigaResponseDto>> CrearLiga([FromBody] LigaRequestDto dto)
     {
-        _context.Ligas.Add(liga);
-        await _context.SaveChangesAsync();
-        return Created($"api/admin/ligas/{liga.Id}", liga);
+        var creada = await _ligaService.CrearAsync(dto);
+        return Created($"api/admin/ligas/{creada.Id}", creada);
     }
 
     [HttpPut("ligas/{id}")]
-    public async Task<IActionResult> ActualizarLiga(int id, [FromBody] Liga liga)
+    public async Task<IActionResult> ActualizarLiga(int id, [FromBody] LigaRequestDto dto)
     {
-        var lig = await _context.Ligas.FindAsync(id);
-        if (lig == null)
+        var actualizada = await _ligaService.ActualizarAsync(id, dto);
+        if (actualizada == null)
             return NotFound(new { error = "Liga no encontrada" });
-
-        lig.Nombre = liga.Nombre;
-        lig.CompeticionId = liga.CompeticionId;
-        lig.Grupo = liga.Grupo;
-        lig.Jornadas = liga.Jornadas;
-        lig.JornadaActual = liga.JornadaActual;
-        lig.Estado = liga.Estado;
-
-        await _context.SaveChangesAsync();
-        return Ok(lig);
+        return Ok(actualizada);
     }
 
     [HttpDelete("ligas/{id}")]
     public async Task<IActionResult> EliminarLiga(int id)
     {
-        var lig = await _context.Ligas.FindAsync(id);
-        if (lig == null)
+        var eliminada = await _ligaService.EliminarAsync(id);
+        if (!eliminada)
             return NotFound(new { error = "Liga no encontrada" });
-
-        _context.Ligas.Remove(lig);
-        await _context.SaveChangesAsync();
         return NoContent();
     }
 
     // ─── Equipos ──────────────────────────────────────────────────────────────
-    
-    [HttpGet("equipos")]
-    public async Task<IActionResult> ObtenerEquipos()
-    {
-        var result = await _equipoService.ObtenerTodosAsync();
-        if (result.IsFailure)
-            return BadRequest(new { error = result.Error.Message });
-        return Ok(result.Value);
-    }
 
-    [HttpPost("equipos")]
-    public async Task<ActionResult<Equipo>> CrearEquipo([FromBody] Equipo equipo)
-    {
-        _context.Equipos.Add(equipo);
-        await _context.SaveChangesAsync();
-        return Created($"api/admin/equipos/{equipo.Id}", equipo);
-    }
-
-    [HttpPut("equipos/{id}")]
-    public async Task<IActionResult> ActualizarEquipo(int id, [FromBody] Equipo equipo)
-    {
-        var eq = await _context.Equipos.FindAsync(id);
-        if (eq == null)
-            return NotFound(new { error = "Equipo no encontrado" });
-
-        eq.Nombre = equipo.Nombre;
-        eq.Sede = equipo.Sede;
-        eq.Entrenador = equipo.Entrenador;
-        eq.EscudoUrl = equipo.EscudoUrl;
-
-        await _context.SaveChangesAsync();
-        return Ok(eq);
-    }
-
-    [HttpDelete("equipos/{id}")]
-    public async Task<IActionResult> EliminarEquipo(int id)
-    {
-        var eq = await _context.Equipos.FindAsync(id);
-        if (eq == null)
-            return NotFound(new { error = "Equipo no encontrado" });
-
-        _context.Equipos.Remove(eq);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-    
     [HttpGet("equipos/sin-liga")]
     public async Task<IActionResult> ObtenerEquiposSinLiga()
     {
@@ -189,98 +121,72 @@ public class AdminController : ControllerBase
     // ─── Árbitros ─────────────────────────────────────────────────────────────
 
     [HttpGet("arbitros")]
-    public async Task<ActionResult<List<Arbitro>>> ObtenerArbitros()
+    public async Task<ActionResult<IEnumerable<ArbitroResponseDto>>> ObtenerArbitros()
     {
-        var arbitros = await _context.Arbitros.ToListAsync();
-        return Ok(arbitros);
+        var result = await _arbitroService.ObtenerTodosAsync();
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error.Message });
+        return Ok(result.Value);
     }
 
     [HttpPost("arbitros")]
-    public async Task<ActionResult<Arbitro>> CrearArbitro([FromBody] Arbitro arbitro)
+    public async Task<ActionResult<ArbitroResponseDto>> CrearArbitro([FromBody] ArbitroRequestDto dto)
     {
-        _context.Arbitros.Add(arbitro);
-        await _context.SaveChangesAsync();
-        return Created($"api/admin/arbitros/{arbitro.Id}", arbitro);
+        var result = await _arbitroService.CrearAsync(dto);
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error.Message });
+        return Created($"api/admin/arbitros/{result.Value.Id}", result.Value);
     }
 
     [HttpPut("arbitros/{id}")]
-    public async Task<IActionResult> ActualizarArbitro(int id, [FromBody] Arbitro arbitro)
+    public async Task<IActionResult> ActualizarArbitro(int id, [FromBody] ArbitroRequestDto dto)
     {
-        var arb = await _context.Arbitros.FindAsync(id);
-        if (arb == null)
-            return NotFound(new { error = "Árbitro no encontrado" });
-
-        arb.Nombre = arbitro.Nombre;
-        arb.Apellidos = arbitro.Apellidos;
-
-        await _context.SaveChangesAsync();
-        return Ok(arb);
+        var result = await _arbitroService.ActualizarAsync(id, dto);
+        if (result.IsFailure)
+            return NotFound(new { error = result.Error.Message });
+        return Ok(result.Value);
     }
 
     [HttpDelete("arbitros/{id}")]
     public async Task<IActionResult> EliminarArbitro(int id)
     {
-        var arb = await _context.Arbitros.FindAsync(id);
-        if (arb == null)
-            return NotFound(new { error = "Árbitro no encontrado" });
-
-        _context.Arbitros.Remove(arb);
-        await _context.SaveChangesAsync();
+        var result = await _arbitroService.EliminarAsync(id);
+        if (result.IsFailure)
+            return NotFound(new { error = result.Error.Message });
         return NoContent();
     }
     
     // ─── Partidos ─────────────────────────────────────────────────────────────
 
     [HttpGet("partidos")]
-    public async Task<ActionResult<List<Partido>>> ObtenerPartidos()
+    public async Task<ActionResult<List<PartidoResponseDto>>> ObtenerPartidos()
     {
-        var partidos = await _context.Partidos
-            .Include(p => p.EquipoLocal)
-            .Include(p => p.EquipoVisitante)
-            .Include(p => p.Liga)
-            .Include(p => p.Arbitro)
-            .ToListAsync();
+        var partidos = await _partidoService.ObtenerTodosAsync();
         return Ok(partidos);
     }
 
     [HttpPost("partidos")]
-    public async Task<ActionResult<Partido>> CrearPartido([FromBody] Partido partido)
+    public async Task<ActionResult<PartidoResponseDto>> CrearPartido([FromBody] PartidoRequestDto dto)
     {
-        _context.Partidos.Add(partido);
-        await _context.SaveChangesAsync();
-        return Created($"api/admin/partidos/{partido.Id}", partido);
+        var creado = await _partidoService.CrearAsync(dto);
+        return Created($"api/admin/partidos/{creado.Id}", creado);
     }
 
     [HttpPut("partidos/{id}")]
-    public async Task<IActionResult> ActualizarPartido(int id, [FromBody] Partido partido)
+    public async Task<IActionResult> ActualizarPartido(int id, [FromBody] PartidoRequestDto dto)
     {
-        var p = await _context.Partidos.FindAsync(id);
-        if (p == null)
+        var actualizado = await _partidoService.ActualizarAsync(id, dto);
+        if (actualizado == null)
             return NotFound(new { error = "Partido no encontrado" });
-
-        p.Jornada = partido.Jornada;
-        p.LigaId = partido.LigaId;
-        p.EquipoLocalId = partido.EquipoLocalId;
-        p.EquipoVisitanteId = partido.EquipoVisitanteId;
-        p.GolesLocal = partido.GolesLocal;
-        p.GolesVisitante = partido.GolesVisitante;
-        p.Estado = partido.Estado;
-        p.FechaHora = partido.FechaHora;
-        p.ArbitroId = partido.ArbitroId;
-
-        await _context.SaveChangesAsync();
-        return Ok(p);
+        return Ok(actualizado);
     }
 
     [HttpDelete("partidos/{id}")]
     public async Task<IActionResult> EliminarPartido(int id)
     {
-        var p = await _context.Partidos.FindAsync(id);
-        if (p == null)
+        var eliminado = await _partidoService.EliminarAsync(id);
+        if (!eliminado)
             return NotFound(new { error = "Partido no encontrado" });
-
-        _context.Partidos.Remove(p);
-        await _context.SaveChangesAsync();
         return NoContent();
     }
     

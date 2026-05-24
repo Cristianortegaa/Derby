@@ -73,8 +73,8 @@ export class AdminGoleadoresComponent implements OnInit {
 
   aplicarFiltro(): void {
     this.goleadoresFiltrados = this.goleadores.filter(g =>
-      g.jugador?.nombre?.toLowerCase().includes(this.busquedaBuscador.toLowerCase()) ||
-      g.equipo?.nombre?.toLowerCase().includes(this.busquedaBuscador.toLowerCase())
+      g.nombre?.toLowerCase().includes(this.busquedaBuscador.toLowerCase()) ||
+      g.equipo?.toLowerCase().includes(this.busquedaBuscador.toLowerCase())
     );
   }
 }

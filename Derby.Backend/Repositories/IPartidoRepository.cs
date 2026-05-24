@@ -16,7 +16,9 @@ public interface IPartidoRepository
     
     Task EliminarPorLigaAsync(int ligaId);
     Task CrearRangoAsync(List<Partido> partidos);
+    Task<List<Partido>> ObtenerTodosAsync();
     Task<List<Partido>> ObtenerFinalizadosAsync();
     Task<Partido?> ActualizarGolesAsync(int id, int? golesLocal, int? golesVisitante);
+    Task<Partido?> FinalizarAsync(int partidoId, int golesLocal, int golesVisitante);
 }
 
