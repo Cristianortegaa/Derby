@@ -29,6 +29,7 @@ public class PartidoRepository : IPartidoRepository
             .Where(p => p.LigaId == ligaId)
             .Include(p => p.EquipoLocal)
             .Include(p => p.EquipoVisitante)
+            .Include(p => p.Arbitro)
             .OrderBy(p => p.FechaHora)
             .ToListAsync();
     }

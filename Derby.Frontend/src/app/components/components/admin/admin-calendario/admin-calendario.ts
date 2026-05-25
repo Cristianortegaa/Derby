@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../navbar/navbar.component';
 import { AdminService } from '../../../../services/admin.service';
-import { CompeticionesService, JornadaResponseDto } from '../../../../services/competiciones.service';
+import { CompeticionesService } from '../../../../services/competiciones.service';
+import { JornadaResponseDto } from '../../../../models/competicion.model';
 
 @Component({
   selector: 'app-admin-calendario',
@@ -18,6 +19,7 @@ export class AdminCalendarioComponent implements OnInit {
   jornadas: JornadaResponseDto[] = [];
   ligaSeleccionada: number = 0;
   cargando = false;
+  jornadaSeleccionada: number = 0;
   competicionIdFijado: number | null = null;
   ligaIdFijado: number | null = null;
 
@@ -71,6 +73,12 @@ export class AdminCalendarioComponent implements OnInit {
   }
 
   cambiarLiga(): void {
+    this.jornadaSeleccionada = 0;
     this.cargarCalendario();
+  }
+
+  get jornadasFiltradas() {
+    if (!this.jornadaSeleccionada) return this.jornadas;
+    return this.jornadas.filter(j => j.numero === this.jornadaSeleccionada);
   }
 }

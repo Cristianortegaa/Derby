@@ -1,27 +1,9 @@
-﻿﻿import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Usuario, LoginRequest, RegistroRequest } from '../models/auth.model';
 
-export interface Usuario {
-  id: number;
-  email: string;
-  rol: string;
-  token: string;
-  arbitroId?: number;
-  nombreArbitro?: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  contrasena: string;
-}
-
-export interface RegistroRequest {
-  email: string;
-  contrasena: string;
-  rol?: string;
-}
 
 @Injectable({
   providedIn: 'root'

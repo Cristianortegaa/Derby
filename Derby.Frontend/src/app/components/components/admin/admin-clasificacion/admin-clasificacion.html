@@ -33,14 +33,6 @@
       </div>
     </div>
 
-    <div class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6 mb-6">
-      <label class="block text-white text-sm font-semibold mb-3">Selecciona una liga:</label>
-      <select [(ngModel)]="ligaSeleccionada" (change)="cambiarLiga()" name="liga" class="px-4 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white focus:border-blue-400 outline-none">
-        <option [ngValue]="0">Seleccionar liga...</option>
-        <option *ngFor="let liga of ligas" [ngValue]="liga.id">{{ liga.nombre }}</option>
-      </select>
-    </div>
-
     <div class="bg-slate-900/80 border border-blue-500/20 rounded-xl p-6">
       <h2 class="text-lg font-bold text-red-400 mb-6"><i class="fas fa-chart-bar mr-2"></i>Tabla de Posiciones</h2>
 

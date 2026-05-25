@@ -18,8 +18,9 @@ public class AdminController : ControllerBase
     private readonly ICompeticionService _competicionService;
     private readonly IArbitroService _arbitroService;
     private readonly IPartidoService _partidoService;
+    private readonly IEquipoService _equipoService;
 
-    public AdminController(ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IPartidoRepository partidoRepository, ICompeticionService competicionService, IArbitroService arbitroService, IPartidoService partidoService)
+    public AdminController(ILogger<AdminController> logger, ILigaService ligaService, IJugadorService jugadorService, IPartidoRepository partidoRepository, ICompeticionService competicionService, IArbitroService arbitroService, IPartidoService partidoService, IEquipoService equipoService)
     {
         _logger = logger;
         _ligaService = ligaService;
@@ -28,6 +29,7 @@ public class AdminController : ControllerBase
         _competicionService = competicionService;
         _arbitroService = arbitroService;
         _partidoService = partidoService;
+        _equipoService = equipoService;
     }
 
     // ─── Competiciones ────────────────────────────────────────────────────────
@@ -110,6 +112,42 @@ public class AdminController : ControllerBase
     }
 
     // ─── Equipos ──────────────────────────────────────────────────────────────
+
+    [HttpGet("equipos")]
+    public async Task<ActionResult<IEnumerable<EquipoResponseDto>>> ObtenerEquipos()
+    {
+        var result = await _equipoService.ObtenerTodosAsync();
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error.Message });
+        return Ok(result.Value);
+    }
+
+    [HttpPost("equipos")]
+    public async Task<ActionResult<EquipoResponseDto>> CrearEquipo([FromBody] EquipoRequestDto dto)
+    {
+        var result = await _equipoService.CrearAsync(dto);
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error.Message });
+        return Created($"api/admin/equipos/{result.Value.Id}", result.Value);
+    }
+
+    [HttpPut("equipos/{id}")]
+    public async Task<IActionResult> ActualizarEquipo(int id, [FromBody] EquipoRequestDto dto)
+    {
+        var result = await _equipoService.ActualizarAsync(id, dto);
+        if (result.IsFailure)
+            return NotFound(new { error = result.Error.Message });
+        return Ok(result.Value);
+    }
+
+    [HttpDelete("equipos/{id}")]
+    public async Task<IActionResult> EliminarEquipo(int id)
+    {
+        var result = await _equipoService.EliminarAsync(id);
+        if (result.IsFailure)
+            return NotFound(new { error = result.Error.Message });
+        return NoContent();
+    }
 
     [HttpGet("equipos/sin-liga")]
     public async Task<IActionResult> ObtenerEquiposSinLiga()
