@@ -6,6 +6,9 @@ using Derby.Backend.Repositories;
 using CSharpFunctionalExtensions;
 using System.Security.Cryptography;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Derby.Backend.Services;
 
@@ -14,12 +17,14 @@ public class UsuarioService : IUsuarioService
     private readonly IUsuarioRepository _repository;
     private readonly IArbitroRepository _arbitroRepository;
     private readonly ILogger<UsuarioService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public UsuarioService(IUsuarioRepository repository, IArbitroRepository arbitroRepository, ILogger<UsuarioService> logger)
+    public UsuarioService(IUsuarioRepository repository, IArbitroRepository arbitroRepository, ILogger<UsuarioService> logger, IConfiguration configuration)
     {
         _repository = repository;
         _arbitroRepository = arbitroRepository;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<Result<UsuarioResponseDto, DerbyError>> RegistrarAsync(RegistroRequestDto dto)
@@ -59,7 +64,7 @@ public class UsuarioService : IUsuarioService
 
         _logger.LogInformation("Usuario registrado exitosamente: {Email}", dto.Email);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioCreado.ToDto(GenerarTokenSimple(usuarioCreado.Id)));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioCreado.ToDto(GenerarTokenJwt(usuarioCreado)));
     }
 
     public async Task<Result<UsuarioResponseDto, DerbyError>> LoginAsync(UsuarioRequestDto dto)
@@ -86,7 +91,7 @@ public class UsuarioService : IUsuarioService
 
         _logger.LogInformation("Login exitoso: {Email}", dto.Email);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenSimple(usuario.Id)));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenJwt(usuario)));
     }
 
     public async Task<Result<List<UsuarioResponseDto>, DerbyError>> ObtenerTodosAsync()
@@ -94,7 +99,7 @@ public class UsuarioService : IUsuarioService
         try
         {
             var usuarios = await _repository.ObtenerTodosAsync();
-            var usuariosDto = usuarios.Select(u => u.ToDto(GenerarTokenSimple(u.Id))).ToList();
+            var usuariosDto = usuarios.Select(u => u.ToDto(GenerarTokenJwt(u))).ToList();
             return Result.Success<List<UsuarioResponseDto>, DerbyError>(usuariosDto);
         }
         catch (Exception ex)
@@ -115,7 +120,7 @@ public class UsuarioService : IUsuarioService
                 new NotFoundError("Usuario no encontrado"));
         }
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenSimple(usuario.Id)));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuario.ToDto(GenerarTokenJwt(usuario)));
     }
 
     public async Task<Result<UsuarioResponseDto, DerbyError>> ActualizarAsync(int id, UsuarioRequestDto dto)
@@ -155,7 +160,7 @@ public class UsuarioService : IUsuarioService
         var usuarioActualizado = await _repository.ActualizarAsync(usuario);
         _logger.LogInformation("Usuario actualizado exitosamente: {Id}", id);
 
-        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioActualizado.ToDto(GenerarTokenSimple(usuarioActualizado.Id)));
+        return Result.Success<UsuarioResponseDto, DerbyError>(usuarioActualizado.ToDto(GenerarTokenJwt(usuarioActualizado)));
     }
 
     public async Task<Result<bool, DerbyError>> EliminarAsync(int id)
@@ -201,15 +206,27 @@ public class UsuarioService : IUsuarioService
         };
     }
 
-    private string GenerarTokenSimple(int usuarioId)
+    private string GenerarTokenJwt(Usuario usuario)
     {
-        // Token simple basado en ID y timestamp
-        var data = $"{usuarioId}-{DateTime.UtcNow.Ticks}";
-        using (var sha256 = SHA256.Create())
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
         {
-            var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(data));
-            return Convert.ToBase64String(hash);
-        }
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+            new Claim(ClaimTypes.Email, usuario.Email),
+            new Claim(ClaimTypes.Role, usuario.Rol.ToString())
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(8),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
 

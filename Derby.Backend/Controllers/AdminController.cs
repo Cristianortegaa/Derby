@@ -4,9 +4,11 @@ using Derby.Backend.Models;
 using Derby.Backend.Repositories;
 using Derby.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Derby.Backend.Controllers;
 
+[Authorize]
 [Route("api/admin")]
 [ApiController]
 public class AdminController : ControllerBase
@@ -34,6 +36,7 @@ public class AdminController : ControllerBase
 
     // ─── Competiciones ────────────────────────────────────────────────────────
 
+    [AllowAnonymous]
     [HttpGet("competiciones")]
     public async Task<ActionResult<List<CompeticionResponseDto>>> ObtenerCompeticiones()
     {
@@ -70,6 +73,7 @@ public class AdminController : ControllerBase
 
     // ─── Ligas ────────────────────────────────────────────────────────────────
 
+    [AllowAnonymous]
     [HttpGet("ligas")]
     public async Task<ActionResult<List<LigaResponseDto>>> ObtenerLigas()
     {
