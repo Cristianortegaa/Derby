@@ -10,12 +10,19 @@ public static class PartidoMapper
         return new PartidoResponseDto
         {
             Id = partido.Id,
-            Fecha = partido.FechaHora ?? DateTime.MinValue,
+            LigaId = partido.LigaId,
+            LigaNombre = partido.Liga?.Nombre,
+            Jornada = partido.Jornada,
+            FechaHora = partido.FechaHora,
             GolesLocal = partido.GolesLocal,
-            GolesVisitantes = partido.GolesVisitante,
+            GolesVisitante = partido.GolesVisitante,
             Estado = partido.Estado,
+            ArbitroId = partido.ArbitroId,
+            EquipoLocalId = partido.EquipoLocalId,
+            EquipoVisitanteId = partido.EquipoVisitanteId,
             EquipoLocal = partido.EquipoLocal?.ToDto(),
-            EquipoVisitante = partido.EquipoVisitante?.ToDto()
+            EquipoVisitante = partido.EquipoVisitante?.ToDto(),
+            ArbitroNombre = partido.Arbitro?.Nombre,
         };
     }
 

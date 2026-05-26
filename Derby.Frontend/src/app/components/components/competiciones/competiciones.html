@@ -24,75 +24,29 @@
         <i class="fas fa-filter mr-2"></i>Filtro de Búsquedas
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Temporada -->
-        <div>
-          <label class="block text-white text-sm font-semibold mb-2">
-            <span class="text-red-400">*</span> TEMPORADA
-          </label>
-          <select [(ngModel)]="filtros.temporada" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
-            <option value="">Seleccionar</option>
-            <option value="2025-2026">2025-2026</option>
-            <option value="2024-2025">2024-2025</option>
-            <option value="2023-2024">2023-2024</option>
-          </select>
-        </div>
-
-        <!-- Tipo de Juego -->
-        <div>
-          <label class="block text-white text-sm font-semibold mb-2">
-            <span class="text-red-400">*</span> TIPO DE JUEGO
-          </label>
-          <select [(ngModel)]="filtros.tipoJuego" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
-            <option value="">Seleccionar</option>
-            <option value="futbol11">Futbol-11</option>
-            <option value="futbol7">Futbol-7</option>
-            <option value="futsal">Futsal</option>
-          </select>
-        </div>
-
-        <!-- Competición -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-white text-sm font-semibold mb-2">
             <span class="text-red-400">*</span> COMPETICIÓN
           </label>
-          <select [(ngModel)]="filtros.competicion" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
-            <option value="">Seleccionar</option>
-            <option value="copa-rfef">Copa RFEF Fase Autonómica</option>
-            <option value="liga-nacional">Liga Nacional</option>
-            <option value="copa-aficionados">Copa de Aficionados</option>
-            <option value="primera-division">Primera División</option>
+          <select [(ngModel)]="competicionSeleccionada" (change)="cambiarCompeticion()"
+                  class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
+            <option [value]="0">Seleccionar competición</option>
+            <option *ngFor="let comp of competiciones" [value]="comp.id">{{ comp.nombre }}</option>
           </select>
         </div>
 
-        <!-- Grupo -->
         <div>
           <label class="block text-white text-sm font-semibold mb-2">
-            <span class="text-red-400">*</span> GRUPO
+            <span class="text-red-400">*</span> LIGA
           </label>
-          <select [(ngModel)]="filtros.grupo" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
-            <option value="">Seleccionar</option>
-            <option value="grupo-a">Grupo A</option>
-            <option value="grupo-b">Grupo B</option>
-            <option value="grupo-c">Grupo C</option>
+          <select [(ngModel)]="ligaSeleccionada" (change)="cambiarLiga()"
+                  [disabled]="!competicionSeleccionada"
+                  class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all disabled:opacity-50">
+            <option [value]="0">Seleccionar liga</option>
+            <option *ngFor="let liga of ligas" [value]="liga.id">{{ liga.nombre }}</option>
           </select>
         </div>
-      </div>
-
-      <!-- Botones -->
-      <div class="flex gap-3 mt-5">
-        <button
-          (click)="buscarCompeticiones()"
-          [disabled]="cargando"
-          class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:from-red-800 disabled:to-red-900 disabled:opacity-50 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
-          <i [class.fas]="!cargando" [class.fa-search]="!cargando" [class.fa-spinner]="cargando" [class.animate-spin]="cargando"></i>{{ cargando ? 'BUSCANDO...' : 'BUSCAR' }}
-        </button>
-        <button
-          (click)="limpiarFiltros()"
-          [disabled]="cargando"
-          class="flex items-center gap-2 px-6 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:opacity-50 text-white font-semibold rounded-lg transition-all border border-blue-500/40">
-          <i class="fas fa-redo"></i>LIMPIAR
-        </button>
       </div>
 
       <!-- Mensaje de error -->
@@ -154,7 +108,7 @@
         <!-- TAB: CALENDARIO -->
         <div *ngIf="tabActiva === 'calendario'">
           <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-400 mb-6">
-            <i class="fas fa-calendar mr-2"></i>{{ tituloCalendario }}
+            <i class="fas fa-calendar mr-2"></i>Calendario de Partidos
           </h2>
 
           <!-- Jornadas y Partidos -->
@@ -171,8 +125,8 @@
                   <!-- Equipo Local -->
                   <div class="flex items-center gap-3 flex-1">
                     <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-                      <img *ngIf="partido.equipoLocal.escudoUrl" [src]="partido.equipoLocal.escudoUrl" alt="" class="w-8 h-8">
-                      <i *ngIf="!partido.equipoLocal.escudoUrl" class="fas fa-football-ball text-red-400"></i>
+                      <img *ngIf="partido.equipoLocal.escudoUrl" [src]="partido.equipoLocal.escudoUrl" alt="" class="w-10 h-10 rounded-full object-contain">
+                      <i *ngIf="!partido.equipoLocal.escudoUrl" class="fas fa-futbol text-red-400"></i>
                     </div>
                     <div>
                       <p class="text-white text-sm font-semibold">{{ partido.equipoLocal.nombre }}</p>
@@ -183,7 +137,7 @@
                   <!-- Resultado -->
                   <div class="text-center px-4">
                     <div class="text-2xl font-bold text-yellow-400">
-                      {{ partido.resultado.local }} - {{ partido.resultado.visitante }}
+                      {{ partido.golesLocal }} - {{ partido.golesVisitante }}
                     </div>
                     <p class="text-slate-400 text-xs mt-1">
                       <span *ngIf="partido.estado === 'jugado'" class="text-green-400">FINAL</span>
@@ -199,13 +153,13 @@
                       <p class="text-slate-400 text-xs text-right">Visitante</p>
                     </div>
                     <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-                      <img *ngIf="partido.equipoVisitante.escudoUrl" [src]="partido.equipoVisitante.escudoUrl" alt="" class="w-8 h-8">
-                      <i *ngIf="!partido.equipoVisitante.escudoUrl" class="fas fa-football-ball text-blue-400"></i>
+                      <img *ngIf="partido.equipoVisitante.escudoUrl" [src]="partido.equipoVisitante.escudoUrl" alt="" class="w-10 h-10 rounded-full object-contain">
+                      <i *ngIf="!partido.equipoVisitante.escudoUrl" class="fas fa-futbol text-blue-400"></i>
                     </div>
                   </div>
 
                   <!-- Ver Acta -->
-                  <button class="ml-4 px-3 py-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-semibold rounded border border-red-500/40 transition-all">
+                  <button (click)="verActa(partido)" class="ml-4 px-3 py-1 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-semibold rounded border border-red-500/40 transition-all">
                     VER ACTA
                   </button>
                 </div>
@@ -215,7 +169,7 @@
             <!-- Si no hay resultados -->
             <div *ngIf="jornadas.length === 0" class="text-center py-12">
               <i class="fas fa-inbox text-slate-500 text-4xl mb-3 block"></i>
-              <p class="text-slate-400 text-lg">Selecciona los filtros y haz clic en BUSCAR para ver los partidos</p>
+              <p class="text-slate-400 text-lg">No hay partidos registrados en esta liga</p>
             </div>
           </div>
         </div>
@@ -246,13 +200,13 @@
                   <tr *ngFor="let equipo of clasificacion; let i = index" [class.bg-yellow-600/10]="i === 0" [class.bg-slate-800/20]="i > 0" class="hover:bg-slate-800/40 transition-colors">
                     <td class="py-3 px-3 font-bold" [ngClass]="{'text-yellow-400': i === 0, 'text-slate-300': i > 0}">{{ i + 1 }}</td>
                     <td class="py-3 px-3 font-semibold text-white">{{ equipo.nombre }}</td>
-                    <td class="text-center py-3 px-2 text-slate-300">{{ equipo.pj }}</td>
-                    <td class="text-center py-3 px-2 text-green-400 font-semibold">{{ equipo.g }}</td>
-                    <td class="text-center py-3 px-2 text-amber-400 font-semibold">{{ equipo.e }}</td>
-                    <td class="text-center py-3 px-2 text-red-400 font-semibold">{{ equipo.p }}</td>
-                    <td class="text-center py-3 px-2 text-blue-400">{{ equipo.gf }}</td>
-                    <td class="text-center py-3 px-2 text-orange-400">{{ equipo.gc }}</td>
-                    <td class="text-center py-3 px-2 font-bold text-cyan-400">{{ equipo.pts }}</td>
+                    <td class="text-center py-3 px-2 text-slate-300">{{ equipo.partidosJugados }}</td>
+                    <td class="text-center py-3 px-2 text-green-400 font-semibold">{{ equipo.ganancias }}</td>
+                    <td class="text-center py-3 px-2 text-amber-400 font-semibold">{{ equipo.empates }}</td>
+                    <td class="text-center py-3 px-2 text-red-400 font-semibold">{{ equipo.derrotas }}</td>
+                    <td class="text-center py-3 px-2 text-blue-400">{{ equipo.golesAFavor }}</td>
+                    <td class="text-center py-3 px-2 text-orange-400">{{ equipo.golesEnContra }}</td>
+                    <td class="text-center py-3 px-2 font-bold text-cyan-400">{{ equipo.puntos }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -277,7 +231,7 @@
               <!-- Equipo Local -->
               <div class="flex items-center gap-3 flex-1">
                 <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-                  <i class="fas fa-football-ball text-amber-400"></i>
+                  <i class="fas fa-futbol text-amber-400"></i>
                 </div>
                 <div>
                   <p class="text-white text-sm font-semibold">{{ resultado.equipoLocal }}</p>
@@ -300,7 +254,7 @@
                   <p class="text-slate-400 text-xs text-right">Visitante</p>
                 </div>
                 <div class="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-                  <i class="fas fa-football-ball text-amber-400"></i>
+                  <i class="fas fa-futbol text-amber-400"></i>
                 </div>
               </div>
             </div>
@@ -353,6 +307,77 @@
     </div>
 
   </main>
+</div>
+
+<!-- MODAL ACTA -->
+<div *ngIf="modalActaAbierto" class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="cerrarActa()">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="relative z-10 w-full max-w-lg bg-slate-900 rounded-2xl border border-blue-500/30 p-6 shadow-2xl max-h-[85vh] flex flex-col" (click)="$event.stopPropagation()">
+
+    <!-- Cabecera -->
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-lg font-bold text-white">Acta del Partido</h3>
+      <button (click)="cerrarActa()" class="text-gray-400 hover:text-white transition">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Equipos y resultado -->
+    <div class="flex items-center justify-between bg-slate-800/50 rounded-xl p-4 mb-4 border border-blue-500/20">
+      <div class="flex items-center gap-3 flex-1">
+        <div class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden">
+          <img *ngIf="partidoActa?.equipoLocal?.escudoUrl" [src]="partidoActa?.equipoLocal?.escudoUrl" class="w-10 h-10 rounded-full object-contain">
+          <i *ngIf="!partidoActa?.equipoLocal?.escudoUrl" class="fas fa-futbol text-red-400"></i>
+        </div>
+        <p class="text-white font-bold text-sm">{{ partidoActa?.equipoLocal?.nombre }}</p>
+      </div>
+      <div class="text-center px-4">
+        <p class="text-2xl font-black text-yellow-400">{{ partidoActa?.golesLocal ?? '-' }} - {{ partidoActa?.golesVisitante ?? '-' }}</p>
+        <p class="text-xs text-gray-400 mt-1">Jornada {{ partidoActa?.jornada }}</p>
+      </div>
+      <div class="flex items-center gap-3 flex-1 justify-end">
+        <p class="text-white font-bold text-sm text-right">{{ partidoActa?.equipoVisitante?.nombre }}</p>
+        <div class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden">
+          <img *ngIf="partidoActa?.equipoVisitante?.escudoUrl" [src]="partidoActa?.equipoVisitante?.escudoUrl" class="w-10 h-10 rounded-full object-contain">
+          <i *ngIf="!partidoActa?.equipoVisitante?.escudoUrl" class="fas fa-futbol text-blue-400"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Árbitro y fecha -->
+    <div class="flex gap-4 mb-4 text-xs text-gray-400">
+      <span><i class="fas fa-whistle mr-1 text-blue-400"></i>{{ partidoActa?.arbitroNombre || 'Sin árbitro asignado' }}</span>
+      <span><i class="fas fa-calendar mr-1 text-blue-400"></i>{{ (partidoActa?.fechaHora | date:'dd/MM/yyyy HH:mm') || 'Sin fecha' }}</span>
+    </div>
+
+    <!-- Eventos -->
+    <div class="overflow-y-auto flex-1">
+      <div *ngIf="cargandoActa" class="text-center py-8">
+        <i class="fas fa-spinner animate-spin text-blue-400 text-2xl"></i>
+      </div>
+
+      <div *ngIf="!cargandoActa">
+        <div *ngIf="eventosActa.length === 0" class="text-center py-8 text-gray-400">
+          <i class="fas fa-clipboard text-3xl mb-2 block"></i>
+          No hay eventos registrados en este partido
+        </div>
+
+        <div *ngIf="eventosActa.length > 0">
+          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Eventos</h4>
+          <div class="space-y-2">
+            <div *ngFor="let evento of eventosActa" class="flex items-center gap-3 bg-slate-800/40 rounded-lg px-3 py-2">
+              <span class="text-blue-400 font-bold text-sm w-10 text-right">{{ evento.minuto }}'</span>
+              <span *ngIf="evento.tipoEvento === 'Gol'" class="text-white"><i class="fas fa-futbol text-yellow-400 mr-1"></i></span>
+              <span *ngIf="evento.tipoEvento === 'TarjetaAmarilla'" class="text-white"><i class="fas fa-square text-yellow-400 mr-1"></i></span>
+              <span *ngIf="evento.tipoEvento === 'TarjetaRoja'" class="text-white"><i class="fas fa-square text-red-500 mr-1"></i></span>
+              <span class="text-white text-sm">{{ evento.nombreJugador }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <style>

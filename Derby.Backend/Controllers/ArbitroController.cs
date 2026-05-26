@@ -4,9 +4,11 @@ using Derby.Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Derby.Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Derby.Backend.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class ArbitroController : ControllerBase

@@ -12,7 +12,7 @@
     <h1 class="text-3xl md:text-4xl font-black mb-2 text-white mt-2">
       Clubes
     </h1>
-    <p class="text-gray-500 text-sm md:text-base font-medium">Todos los equipos que forman parte de la comunidad Derby 2026</p>
+    <p class="text-gray-500 text-sm md:text-base font-medium">Todos los equipos que forman parte de la comunidad Derby</p>
     <div class="h-1 w-16 bg-gradient-to-r from-red-400 to-blue-400 mt-3 rounded-full"></div>
   </div>
 
@@ -34,16 +34,14 @@
                  class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all placeholder:text-slate-500">
         </div>
 
-        <!-- División -->
+        <!-- Liga -->
         <div>
           <label class="block text-white text-sm font-semibold mb-2">
-            <span class="text-red-400">*</span> DIVISIÓN
+            <span class="text-red-400">*</span> LIGA
           </label>
-          <select [(ngModel)]="divisionSeleccionada" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
-            <option value="">Todas las divisiones</option>
-            <option value="1">1ª División</option>
-            <option value="2">2ª División</option>
-            <option value="fem">Liga Femenina</option>
+          <select [(ngModel)]="filtroLiga" class="w-full px-3 py-2 bg-slate-950/70 border border-blue-500/40 rounded-lg text-white text-sm focus:border-blue-400 focus:outline-none transition-all">
+            <option value="">Todas las ligas</option>
+            <option *ngFor="let liga of ligas" [value]="liga">{{ liga }}</option>
           </select>
         </div>
       </div>
@@ -51,53 +49,102 @@
 
     <!-- GRID DE CLUBES -->
     <div class="bg-slate-900/80 backdrop-blur-md border border-blue-500/40 rounded-xl p-5 shadow-lg">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        @for (club of clubesFiltrados; track club.id) {
+      <div *ngIf="cargando" class="text-center py-20">
+        <i class="fas fa-spinner animate-spin text-3xl text-blue-400 mb-3 block"></i>
+        <p class="text-gray-400">Cargando equipos...</p>
+      </div>
 
+      <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <ng-container *ngFor="let club of clubesFiltrados">
           <div class="group bg-slate-800/50 border border-blue-500/30 rounded-lg overflow-hidden hover:border-blue-400/60 transition-all hover:shadow-lg hover:shadow-blue-500/20">
             <div class="p-6">
               <div class="flex items-center gap-4 mb-4">
-                <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-blue-600 rounded-lg flex items-center justify-center border border-blue-400/50 group-hover:border-blue-300">
-                  <i class="fas fa-shield-halved text-2xl text-white"></i>
+                <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-blue-600 rounded-lg flex items-center justify-center border border-blue-400/50 group-hover:border-blue-300 overflow-hidden">
+                  <img *ngIf="club.escudoUrl" [src]="club.escudoUrl" alt="Escudo" class="w-full h-full object-cover">
+                  <i *ngIf="!club.escudoUrl" class="fas fa-shield-halved text-2xl text-white"></i>
                 </div>
 
                 <div class="flex-1">
                   <h3 class="text-lg font-bold text-white">{{ club.nombre }}</h3>
                   <p class="text-xs text-gray-400 mt-1">
-                    <i class="fas fa-location-dot text-red-400 mr-1"></i>{{ club.sede }}
+                    <i class="fas fa-location-dot text-red-400 mr-1"></i>{{ club.sede || 'Sin sede' }}
                   </p>
                 </div>
               </div>
 
               <div class="mb-4 pt-4 border-t border-blue-500/20">
                 <span class="inline-block text-[11px] font-black text-blue-400 uppercase tracking-widest bg-blue-500/10 px-3 py-1 rounded-md border border-blue-500/40">
-                  @if (club.division === '1') { 1ª División }
-                  @else if (club.division === '2') { 2ª División }
-                  @else if (club.division === 'fem') { Liga Femenina }
-                  @else { Division }
+                  {{ club.ligaNombre || 'Sin liga' }}
                 </span>
               </div>
 
-              <button class="w-full py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold rounded-lg transition-all uppercase tracking-widest">
+              <button (click)="verPlantilla(club)" class="w-full py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-bold rounded-lg transition-all uppercase tracking-widest">
                 <i class="fas fa-users mr-2"></i>Ver Plantilla
               </button>
             </div>
           </div>
+        </ng-container>
 
-        } @empty {
-
-          <div class="col-span-full py-20 text-center">
-            <div class="w-20 h-20 mx-auto bg-slate-800/80 rounded-full flex items-center justify-center mb-4 border border-blue-500/40">
-              <i class="fas fa-search text-3xl text-blue-400"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2">Ningún equipo encontrado</h3>
-            <p class="text-gray-400">Prueba a usar otro nombre o cambiar el filtro de división.</p>
+        <div *ngIf="clubesFiltrados.length === 0" class="col-span-full py-20 text-center">
+          <div class="w-20 h-20 mx-auto bg-slate-800/80 rounded-full flex items-center justify-center mb-4 border border-blue-500/40">
+            <i class="fas fa-search text-3xl text-blue-400"></i>
           </div>
-
-        }
+          <h3 class="text-xl font-bold text-white mb-2">Ningún equipo encontrado</h3>
+          <p class="text-gray-400">Prueba a usar otro nombre o cambiar el filtro de liga.</p>
+        </div>
 
       </div>
     </div>
   </main>
+</div>
+
+<div *ngIf="modalAbierto" class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="cerrarModal()">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  <div class="relative z-10 w-full max-w-lg bg-slate-900 rounded-2xl border border-blue-500/30 p-6 shadow-2xl max-h-[80vh] flex flex-col" (click)="$event.stopPropagation()">
+
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-blue-600 rounded-lg flex items-center justify-center overflow-hidden">
+          <img *ngIf="equipoSeleccionado?.escudoUrl" [src]="equipoSeleccionado?.escudoUrl" class="w-full h-full object-cover">
+          <i *ngIf="!equipoSeleccionado?.escudoUrl" class="fas fa-shield-halved text-white"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white">{{ equipoSeleccionado?.nombre }}</h3>
+          <p class="text-xs text-gray-400">{{ equipoSeleccionado?.ligaNombre || 'Sin liga' }}</p>
+          <p class="text-xs text-gray-400"><i class="fas fa-user-tie mr-1"></i>{{ equipoSeleccionado?.entrenador || 'Sin entrenador' }}</p>
+        </div>
+      </div>
+      <button (click)="cerrarModal()" class="text-gray-400 hover:text-white transition">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <div *ngIf="cargandoJugadores" class="text-center py-8">
+      <i class="fas fa-spinner animate-spin text-blue-400 text-2xl"></i>
+    </div>
+
+    <div *ngIf="!cargandoJugadores" class="overflow-y-auto flex-1">
+      <div *ngIf="jugadores.length === 0" class="text-center py-8 text-gray-400">
+        <i class="fas fa-users text-3xl mb-2 block"></i>
+        No hay jugadores registrados
+      </div>
+      <table *ngIf="jugadores.length > 0" class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-gray-400 text-left">
+            <th class="py-2 px-3">Dorsal</th>
+            <th class="py-2 px-3">Nombre</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-700/50">
+          <tr *ngFor="let jugador of jugadores" class="hover:bg-slate-800/50">
+            <td class="py-2 px-3 font-bold text-blue-400">{{ jugador.dorsal }}</td>
+            <td class="py-2 px-3 text-white">{{ jugador.nombre }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
