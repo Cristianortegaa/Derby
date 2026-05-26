@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Derby.Backend/Derby.Backend.csproj" />
+  <Project Path="Derby.Tests/Derby.Tests.csproj" />
 </Solution>
