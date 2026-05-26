@@ -31,7 +31,7 @@ public class PartidoMapperTests
 
         // ==================== ASSERT ====================
         Assert.Equal(3, dto.GolesLocal);
-        Assert.Equal(0, dto.GolesVisitantes);
+        Assert.Equal(0, dto.GolesVisitante);
     }
 
     [Fact]
