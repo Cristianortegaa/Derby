@@ -9,7 +9,7 @@ import { Usuario, LoginRequest, RegistroRequest } from '../models/auth.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5101/api/usuarios';
+  private apiUrl = 'https://derby-production.up.railway.app/api/usuarios';
   private usuarioActual = new BehaviorSubject<Usuario | null>(null);
   public usuarioActual$ = this.usuarioActual.asObservable();
 

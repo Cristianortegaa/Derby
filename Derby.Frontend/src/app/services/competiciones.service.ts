@@ -15,7 +15,7 @@ import {
   providedIn: 'root'
 })
 export class CompeticionesService {
-  private apiUrl = 'http://localhost:5101/api/competiciones';
+  private apiUrl = 'https://derby-production.up.railway.app/api/competiciones';
 
   constructor(private http: HttpClient) {}
 

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ArbitroService {
-  private apiUrl = 'http://localhost:5101/api';
+  private apiUrl = 'https://derby-production.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 

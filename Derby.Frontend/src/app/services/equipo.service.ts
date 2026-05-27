@@ -8,7 +8,7 @@ import { Equipo } from '../models/equipo.model';
   providedIn: 'root'
 })
 export class EquipoService {
-  private apiUrl = 'http://localhost:5101/api/equipos';
+  private apiUrl = 'https://derby-production.up.railway.app/api/equipos';
 
   constructor(private http: HttpClient) { }
 
