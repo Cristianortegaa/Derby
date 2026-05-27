@@ -267,6 +267,11 @@ public class DataSeeder
                     new() { LigaId = ligaId, Jornada = 3, FechaHora = hoy.AddDays(-7),
                             EquipoLocalId = e[5].Id, EquipoVisitanteId = e[7].Id,
                             GolesLocal = 0, GolesVisitante = 0, Estado = "Finalizado", ArbitroId = arbitro4 },
+
+                    // Jornada 4 — partido pendiente para tests E2E
+                    new() { LigaId = ligaId, Jornada = 4, FechaHora = hoy.AddDays(7),
+                            EquipoLocalId = e[0].Id, EquipoVisitanteId = e[1].Id,
+                            Estado = "Programado", ArbitroId = arbitro1 },
                 };
 
                 await context.Partidos.AddRangeAsync(partidos);
