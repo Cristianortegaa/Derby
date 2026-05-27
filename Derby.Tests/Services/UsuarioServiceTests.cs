@@ -5,6 +5,7 @@ using Derby.Backend.Errors;
 using Derby.Backend.Models;
 using Derby.Backend.Repositories;
 using Derby.Backend.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -16,11 +17,16 @@ public class UsuarioServiceTests
     private readonly Mock<IUsuarioRepository>      _mockUsuarioRepo = new();
     private readonly Mock<IArbitroRepository>      _mockArbitroRepo = new();
     private readonly Mock<ILogger<UsuarioService>> _mockLogger      = new();
+    private readonly Mock<IConfiguration>          _mockConfig      = new();
     private readonly UsuarioService                _servicio;
 
     public UsuarioServiceTests()
     {
-        _servicio = new UsuarioService(_mockUsuarioRepo.Object, _mockArbitroRepo.Object, _mockLogger.Object);
+        _mockConfig.Setup(c => c["Jwt:Key"]).Returns("derby-clave-secreta-super-larga-2026-tfg-cristian");
+        _mockConfig.Setup(c => c["Jwt:Issuer"]).Returns("derby-backend");
+        _mockConfig.Setup(c => c["Jwt:Audience"]).Returns("derby-frontend");
+
+        _servicio = new UsuarioService(_mockUsuarioRepo.Object, _mockArbitroRepo.Object, _mockLogger.Object, _mockConfig.Object);
     }
 
     // Helper: genera el mismo hash SHA256 que usa el servicio
@@ -288,6 +294,69 @@ public class UsuarioServiceTests
         // ==================== ASSERT ====================
         Assert.True(resultado.IsFailure);
         Assert.IsType<NotFoundError>(resultado.Error);
+    }
+
+    // =========================================================================
+    // Actualizar
+    // =========================================================================
+
+    [Fact]
+    public async Task ActualizarAsync_CuandoElUsuarioExisteYLosDatosSonValidos_DeberiaActualizarYRetornar()
+    {
+        // ==================== ARRANGE ====================
+        int idTest = 1;
+        var usuarioEnBD = new Usuario { Id = idTest, Email = "original@derby.com", Rol = Rol.Aficionado, Contraseña = HashPassword("pass") };
+        var usuarioActualizado = new Usuario { Id = idTest, Email = "nuevo@derby.com", Rol = Rol.Aficionado, Contraseña = HashPassword("pass") };
+        var dto = new UsuarioRequestDto { Email = "nuevo@derby.com", Contrasena = "", Rol = "aficionado" };
+
+        _mockUsuarioRepo.Setup(r => r.ObtenerPorIdAsync(idTest)).ReturnsAsync(usuarioEnBD);
+        _mockUsuarioRepo.Setup(r => r.EmailExisteAsync("nuevo@derby.com")).ReturnsAsync(false);
+        _mockUsuarioRepo.Setup(r => r.ActualizarAsync(It.IsAny<Usuario>())).ReturnsAsync(usuarioActualizado);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ActualizarAsync(idTest, dto);
+
+        // ==================== ASSERT ====================
+        Assert.True(resultado.IsSuccess);
+        Assert.Equal("nuevo@derby.com", resultado.Value.Email);
+        _mockUsuarioRepo.Verify(r => r.ActualizarAsync(It.IsAny<Usuario>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ActualizarAsync_CuandoElUsuarioNoExiste_DeberiaRetornarNotFoundError()
+    {
+        // ==================== ARRANGE ====================
+        int idInexistente = 99;
+        _mockUsuarioRepo.Setup(r => r.ObtenerPorIdAsync(idInexistente)).ReturnsAsync((Usuario?)null);
+        var dto = new UsuarioRequestDto { Email = "x@derby.com", Contrasena = "", Rol = "aficionado" };
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ActualizarAsync(idInexistente, dto);
+
+        // ==================== ASSERT ====================
+        Assert.True(resultado.IsFailure);
+        Assert.IsType<NotFoundError>(resultado.Error);
+        _mockUsuarioRepo.Verify(r => r.ActualizarAsync(It.IsAny<Usuario>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ActualizarAsync_CuandoElEmailNuevoYaEstaEnUso_DeberiaRetornarBadRequestError()
+    {
+        // ==================== ARRANGE ====================
+        int idTest = 1;
+        var usuarioEnBD = new Usuario { Id = idTest, Email = "original@derby.com", Rol = Rol.Aficionado, Contraseña = "" };
+        var dto = new UsuarioRequestDto { Email = "duplicado@derby.com", Contrasena = "", Rol = "aficionado" };
+
+        _mockUsuarioRepo.Setup(r => r.ObtenerPorIdAsync(idTest)).ReturnsAsync(usuarioEnBD);
+        _mockUsuarioRepo.Setup(r => r.EmailExisteAsync("duplicado@derby.com")).ReturnsAsync(true);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ActualizarAsync(idTest, dto);
+
+        // ==================== ASSERT ====================
+        Assert.True(resultado.IsFailure);
+        Assert.IsType<BadRequestError>(resultado.Error);
+        _mockUsuarioRepo.Verify(r => r.ActualizarAsync(It.IsAny<Usuario>()), Times.Never);
     }
 
     // =========================================================================

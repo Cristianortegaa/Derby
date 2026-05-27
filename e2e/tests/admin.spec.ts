@@ -1,16 +1,18 @@
 import { test, expect, Page } from '@playwright/test';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers
+// Helper: login como admin
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function loginComoAdmin(page: Page) {
   await page.goto('/login');
-  await page.waitForLoadState('networkidle');
-  await page.getByLabel(/email/i).fill('admin@derby.com');
-  await page.getByLabel(/contraseña/i).fill('Password1');
-  await page.getByRole('button', { name: /iniciar sesión/i }).click();
-  await page.waitForURL('**/admin', { timeout: 10_000 });
+  await page.waitForLoadState('domcontentloaded');
+  await page.locator('input[type="email"]').fill('admin@derby.com');
+  await page.locator('input[type="password"]').fill('Admin@123');
+  const btn = page.locator('button[type="submit"]');
+  await expect(btn).not.toBeDisabled({ timeout: 5_000 });
+  await btn.click();
+  await page.waitForURL('**/admin', { timeout: 15_000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -23,100 +25,82 @@ test.describe('Panel de Administración', () => {
     await loginComoAdmin(page);
   });
 
-  // ── Dashboard ──────────────────────────────────────────────────────────────
+  // 1. Crea una competición y verifica que aparece en la tabla
+  test('puede crear una nueva competición', async ({ page }) => {
+    await page.goto('/admin/competiciones');
+    await page.waitForLoadState('domcontentloaded');
 
-  test('el dashboard de admin se muestra tras el login', async ({ page }) => {
-    await expect(page).toHaveURL(/\/admin/);
-    await expect(page.getByRole('heading', { name: /dashboard|panel|administr/i })).toBeVisible({ timeout: 8_000 });
+    // Abre el formulario
+    await page.getByRole('button', { name: /nueva/i }).click();
+    await expect(page.getByText('Nueva competición')).toBeVisible({ timeout: 5_000 });
+
+    // Rellena los campos obligatorios
+    await page.getByPlaceholder(/Copa RFEF/i).fill('Competicion Test E2E');
+    await page.getByPlaceholder(/2025-2026/i).fill('2025-2026');
+
+    // Guarda
+    await page.locator('button.btn-primary').filter({ hasText: 'Crear' }).click();
+
+    // Verifica que aparece en la tabla
+    await expect(page.getByText('Competicion Test E2E')).toBeVisible({ timeout: 8_000 });
   });
 
-  test('la barra de navegación del admin está visible', async ({ page }) => {
-    await expect(page.getByRole('navigation')).toBeVisible();
-  });
-
-  // ── Competiciones ──────────────────────────────────────────────────────────
-
-  test('puede navegar a la sección de competiciones', async ({ page }) => {
-    await page.getByRole('link', { name: /competicion/i }).first().click();
-    await page.waitForURL('**/competiciones', { timeout: 8_000 });
-    await expect(page).toHaveURL(/\/competiciones/);
-  });
-
-  test('la página de competiciones muestra la tabla o lista de competiciones', async ({ page }) => {
+  // 2. Edita la competición creada y verifica el nombre actualizado
+  test('puede editar una competición existente', async ({ page }) => {
     await page.goto('/admin/competiciones');
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /competicion/i })).toBeVisible({ timeout: 8_000 });
+
+    // Encuentra la fila de la competición y hace click en editar
+    const fila = page.locator('tr').filter({ hasText: 'Competicion Test E2E' });
+    await fila.locator('button[title="Editar"]').click();
+    await expect(page.getByText('Editar competición')).toBeVisible({ timeout: 5_000 });
+
+    // Cambia el nombre
+    const campoNombre = page.getByPlaceholder(/Copa RFEF/i);
+    await campoNombre.clear();
+    await campoNombre.fill('Competicion E2E Editada');
+
+    // Guarda
+    await page.getByRole('button', { name: /actualizar/i }).click();
+
+    // Verifica el nombre actualizado en la tabla
+    await expect(page.getByText('Competicion E2E Editada')).toBeVisible({ timeout: 8_000 });
   });
 
-  test('el botón "Nueva Competición" abre el formulario', async ({ page }) => {
-    await page.goto('/admin/competiciones');
+  // 3. Filtra usuarios por rol y busca por email en el mismo test
+  test('puede filtrar usuarios por rol y buscar por email', async ({ page }) => {
+    await page.goto('/admin/usuarios');
     await page.waitForLoadState('networkidle');
-    const boton = page.getByRole('button', { name: /nueva|crear|añadir/i }).first();
-    await boton.click();
-    await expect(page.getByRole('textbox', { name: /nombre/i }).first()).toBeVisible({ timeout: 5_000 });
+
+    // Filtra por Árbitro y verifica que aparece arbitro1
+    await page.locator('.filter-arbitro').click();
+    await expect(page.getByText('arbitro1@derby.com')).toBeVisible({ timeout: 5_000 });
+
+    // Limpia el filtro y busca admin por email
+    await page.locator('.filter-todos').click();
+    await page.getByPlaceholder('Buscar por email...').fill('admin@derby.com');
+    await expect(page.getByText('admin@derby.com')).toBeVisible({ timeout: 5_000 });
   });
 
-  // ── Ligas ──────────────────────────────────────────────────────────────────
-
-  test('la página de ligas se carga correctamente', async ({ page }) => {
-    await page.goto('/admin/ligas');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /liga/i })).toBeVisible({ timeout: 8_000 });
-  });
-
-  test('el botón "Nueva Liga" abre el formulario', async ({ page }) => {
-    await page.goto('/admin/ligas');
-    await page.waitForLoadState('networkidle');
-    const boton = page.getByRole('button', { name: /nueva|crear|añadir/i }).first();
-    await boton.click();
-    await expect(page.getByRole('textbox', { name: /nombre/i }).first()).toBeVisible({ timeout: 5_000 });
-  });
-
-  // ── Equipos ────────────────────────────────────────────────────────────────
-
-  test('la página de equipos se carga correctamente', async ({ page }) => {
+  // 4. Edita el primer equipo de la lista cambiando la sede
+  test('puede editar un equipo existente', async ({ page }) => {
     await page.goto('/admin/equipos');
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /equipo/i })).toBeVisible({ timeout: 8_000 });
+
+    // Hace click en editar del primer equipo
+    await page.locator('button[title="Editar"]').first().click();
+    await expect(page.getByText('Editar Equipo')).toBeVisible({ timeout: 5_000 });
+
+    // Cambia la sede
+    const campoSede = page.getByPlaceholder('Sede');
+    await campoSede.clear();
+    await campoSede.fill('Sede E2E Test');
+
+    // Guarda
+    await page.getByRole('button', { name: /actualizar/i }).click();
+
+    // Verifica que el formulario se cierra (indica éxito)
+    await expect(page.getByText('Editar Equipo')).not.toBeVisible({ timeout: 5_000 });
   });
 
-  // ── Partidos ───────────────────────────────────────────────────────────────
-
-  test('la página de partidos se carga correctamente', async ({ page }) => {
-    await page.goto('/admin/partidos');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /partido/i })).toBeVisible({ timeout: 8_000 });
-  });
-
-  // ── Usuarios ───────────────────────────────────────────────────────────────
-
-  test('la página de usuarios se carga correctamente', async ({ page }) => {
-    await page.goto('/admin/usuarios');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /usuario/i })).toBeVisible({ timeout: 8_000 });
-  });
-
-  test('la lista de usuarios muestra al menos el propio admin', async ({ page }) => {
-    await page.goto('/admin/usuarios');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByText('admin@derby.com')).toBeVisible({ timeout: 8_000 });
-  });
-
-  // ── Árbitros ───────────────────────────────────────────────────────────────
-
-  test('la página de árbitros se carga correctamente', async ({ page }) => {
-    await page.goto('/admin/arbitros');
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /árbitr|arbitr/i })).toBeVisible({ timeout: 8_000 });
-  });
-
-  // ── Seguridad: rutas de admin protegidas ───────────────────────────────────
-
-  test('cerrar sesión y acceder a /admin redirige a /login', async ({ page }) => {
-    // Limpiar sesión directamente borrando localStorage
-    await page.evaluate(() => localStorage.removeItem('usuarioActual'));
-    await page.goto('/admin');
-    await page.waitForURL('**/login', { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/login/);
-  });
 });

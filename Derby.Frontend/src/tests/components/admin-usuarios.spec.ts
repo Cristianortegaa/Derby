@@ -1,32 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminUsuarios } from '../../app/components/components/admin/admin-usuarios/admin-usuarios';
-import { AdminService } from '../../app/services/admin.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { provideRouter } from '@angular/router';
+import { vi } from 'vitest';
 
 describe('AdminUsuarios', () => {
   let component: AdminUsuarios;
   let fixture: ComponentFixture<AdminUsuarios>;
-  let adminService: AdminService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, FormsModule, CommonModule, AdminUsuarios]
+      imports: [HttpClientTestingModule, FormsModule, CommonModule, AdminUsuarios],
+      providers: [provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminUsuarios);
     component = fixture.componentInstance;
-    adminService = TestBed.inject(AdminService);
     fixture.detectChanges();
   });
 
   it('debería crearse', () => expect(component).toBeTruthy());
 
   it('debería cargar usuarios al inicializar', () => {
-    spyOn(component, 'cargarUsuarios');
+    const spy = vi.spyOn(component, 'cargarUsuarios');
     component.ngOnInit();
-    expect(component.cargarUsuarios).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 
   it('debería mostrar formulario al hacer clic en Agregar Usuario', () => {
@@ -57,7 +57,7 @@ describe('AdminUsuarios', () => {
       { id: 2, email: 'arbitro@derby.com', rol: 'Arbitro' },
       { id: 3, email: 'fan@derby.com', rol: 'Aficionado' }
     ];
-    component.cambiarFiltro('Admin');
+    component.cambiarFiltro('Administrador');
     expect(component.usuariosFiltrados.length).toBe(1);
     expect(component.usuariosFiltrados[0].rol).toBe('Administrador');
   });
@@ -78,7 +78,7 @@ describe('AdminUsuarios', () => {
   });
 
   it('debería resetear formulario después de crear usuario', () => {
-    component.formulario = { email: 'test@test.com', contrasena: 'pwd', rol: 'Aficionado' };
+    component.formulario = { email: 'test@test.com', contrasena: 'pwd', rol: 'Aficionado', nombre: 'Ana', apellidos: 'Ruiz' };
     component.resetFormulario();
     expect(component.formulario.email).toBe('');
     expect(component.formulario.contrasena).toBe('');
@@ -111,13 +111,12 @@ describe('AdminUsuarios', () => {
     expect(component.notificacion.tipo).toBe('error');
   });
 
-  it('debería ocultarse después de 3 segundos', (done) => {
+  it('debería ocultarse después de 3 segundos', async () => {
+    vi.useFakeTimers();
     component.mostrarAlerta('Test', 'exito');
     expect(component.notificacion.mostrar).toBe(true);
-    setTimeout(() => {
-      expect(component.notificacion.mostrar).toBe(false);
-      done();
-    }, 3100);
+    vi.advanceTimersByTime(3100);
+    expect(component.notificacion.mostrar).toBe(false);
+    vi.useRealTimers();
   });
 });
-

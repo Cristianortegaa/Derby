@@ -258,6 +258,149 @@ public class LigaServiceTests
         _mockLigaRepo.Verify(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>()), Times.Once);
     }
 
+     // =========================================================================
+     // GenerarCalendario — casos adicionales con múltiples equipos
+     // =========================================================================
+
+     [Fact]
+     public async Task GenerarCalendarioAsync_ConTresEquipos_DeberíaGenerarCalendario()
+     {
+         // ==================== ARRANGE ====================
+         int ligaId = 1;
+         var liga = new Liga { Id = ligaId, Nombre = "L", CompeticionId = 1, Jornadas = 0, JornadaActual = 0, Estado = "Activo", Grupo = "Único" };
+
+         _mockLigaRepo.Setup(r => r.ObtenerPorIdAsync(ligaId)).ReturnsAsync(liga);
+         _mockPartidoRepo.Setup(r => r.EliminarPorLigaAsync(ligaId)).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(new List<Equipo>
+         {
+             new() { Id = 1, Nombre = "A" },
+             new() { Id = 2, Nombre = "B" },
+             new() { Id = 3, Nombre = "C" }
+         });
+         _mockPartidoRepo.Setup(r => r.CrearRangoAsync(It.IsAny<List<Partido>>())).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>())).Returns(Task.CompletedTask);
+
+         // ==================== ACT ====================
+         var resultado = await _servicio.GenerarCalendarioAsync(ligaId);
+
+         // ==================== ASSERT ====================
+         Assert.NotNull(resultado);
+         _mockPartidoRepo.Verify(r => r.CrearRangoAsync(It.IsAny<List<Partido>>()), Times.Once);
+     }
+
+     [Fact]
+     public async Task GenerarCalendarioAsync_ConCuatroEquipos_DeberíaGenerarCalendario()
+     {
+         // ==================== ARRANGE ====================
+         int ligaId = 1;
+         var liga = new Liga { Id = ligaId, Nombre = "L", CompeticionId = 1, Jornadas = 0, JornadaActual = 0, Estado = "Activo", Grupo = "Único" };
+
+         _mockLigaRepo.Setup(r => r.ObtenerPorIdAsync(ligaId)).ReturnsAsync(liga);
+         _mockPartidoRepo.Setup(r => r.EliminarPorLigaAsync(ligaId)).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(new List<Equipo>
+         {
+             new() { Id = 1, Nombre = "A" },
+             new() { Id = 2, Nombre = "B" },
+             new() { Id = 3, Nombre = "C" },
+             new() { Id = 4, Nombre = "D" }
+         });
+         _mockPartidoRepo.Setup(r => r.CrearRangoAsync(It.IsAny<List<Partido>>())).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>())).Returns(Task.CompletedTask);
+
+         // ==================== ACT ====================
+         var resultado = await _servicio.GenerarCalendarioAsync(ligaId);
+
+         // ==================== ASSERT ====================
+         Assert.NotNull(resultado);
+         _mockPartidoRepo.Verify(r => r.CrearRangoAsync(It.IsAny<List<Partido>>()), Times.Once);
+     }
+
+     [Fact]
+     public async Task GenerarCalendarioAsync_ConSeisEquipos_DeberíaGenerarCalendario()
+     {
+         // ==================== ARRANGE ====================
+         int ligaId = 1;
+         var liga = new Liga { Id = ligaId, Nombre = "L", CompeticionId = 1, Jornadas = 0, JornadaActual = 0, Estado = "Activo", Grupo = "Único" };
+
+         _mockLigaRepo.Setup(r => r.ObtenerPorIdAsync(ligaId)).ReturnsAsync(liga);
+         _mockPartidoRepo.Setup(r => r.EliminarPorLigaAsync(ligaId)).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(new List<Equipo>
+         {
+             new() { Id = 1, Nombre = "A" },
+             new() { Id = 2, Nombre = "B" },
+             new() { Id = 3, Nombre = "C" },
+             new() { Id = 4, Nombre = "D" },
+             new() { Id = 5, Nombre = "E" },
+             new() { Id = 6, Nombre = "F" }
+         });
+         _mockPartidoRepo.Setup(r => r.CrearRangoAsync(It.IsAny<List<Partido>>())).Returns(Task.CompletedTask);
+         _mockLigaRepo.Setup(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>())).Returns(Task.CompletedTask);
+
+         // ==================== ACT ====================
+         var resultado = await _servicio.GenerarCalendarioAsync(ligaId);
+
+         // ==================== ASSERT ====================
+         Assert.NotNull(resultado);
+         _mockPartidoRepo.Verify(r => r.CrearRangoAsync(It.IsAny<List<Partido>>()), Times.Once);
+     }
+
+
+    [Fact]
+    public async Task GenerarCalendarioAsync_DeberiaRetornarObjetoConPropiedadesCorrecto()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1;
+        var liga = new Liga { Id = ligaId, Nombre = "L", CompeticionId = 1, Jornadas = 0, JornadaActual = 0, Estado = "Activo", Grupo = "Único" };
+
+        _mockLigaRepo.Setup(r => r.ObtenerPorIdAsync(ligaId)).ReturnsAsync(liga);
+        _mockPartidoRepo.Setup(r => r.EliminarPorLigaAsync(ligaId)).Returns(Task.CompletedTask);
+        _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(new List<Equipo>
+        {
+            new() { Id = 1, Nombre = "A" },
+            new() { Id = 2, Nombre = "B" }
+        });
+        _mockPartidoRepo.Setup(r => r.CrearRangoAsync(It.IsAny<List<Partido>>())).Returns(Task.CompletedTask);
+        _mockLigaRepo.Setup(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>())).Returns(Task.CompletedTask);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.GenerarCalendarioAsync(ligaId);
+
+        // ==================== ASSERT ====================
+        Assert.NotNull(resultado);
+        // Verificar que devuelve un objeto anónimo con las propiedades correctas
+        var resultType = resultado.GetType();
+        Assert.NotNull(resultType.GetProperty("mensaje"));
+        Assert.NotNull(resultType.GetProperty("jornadas"));
+        Assert.NotNull(resultType.GetProperty("totalPartidos"));
+    }
+
+    [Fact]
+    public async Task GenerarCalendarioAsync_DeberiaLlamarActualizarJornadasConValorCorrecto()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1;
+        var liga = new Liga { Id = ligaId, Nombre = "L", CompeticionId = 1, Jornadas = 0, JornadaActual = 0, Estado = "Activo", Grupo = "Único" };
+
+        _mockLigaRepo.Setup(r => r.ObtenerPorIdAsync(ligaId)).ReturnsAsync(liga);
+        _mockPartidoRepo.Setup(r => r.EliminarPorLigaAsync(ligaId)).Returns(Task.CompletedTask);
+        _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(new List<Equipo>
+        {
+            new() { Id = 1, Nombre = "A" },
+            new() { Id = 2, Nombre = "B" },
+            new() { Id = 3, Nombre = "C" },
+            new() { Id = 4, Nombre = "D" }
+        });
+        _mockPartidoRepo.Setup(r => r.CrearRangoAsync(It.IsAny<List<Partido>>())).Returns(Task.CompletedTask);
+        _mockLigaRepo.Setup(r => r.ActualizarJornadasAsync(ligaId, It.IsAny<int>())).Returns(Task.CompletedTask);
+
+        // ==================== ACT ====================
+        await _servicio.GenerarCalendarioAsync(ligaId);
+
+        // ==================== ASSERT ====================
+        // Con 4 equipos → (4-1)*2 = 6 jornadas
+        _mockLigaRepo.Verify(r => r.ActualizarJornadasAsync(ligaId, 6), Times.Once);
+    }
+
     // =========================================================================
     // ObtenerClasificacion
     // =========================================================================
@@ -312,5 +455,150 @@ public class LigaServiceTests
         Assert.Equal(3, goleadores.First().Goles);
         Assert.Equal("Leo", goleadores.First().Nombre);
         _mockEventoRepo.Verify(r => r.ObtenerGolesPorLigaAsync(1), Times.Once);
+    }
+
+    // =========================================================================
+    // ActualizarAsync
+    // =========================================================================
+
+    [Fact]
+    public async Task ActualizarAsync_CuandoLaLigaExiste_DeberiaRetornarElDto()
+    {
+        // ==================== ARRANGE ====================
+        int idTest = 1;
+        var dto = new LigaRequestDto { Nombre = "Primera DAW Actualizada", CompeticionId = 1, Grupo = "Único", Jornadas = 14, JornadaActual = 3, Estado = "Activo" };
+        var ligaActualizada = new Liga { Id = idTest, Nombre = "Primera DAW Actualizada", CompeticionId = 1, Grupo = "Único", Jornadas = 14, JornadaActual = 3, Estado = "Activo" };
+        _mockLigaRepo.Setup(r => r.ActualizarAsync(idTest, It.IsAny<Liga>())).ReturnsAsync(ligaActualizada);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ActualizarAsync(idTest, dto);
+
+        // ==================== ASSERT ====================
+        Assert.NotNull(resultado);
+        Assert.Equal("Primera DAW Actualizada", resultado!.Nombre);
+        _mockLigaRepo.Verify(r => r.ActualizarAsync(idTest, It.IsAny<Liga>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ActualizarAsync_CuandoLaLigaNoExiste_DeberiaRetornarNull()
+    {
+        // ==================== ARRANGE ====================
+        int idInexistente = 99;
+        var dto = new LigaRequestDto { Nombre = "X", CompeticionId = 1, Grupo = "Único", Jornadas = 10, JornadaActual = 0, Estado = "Activo" };
+        _mockLigaRepo.Setup(r => r.ActualizarAsync(idInexistente, It.IsAny<Liga>())).ReturnsAsync((Liga?)null);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ActualizarAsync(idInexistente, dto);
+
+        // ==================== ASSERT ====================
+        Assert.Null(resultado);
+    }
+
+    // =========================================================================
+    // ObtenerEquipos / ObtenerEquiposSinLiga / QuitarEquipo
+    // =========================================================================
+
+    [Fact]
+    public async Task ObtenerEquiposAsync_DeberiaRetornarLosEquiposDeLaLiga()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1;
+        var equipos = new List<Equipo>
+        {
+            new() { Id = 1, Nombre = "FC Derby Norte", Sede = "Estadio Norte", Entrenador = "Luis" },
+            new() { Id = 2, Nombre = "Atlético Sur CF", Sede = "Estadio Sur",  Entrenador = "Pedro" }
+        };
+        _mockLigaRepo.Setup(r => r.ObtenerEquiposAsync(ligaId)).ReturnsAsync(equipos);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ObtenerEquiposAsync(ligaId);
+
+        // ==================== ASSERT ====================
+        Assert.Equal(2, resultado.Count);
+        _mockLigaRepo.Verify(r => r.ObtenerEquiposAsync(ligaId), Times.Once);
+    }
+
+    [Fact]
+    public async Task ObtenerEquiposSinLigaAsync_DeberiaRetornarEquiposNoAsignados()
+    {
+        // ==================== ARRANGE ====================
+        var equiposSinLiga = new List<Equipo>
+        {
+            new() { Id = 5, Nombre = "Equipo Libre", Sede = "Campo Libre", Entrenador = "Carlos" }
+        };
+        _mockLigaRepo.Setup(r => r.ObtenerEquiposSinLigaAsync()).ReturnsAsync(equiposSinLiga);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ObtenerEquiposSinLigaAsync();
+
+        // ==================== ASSERT ====================
+        Assert.Single(resultado);
+        Assert.Equal("Equipo Libre", resultado[0].Nombre);
+        _mockLigaRepo.Verify(r => r.ObtenerEquiposSinLigaAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task QuitarEquipoAsync_DeberiaLlamarAlRepositorio()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1, equipoId = 2;
+        _mockLigaRepo.Setup(r => r.QuitarEquipoAsync(ligaId, equipoId)).Returns(Task.CompletedTask);
+
+        // ==================== ACT ====================
+        await _servicio.QuitarEquipoAsync(ligaId, equipoId);
+
+        // ==================== ASSERT ====================
+        _mockLigaRepo.Verify(r => r.QuitarEquipoAsync(ligaId, equipoId), Times.Once);
+    }
+
+    // =========================================================================
+    // ObtenerJornadas / ObtenerResultados
+    // =========================================================================
+
+    [Fact]
+    public async Task ObtenerJornadasAsync_DeberiaAgruparPartidosPorJornada()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1;
+        var partidos = new List<Partido>
+        {
+            new() { Id = 1, Jornada = 1, LigaId = ligaId, EquipoLocalId = 1, EquipoVisitanteId = 2, FechaHora = DateTime.Now, Estado = "Pendiente" },
+            new() { Id = 2, Jornada = 1, LigaId = ligaId, EquipoLocalId = 3, EquipoVisitanteId = 4, FechaHora = DateTime.Now, Estado = "Pendiente" },
+            new() { Id = 3, Jornada = 2, LigaId = ligaId, EquipoLocalId = 1, EquipoVisitanteId = 3, FechaHora = DateTime.Now, Estado = "Pendiente" },
+        };
+        _mockPartidoRepo.Setup(r => r.ObtenerPorLigaAsync(ligaId)).ReturnsAsync(partidos);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ObtenerJornadasAsync(ligaId);
+
+        // ==================== ASSERT ====================
+        Assert.Equal(2, resultado.Count);
+        Assert.Equal(1, resultado[0].Numero);
+        Assert.Equal(2, resultado[0].Partidos.Count);
+        Assert.Equal(2, resultado[1].Numero);
+        Assert.Single(resultado[1].Partidos);
+    }
+
+    [Fact]
+    public async Task ObtenerResultadosAsync_DeberiaRetornarSoloPartidosFinalizados()
+    {
+        // ==================== ARRANGE ====================
+        int ligaId = 1;
+        var partidos = new List<Partido>
+        {
+            new() { Id = 1, GolesLocal = 2, GolesVisitante = 1, Estado = "Finalizado",
+                    EquipoLocal = new Equipo { Id = 1, Nombre = "Local",    Sede = "S1", Entrenador = "E1" },
+                    EquipoVisitante = new Equipo { Id = 2, Nombre = "Visitante", Sede = "S2", Entrenador = "E2" } }
+        };
+        _mockPartidoRepo.Setup(r => r.ObtenerResultadosPorLigaAsync(ligaId)).ReturnsAsync(partidos);
+
+        // ==================== ACT ====================
+        var resultado = await _servicio.ObtenerResultadosAsync(ligaId);
+
+        // ==================== ASSERT ====================
+        Assert.Single(resultado);
+        Assert.Equal(2, resultado[0].GolesLocal);
+        Assert.Equal(1, resultado[0].GolesVisitante);
+        _mockPartidoRepo.Verify(r => r.ObtenerResultadosPorLigaAsync(ligaId), Times.Once);
     }
 }

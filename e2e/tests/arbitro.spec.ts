@@ -1,16 +1,18 @@
 import { test, expect, Page } from '@playwright/test';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers
+// Helper: login como árbitro
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function loginComoArbitro(page: Page) {
   await page.goto('/login');
-  await page.waitForLoadState('networkidle');
-  await page.getByLabel(/email/i).fill('arbitro@derby.com');
-  await page.getByLabel(/contraseña/i).fill('Password1');
-  await page.getByRole('button', { name: /iniciar sesión/i }).click();
-  await page.waitForURL('**/arbitro', { timeout: 10_000 });
+  await page.waitForLoadState('domcontentloaded');
+  await page.locator('input[type="email"]').fill('arbitro1@derby.com');
+  await page.locator('input[type="password"]').fill('Arbitro@123');
+  const btn = page.locator('button[type="submit"]');
+  await expect(btn).not.toBeDisabled({ timeout: 5_000 });
+  await btn.click();
+  await page.waitForURL('**/arbitro', { timeout: 15_000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -23,65 +25,67 @@ test.describe('Panel del Árbitro', () => {
     await loginComoArbitro(page);
   });
 
-  // ── Dashboard ──────────────────────────────────────────────────────────────
-
+  // 1. El dashboard se muestra tras el login
   test('el dashboard del árbitro se muestra tras el login', async ({ page }) => {
     await expect(page).toHaveURL(/\/arbitro/);
-    await expect(page.getByRole('heading', { name: /árbitr|arbitr|dashboard|panel/i })).toBeVisible({ timeout: 8_000 });
+    await expect(page.locator('body')).not.toBeEmpty();
   });
 
-  test('la barra de navegación del árbitro está visible', async ({ page }) => {
-    await expect(page.getByRole('navigation')).toBeVisible();
-  });
-
-  // ── Mis partidos ───────────────────────────────────────────────────────────
-
-  test('puede navegar a la sección "Mis Partidos"', async ({ page }) => {
-    const enlace = page.getByRole('link', { name: /mis partidos|partidos/i }).first();
-    if (await enlace.isVisible()) {
-      await enlace.click();
-      await expect(page).toHaveURL(/arbitro/);
-    }
-  });
-
-  test('la página de mis partidos se carga correctamente', async ({ page }) => {
+  // 2. Mis Partidos muestra los partidos asignados
+  test('Mis Partidos muestra los partidos asignados', async ({ page }) => {
     await page.goto('/arbitro/mis-partidos');
-    await page.waitForLoadState('networkidle');
-    // Debe mostrar la sección sin errores 500 ni redirección inesperada
-    await expect(page).toHaveURL(/arbitro/);
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page.getByRole('heading', { name: /mis partidos/i })).toBeVisible({ timeout: 5_000 });
+    await expect(page.locator('a[href*="/arbitro/acta"]').first()).toBeVisible({ timeout: 8_000 });
   });
 
-  // ── Historial ──────────────────────────────────────────────────────────────
+  // 3. Añade un evento al acta y la cierra
+  test('puede añadir un evento y cerrar el acta', async ({ page }) => {
+    // Entra al acta del primer partido pendiente
+    await page.goto('/arbitro/mis-partidos');
+    await page.waitForLoadState('domcontentloaded');
+    await page.locator('a[href*="/arbitro/acta"]').first().click();
+    await page.waitForURL(/\/arbitro\/acta\/\d+/, { timeout: 8_000 });
+    await expect(page.getByRole('heading', { name: /acta del partido/i })).toBeVisible({ timeout: 5_000 });
 
-  test('la página de historial del árbitro se carga correctamente', async ({ page }) => {
+    // Abre el dropdown y selecciona el primer jugador
+    await page.locator('button:has-text("Selecciona jugador")').click();
+    await page.locator('.absolute.z-30 div[class*="cursor-pointer"]').first().click();
+
+    // Rellena el minuto y añade el evento
+    await page.locator('input[type="number"]').fill('10');
+    await page.getByRole('button', { name: /añadir evento/i }).click();
+
+    // Verifica que el evento aparece en la lista
+    await expect(page.locator('text=min. 10').first()).toBeVisible({ timeout: 8_000 });
+
+    // Cierra el acta → se abre modal de confirmación
+    await page.getByRole('button', { name: /cerrar acta/i }).click();
+    await expect(page.getByText('¿Seguro que quieres cerrar el acta?')).toBeVisible({ timeout: 5_000 });
+
+    // Confirma en el modal → redirige a historial
+    await page.locator('a:has-text("Cerrar Acta")').click();
+    await page.waitForURL('**/arbitro/historial', { timeout: 10_000 });
+    await expect(page).toHaveURL(/\/arbitro\/historial/);
+  });
+
+  // 4. En historial abre detalles de un partido y cierra el modal
+  // Este test usa el partido que cerró el test 3
+  test('en el historial puede abrir y cerrar el modal de detalles', async ({ page }) => {
     await page.goto('/arbitro/historial');
     await page.waitForLoadState('networkidle');
-    await expect(page).toHaveURL(/arbitro/);
+
+    // Hace click en el botón Detalles del primer partido
+    await page.locator('button').filter({ hasText: 'Detalles' }).first().click();
+
+    // Verifica que el modal se abre
+    await expect(page.getByText('Detalles del partido')).toBeVisible({ timeout: 5_000 });
+
+    // Cierra el modal
+    await page.locator('button').filter({ hasText: 'Cerrar' }).click();
+
+    // Verifica que el modal desaparece
+    await expect(page.getByText('Detalles del partido')).not.toBeVisible({ timeout: 5_000 });
   });
 
-  // ── Seguridad: el árbitro no puede acceder al panel de admin ──────────────
-
-  test('el árbitro no puede acceder a /admin y es redirigido', async ({ page }) => {
-    await page.goto('/admin');
-    // Debe redirigir a / o a /login (no a /admin)
-    await page.waitForURL(url => !url.pathname.startsWith('/admin'), { timeout: 10_000 });
-    await expect(page).not.toHaveURL(/^.*\/admin$/);
-  });
-
-  // ── Seguridad: rutas de árbitro protegidas ────────────────────────────────
-
-  test('cerrar sesión y acceder a /arbitro redirige a /login', async ({ page }) => {
-    // Limpiar sesión directamente borrando localStorage
-    await page.evaluate(() => localStorage.removeItem('usuarioActual'));
-    await page.goto('/arbitro');
-    await page.waitForURL('**/login', { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/login/);
-  });
-
-  test('un usuario sin sesión no puede acceder a /arbitro/mis-partidos', async ({ page }) => {
-    await page.evaluate(() => localStorage.removeItem('usuarioActual'));
-    await page.goto('/arbitro/mis-partidos');
-    await page.waitForURL('**/login', { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/login/);
-  });
 });

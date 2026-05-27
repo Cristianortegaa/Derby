@@ -276,4 +276,133 @@ public class CompeticionServiceTests
         Assert.Equal(1, goleadores.Last().Goles);
         _mockEventoRepo.Verify(r => r.ObtenerGolesPorCompeticionAsync(1), Times.Once);
     }
+
+    [Fact]
+    public async Task ObtenerGoleadoresAsync_SinGoles_DeberiaRetornarListaVacia()
+    {
+        // ==================== ARRANGE ====================
+        _mockEventoRepo.Setup(r => r.ObtenerGolesPorCompeticionAsync(1)).ReturnsAsync(new List<EventoPartido>());
+
+        // ==================== ACT ====================
+        var goleadores = await _servicio.ObtenerGoleadoresAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Empty(goleadores);
+    }
+
+    [Fact]
+    public async Task ObtenerGoleadoresAsync_ConJugadoresDesconocidos_DeberiaRetornarNombreDesconocido()
+    {
+        // ==================== ARRANGE ====================
+        var eventos = new List<EventoPartido>
+        {
+            new() { JugadorId = 1, Jugador = null, TipoEvento = TipoEvento.Gol },
+            new() { JugadorId = 2, Jugador = new Jugador { Id = 2, Nombre = "Juan", Equipo = null }, TipoEvento = TipoEvento.Gol }
+        };
+        _mockEventoRepo.Setup(r => r.ObtenerGolesPorCompeticionAsync(1)).ReturnsAsync(eventos);
+
+        // ==================== ACT ====================
+        var goleadores = await _servicio.ObtenerGoleadoresAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Equal(2, goleadores.Count);
+        Assert.Equal("Desconocido", goleadores.First().Nombre);
+        Assert.Equal("Desconocido", goleadores.Last().Equipo);
+    }
+
+    [Fact]
+    public async Task ObtenerClasificacionAsync_ConEquiposSinPartidos_DeberiaRetornarClasificacionVacia()
+    {
+        // ==================== ARRANGE ====================
+        _mockPartidoRepo.Setup(r => r.ObtenerResultadosAsync(1)).ReturnsAsync(new List<Partido>());
+
+        // ==================== ACT ====================
+        var clasificacion = await _servicio.ObtenerClasificacionAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Empty(clasificacion);
+    }
+
+    [Fact]
+    public async Task ObtenerClasificacionAsync_ConMultiplosPartidos_DeberiaOrdenarPorPuntos()
+    {
+        // ==================== ARRANGE ====================
+        var equipoA = new Equipo { Id = 1, Nombre = "Equipo A" };
+        var equipoB = new Equipo { Id = 2, Nombre = "Equipo B" };
+        var equipoC = new Equipo { Id = 3, Nombre = "Equipo C" };
+        var partidos = new List<Partido>
+        {
+            new() { EquipoLocal = equipoA, EquipoVisitante = equipoB, GolesLocal = 2, GolesVisitante = 0 },
+            new() { EquipoLocal = equipoB, EquipoVisitante = equipoC, GolesLocal = 1, GolesVisitante = 1 },
+            new() { EquipoLocal = equipoC, EquipoVisitante = equipoA, GolesLocal = 0, GolesVisitante = 3 }
+        };
+        _mockPartidoRepo.Setup(r => r.ObtenerResultadosAsync(1)).ReturnsAsync(partidos);
+
+        // ==================== ACT ====================
+        var clasificacion = await _servicio.ObtenerClasificacionAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Equal(3, clasificacion.Count);
+        // Equipo A debe estar primero con 6 puntos
+        Assert.Equal("Equipo A", clasificacion[0].Nombre);
+        Assert.Equal(6, clasificacion[0].Puntos);
+    }
+
+    [Fact]
+    public async Task ObtenerJornadasAsync_SinPartidos_DeberiaRetornarListaVacia()
+    {
+        // ==================== ARRANGE ====================
+        _mockPartidoRepo.Setup(r => r.ObtenerPorCompeticionAsync(1)).ReturnsAsync(new List<Partido>());
+
+        // ==================== ACT ====================
+        var result = await _servicio.ObtenerJornadasAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ObtenerResultadosAsync_SinPartidos_DeberiaRetornarListaVacia()
+    {
+        // ==================== ARRANGE ====================
+        _mockPartidoRepo.Setup(r => r.ObtenerResultadosAsync(1)).ReturnsAsync(new List<Partido>());
+
+        // ==================== ACT ====================
+        var result = await _servicio.ObtenerResultadosAsync(1);
+
+        // ==================== ASSERT ====================
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ObtenerTodasAsync_SinCompeticiones_DeberiaRetornarListaVacia()
+    {
+        // ==================== ARRANGE ====================
+        _mockCompRepo.Setup(r => r.ObtenerTodasAsync()).ReturnsAsync(new List<Competicion>());
+
+        // ==================== ACT ====================
+        var result = await _servicio.ObtenerTodasAsync();
+
+        // ==================== ASSERT ====================
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task BuscarCompeticionesAsync_AplicandoMultiplesFiltros_DeberiaRetornarFiltradasCorrectamente()
+    {
+        // ==================== ARRANGE ====================
+        var competiciones = new List<Competicion>
+        {
+            new() { Id = 1, Nombre = "Liga Derby", Temporada = "2025-2026", TipoJuego = "futbol11", Grupo = "Grupo A" }
+        };
+        _mockCompRepo.Setup(r => r.FiltrarAsync("2025-2026", "futbol11", "Liga Derby", "Grupo A"))
+            .ReturnsAsync(competiciones);
+
+        // ==================== ACT ====================
+        var result = await _servicio.BuscarCompeticionesAsync("2025-2026", "futbol11", "Liga Derby", "Grupo A");
+
+        // ==================== ASSERT ====================
+        Assert.Single(result);
+        Assert.Equal("Liga Derby", result[0].Nombre);
+    }
 }
