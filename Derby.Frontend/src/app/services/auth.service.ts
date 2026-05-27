@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Usuario, LoginRequest, RegistroRequest } from '../models/auth.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://derby-production.up.railway.app/api/usuarios';
+  private apiUrl = `${environment.apiUrl}/usuarios`;
   private usuarioActual = new BehaviorSubject<Usuario | null>(null);
   public usuarioActual$ = this.usuarioActual.asObservable();
 
