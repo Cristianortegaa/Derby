@@ -83,8 +83,9 @@ builder.Services.AddScoped<IJugadorService, JugadorService>();
 
 var app = builder.Build();
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5101";
 app.Urls.Clear();
-app.Urls.Add("http://0.0.0.0:5101");
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 if (app.Environment.IsDevelopment())
 {

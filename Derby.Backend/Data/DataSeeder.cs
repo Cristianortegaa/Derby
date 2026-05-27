@@ -71,35 +71,35 @@ public class DataSeeder
         {
             var equipos = new List<Equipo>
             {
-                // Primera DAW (8 equipos)
-                new Equipo { Nombre = "FC Derby Norte",       Sede = "Estadio El Pinar",        Entrenador = "Luis Enrique" },
-                new Equipo { Nombre = "Atlético Sur CF",      Sede = "Campo La Ribera",          Entrenador = "Diego Simeone" },
-                new Equipo { Nombre = "CD Las Torres",        Sede = "Polideportivo Torres",     Entrenador = "Pep Guardiola" },
-                new Equipo { Nombre = "Real Vallés FC",       Sede = "Estadio Vallés",           Entrenador = "Carlo Ancelotti" },
-                new Equipo { Nombre = "UD Miralba",           Sede = "Campo Miralba",            Entrenador = "Zinedine Zidane" },
-                new Equipo { Nombre = "CF Esperanza",         Sede = "Polideportivo Esperanza",  Entrenador = "Jürgen Klopp" },
-                new Equipo { Nombre = "Racing Derby Club",    Sede = "Estadio La Colina",        Entrenador = "José Mourinho" },
-                new Equipo { Nombre = "Deportivo Crestall",   Sede = "Campo Crestall",           Entrenador = "Arsène Wenger" },
+                // Primera DAW (8 equipos) — azules
+                new Equipo { Nombre = "FC Derby Norte",       Sede = "Estadio El Pinar",        Entrenador = "Luis Enrique",        EscudoUrl = "https://ui-avatars.com/api/?name=FC+Derby+Norte&background=1565C0&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Atlético Sur CF",      Sede = "Campo La Ribera",          Entrenador = "Diego Simeone",       EscudoUrl = "https://ui-avatars.com/api/?name=Atletico+Sur&background=0D47A1&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "CD Las Torres",        Sede = "Polideportivo Torres",     Entrenador = "Pep Guardiola",       EscudoUrl = "https://ui-avatars.com/api/?name=CD+Las+Torres&background=1976D2&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Real Vallés FC",       Sede = "Estadio Vallés",           Entrenador = "Carlo Ancelotti",     EscudoUrl = "https://ui-avatars.com/api/?name=Real+Valles&background=2196F3&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "UD Miralba",           Sede = "Campo Miralba",            Entrenador = "Zinedine Zidane",     EscudoUrl = "https://ui-avatars.com/api/?name=UD+Miralba&background=0288D1&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "CF Esperanza",         Sede = "Polideportivo Esperanza",  Entrenador = "Jürgen Klopp",        EscudoUrl = "https://ui-avatars.com/api/?name=CF+Esperanza&background=01579B&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Racing Derby Club",    Sede = "Estadio La Colina",        Entrenador = "José Mourinho",       EscudoUrl = "https://ui-avatars.com/api/?name=Racing+Derby&background=039BE5&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Deportivo Crestall",   Sede = "Campo Crestall",           Entrenador = "Arsène Wenger",       EscudoUrl = "https://ui-avatars.com/api/?name=Dep+Crestall&background=0277BD&color=fff&size=128&bold=true" },
 
-                // Segunda DAW (8 equipos)
-                new Equipo { Nombre = "CD Tres Ríos",         Sede = "Estadio Tres Ríos",        Entrenador = "Rafael Benítez" },
-                new Equipo { Nombre = "Sporting Montaña",     Sede = "Campo La Cumbre",          Entrenador = "Marcelo Gallardo" },
-                new Equipo { Nombre = "FC Los Álamos",        Sede = "Polideportivo Álamos",     Entrenador = "Jorge Sampaoli" },
-                new Equipo { Nombre = "UD Piedralba",         Sede = "Estadio Piedralba",        Entrenador = "Ernesto Valverde" },
-                new Equipo { Nombre = "CF Riobello",          Sede = "Campo Riobello",           Entrenador = "Mauricio Pochettino" },
-                new Equipo { Nombre = "SD Campofrío",         Sede = "Estadio Campofrío",        Entrenador = "Roberto Martínez" },
-                new Equipo { Nombre = "AC Puente Verde",      Sede = "Campo Puente Verde",       Entrenador = "Thomas Tuchel" },
-                new Equipo { Nombre = "UD Valderrama",        Sede = "Estadio Valderrama",       Entrenador = "Unai Emery" },
+                // Segunda DAW (8 equipos) — rojos/granate
+                new Equipo { Nombre = "CD Tres Ríos",         Sede = "Estadio Tres Ríos",        Entrenador = "Rafael Benítez",      EscudoUrl = "https://ui-avatars.com/api/?name=CD+Tres+Rios&background=C62828&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Sporting Montaña",     Sede = "Campo La Cumbre",          Entrenador = "Marcelo Gallardo",    EscudoUrl = "https://ui-avatars.com/api/?name=Sporting+Montana&background=B71C1C&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "FC Los Álamos",        Sede = "Polideportivo Álamos",     Entrenador = "Jorge Sampaoli",      EscudoUrl = "https://ui-avatars.com/api/?name=FC+Los+Alamos&background=D32F2F&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "UD Piedralba",         Sede = "Estadio Piedralba",        Entrenador = "Ernesto Valverde",    EscudoUrl = "https://ui-avatars.com/api/?name=UD+Piedralba&background=E53935&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "CF Riobello",          Sede = "Campo Riobello",           Entrenador = "Mauricio Pochettino", EscudoUrl = "https://ui-avatars.com/api/?name=CF+Riobello&background=AD1457&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "SD Campofrío",         Sede = "Estadio Campofrío",        Entrenador = "Roberto Martínez",    EscudoUrl = "https://ui-avatars.com/api/?name=SD+Campofrio&background=880E4F&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "AC Puente Verde",      Sede = "Campo Puente Verde",       Entrenador = "Thomas Tuchel",       EscudoUrl = "https://ui-avatars.com/api/?name=AC+Puente+Verde&background=6A1B9A&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "UD Valderrama",        Sede = "Estadio Valderrama",       Entrenador = "Unai Emery",          EscudoUrl = "https://ui-avatars.com/api/?name=UD+Valderrama&background=4A148C&color=fff&size=128&bold=true" },
 
-                // Tercera DAW (8 equipos)
-                new Equipo { Nombre = "FC Monteclaro",        Sede = "Estadio Monteclaro",       Entrenador = "Antonio Conte" },
-                new Equipo { Nombre = "CD Estrella Roja",     Sede = "Campo Estrella",           Entrenador = "Quique Setién" },
-                new Equipo { Nombre = "SD Ribera Alta",       Sede = "Polideportivo Ribera",     Entrenador = "Michel" },
-                new Equipo { Nombre = "CF Altavista",         Sede = "Estadio Altavista",        Entrenador = "Niko Kovač" },
-                new Equipo { Nombre = "Racing Norteño",       Sede = "Campo Norte",              Entrenador = "Rudi García" },
-                new Equipo { Nombre = "UD Bellaverde",        Sede = "Estadio Bellaverde",       Entrenador = "Frank Lampard" },
-                new Equipo { Nombre = "SC Maravillas",        Sede = "Campo Maravillas",         Entrenador = "Domenico Tedesco" },
-                new Equipo { Nombre = "FC Tierrasol",         Sede = "Estadio Tierrasol",        Entrenador = "Oliver Glasner" },
+                // Tercera DAW (8 equipos) — verdes/naranja
+                new Equipo { Nombre = "FC Monteclaro",        Sede = "Estadio Monteclaro",       Entrenador = "Antonio Conte",       EscudoUrl = "https://ui-avatars.com/api/?name=FC+Monteclaro&background=1B5E20&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "CD Estrella Roja",     Sede = "Campo Estrella",           Entrenador = "Quique Setién",       EscudoUrl = "https://ui-avatars.com/api/?name=CD+Estrella+Roja&background=2E7D32&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "SD Ribera Alta",       Sede = "Polideportivo Ribera",     Entrenador = "Michel",              EscudoUrl = "https://ui-avatars.com/api/?name=SD+Ribera+Alta&background=33691E&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "CF Altavista",         Sede = "Estadio Altavista",        Entrenador = "Niko Kovač",          EscudoUrl = "https://ui-avatars.com/api/?name=CF+Altavista&background=558B2F&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "Racing Norteño",       Sede = "Campo Norte",              Entrenador = "Rudi García",         EscudoUrl = "https://ui-avatars.com/api/?name=Racing+Norteno&background=E65100&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "UD Bellaverde",        Sede = "Estadio Bellaverde",       Entrenador = "Frank Lampard",       EscudoUrl = "https://ui-avatars.com/api/?name=UD+Bellaverde&background=BF360C&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "SC Maravillas",        Sede = "Campo Maravillas",         Entrenador = "Domenico Tedesco",    EscudoUrl = "https://ui-avatars.com/api/?name=SC+Maravillas&background=F57F17&color=fff&size=128&bold=true" },
+                new Equipo { Nombre = "FC Tierrasol",         Sede = "Estadio Tierrasol",        Entrenador = "Oliver Glasner",      EscudoUrl = "https://ui-avatars.com/api/?name=FC+Tierrasol&background=E65100&color=fff&size=128&bold=true" },
             };
             await context.Equipos.AddRangeAsync(equipos);
             await context.SaveChangesAsync();
@@ -203,5 +203,126 @@ public class DataSeeder
             }
         }
         else { Console.WriteLine("✓ LigaEquipos ya existen"); }
+
+        // ─── Partidos finalizados (historial + clasificación) ─────────────────────
+        var partidosExisten = await context.Partidos.AnyAsync();
+        if (!partidosExisten)
+        {
+            var ligas    = await context.Ligas.ToListAsync();
+            var equipos  = await context.Equipos.ToListAsync();
+            var arbitros = await context.Arbitros.ToListAsync();
+
+            if (ligas.Count >= 1 && equipos.Count >= 8 && arbitros.Count >= 1)
+            {
+                // Equipos de Primera DAW (índices 0-7)
+                var e = equipos.Take(8).ToList();
+                var ligaId   = ligas[0].Id;
+                var arbitro1 = arbitros[0].Id; // Carlos Martínez → vinculado a arbitro1@derby.com
+                var arbitro2 = arbitros[1].Id;
+                var arbitro3 = arbitros[2].Id;
+                var arbitro4 = arbitros[3].Id;
+
+                var hoy = DateTime.UtcNow;
+
+                // Jornada 1 — 4 partidos finalizados
+                var partidos = new List<Partido>
+                {
+                    new() { LigaId = ligaId, Jornada = 1, FechaHora = hoy.AddDays(-21),
+                            EquipoLocalId = e[0].Id, EquipoVisitanteId = e[1].Id,
+                            GolesLocal = 2, GolesVisitante = 1, Estado = "Finalizado", ArbitroId = arbitro1 },
+                    new() { LigaId = ligaId, Jornada = 1, FechaHora = hoy.AddDays(-21),
+                            EquipoLocalId = e[2].Id, EquipoVisitanteId = e[3].Id,
+                            GolesLocal = 1, GolesVisitante = 1, Estado = "Finalizado", ArbitroId = arbitro2 },
+                    new() { LigaId = ligaId, Jornada = 1, FechaHora = hoy.AddDays(-21),
+                            EquipoLocalId = e[4].Id, EquipoVisitanteId = e[5].Id,
+                            GolesLocal = 3, GolesVisitante = 0, Estado = "Finalizado", ArbitroId = arbitro3 },
+                    new() { LigaId = ligaId, Jornada = 1, FechaHora = hoy.AddDays(-21),
+                            EquipoLocalId = e[6].Id, EquipoVisitanteId = e[7].Id,
+                            GolesLocal = 0, GolesVisitante = 2, Estado = "Finalizado", ArbitroId = arbitro4 },
+
+                    // Jornada 2 — 4 partidos finalizados
+                    new() { LigaId = ligaId, Jornada = 2, FechaHora = hoy.AddDays(-14),
+                            EquipoLocalId = e[1].Id, EquipoVisitanteId = e[2].Id,
+                            GolesLocal = 1, GolesVisitante = 0, Estado = "Finalizado", ArbitroId = arbitro1 },
+                    new() { LigaId = ligaId, Jornada = 2, FechaHora = hoy.AddDays(-14),
+                            EquipoLocalId = e[3].Id, EquipoVisitanteId = e[4].Id,
+                            GolesLocal = 2, GolesVisitante = 2, Estado = "Finalizado", ArbitroId = arbitro2 },
+                    new() { LigaId = ligaId, Jornada = 2, FechaHora = hoy.AddDays(-14),
+                            EquipoLocalId = e[5].Id, EquipoVisitanteId = e[6].Id,
+                            GolesLocal = 0, GolesVisitante = 1, Estado = "Finalizado", ArbitroId = arbitro3 },
+                    new() { LigaId = ligaId, Jornada = 2, FechaHora = hoy.AddDays(-14),
+                            EquipoLocalId = e[7].Id, EquipoVisitanteId = e[0].Id,
+                            GolesLocal = 1, GolesVisitante = 3, Estado = "Finalizado", ArbitroId = arbitro4 },
+
+                    // Jornada 3 — 4 partidos finalizados
+                    new() { LigaId = ligaId, Jornada = 3, FechaHora = hoy.AddDays(-7),
+                            EquipoLocalId = e[0].Id, EquipoVisitanteId = e[2].Id,
+                            GolesLocal = 2, GolesVisitante = 0, Estado = "Finalizado", ArbitroId = arbitro1 },
+                    new() { LigaId = ligaId, Jornada = 3, FechaHora = hoy.AddDays(-7),
+                            EquipoLocalId = e[1].Id, EquipoVisitanteId = e[3].Id,
+                            GolesLocal = 1, GolesVisitante = 2, Estado = "Finalizado", ArbitroId = arbitro2 },
+                    new() { LigaId = ligaId, Jornada = 3, FechaHora = hoy.AddDays(-7),
+                            EquipoLocalId = e[4].Id, EquipoVisitanteId = e[6].Id,
+                            GolesLocal = 3, GolesVisitante = 1, Estado = "Finalizado", ArbitroId = arbitro3 },
+                    new() { LigaId = ligaId, Jornada = 3, FechaHora = hoy.AddDays(-7),
+                            EquipoLocalId = e[5].Id, EquipoVisitanteId = e[7].Id,
+                            GolesLocal = 0, GolesVisitante = 0, Estado = "Finalizado", ArbitroId = arbitro4 },
+                };
+
+                await context.Partidos.AddRangeAsync(partidos);
+                await context.SaveChangesAsync();
+
+                // Actualizar JornadaActual de la liga
+                ligas[0].JornadaActual = 3;
+                await context.SaveChangesAsync();
+
+                Console.WriteLine($"✓ {partidos.Count} partidos finalizados creados");
+
+                // ─── Eventos de los partidos (goles y tarjetas) ───────────────────
+                var jugadoresE0 = await context.Jugadores.Where(j => j.EquipoId == e[0].Id).Take(5).ToListAsync();
+                var jugadoresE1 = await context.Jugadores.Where(j => j.EquipoId == e[1].Id).Take(5).ToListAsync();
+                var jugadoresE4 = await context.Jugadores.Where(j => j.EquipoId == e[4].Id).Take(5).ToListAsync();
+                var jugadoresE7 = await context.Jugadores.Where(j => j.EquipoId == e[7].Id).Take(5).ToListAsync();
+
+                var partidosGuardados = await context.Partidos.OrderBy(p => p.Id).ToListAsync();
+
+                if (jugadoresE0.Count >= 3 && jugadoresE1.Count >= 2 && partidosGuardados.Count >= 9)
+                {
+                    var eventos = new List<EventoPartido>
+                    {
+                        // Partido 1 (J1): e[0] 2-1 e[1]  — árbitro1
+                        new() { PartidoId = partidosGuardados[0].Id, Minuto = 12, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[0].Id },
+                        new() { PartidoId = partidosGuardados[0].Id, Minuto = 34, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[1].Id },
+                        new() { PartidoId = partidosGuardados[0].Id, Minuto = 67, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE1[0].Id },
+                        new() { PartidoId = partidosGuardados[0].Id, Minuto = 55, TipoEvento = TipoEvento.TarjetaAmarilla, JugadorId = jugadoresE1[1].Id },
+
+                        // Partido 5 (J2): e[1] 1-0 e[2]  — árbitro1
+                        new() { PartidoId = partidosGuardados[4].Id, Minuto = 78, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE1[0].Id },
+                        new() { PartidoId = partidosGuardados[4].Id, Minuto = 22, TipoEvento = TipoEvento.TarjetaAmarilla, JugadorId = jugadoresE1[1].Id },
+
+                        // Partido 9 (J3): e[0] 2-0 e[2]  — árbitro1
+                        new() { PartidoId = partidosGuardados[8].Id, Minuto = 8,  TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[0].Id },
+                        new() { PartidoId = partidosGuardados[8].Id, Minuto = 61, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[2].Id },
+                        new() { PartidoId = partidosGuardados[8].Id, Minuto = 43, TipoEvento = TipoEvento.TarjetaRoja,    JugadorId = jugadoresE0[3].Id },
+
+                        // Partido 3 (J1): e[4] 3-0 e[5]
+                        new() { PartidoId = partidosGuardados[2].Id, Minuto = 5,  TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE4[0].Id },
+                        new() { PartidoId = partidosGuardados[2].Id, Minuto = 29, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE4[1].Id },
+                        new() { PartidoId = partidosGuardados[2].Id, Minuto = 88, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE4[2].Id },
+
+                        // Partido 8 (J2): e[7] 1-3 e[0]
+                        new() { PartidoId = partidosGuardados[7].Id, Minuto = 15, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE7[0].Id },
+                        new() { PartidoId = partidosGuardados[7].Id, Minuto = 33, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[0].Id },
+                        new() { PartidoId = partidosGuardados[7].Id, Minuto = 50, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[1].Id },
+                        new() { PartidoId = partidosGuardados[7].Id, Minuto = 72, TipoEvento = TipoEvento.Gol,            JugadorId = jugadoresE0[2].Id },
+                    };
+
+                    await context.EventosPartidos.AddRangeAsync(eventos);
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"✓ {eventos.Count} eventos de partido creados");
+                }
+            }
+        }
+        else { Console.WriteLine("✓ Partidos ya existen"); }
     }
 }
