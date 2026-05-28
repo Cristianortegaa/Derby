@@ -163,7 +163,7 @@ export class AdminEquipos implements OnInit {
   abrirForm(equipo?: any) {
     if (equipo) {
       this.editandoId = equipo.id;
-      this.formulario = {nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || ''};
+      this.formulario = {nombre: equipo.nombre, sede: equipo.sede, escudoUrl: equipo.escudoUrl || '', entrenador: equipo.entrenador || ''};
     } else {
       this.editandoId = null;
       this.resetForm();
@@ -173,7 +173,7 @@ export class AdminEquipos implements OnInit {
   }
 
   resetForm() {
-    this.formulario = {nombre: '', sede: '', escudoUrl: ''};
+    this.formulario = {nombre: '', sede: '', escudoUrl: '', entrenador: ''};
   }
 
   agregarJugadorForm() {
@@ -213,7 +213,7 @@ export class AdminEquipos implements OnInit {
   }
 
   resetFormulario() {
-    this.formulario = {nombre: '', sede: '', escudoUrl: ''};
+    this.formulario = {nombre: '', sede: '', escudoUrl: '', entrenador: ''};
     this.jugadoresForm[0] = [{nombre: '', dorsal: null}];
   }
 
