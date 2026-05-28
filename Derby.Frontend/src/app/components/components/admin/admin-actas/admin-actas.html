@@ -79,12 +79,12 @@
         <div class="space-y-1 max-h-40 overflow-y-auto">
           <div *ngFor="let evento of eventos" class="flex items-center gap-3 px-3 py-2 bg-slate-800/60 rounded-lg text-sm">
             <span class="text-gray-400 w-8 text-center font-bold">{{ evento.minuto }}'</span>
-            <i class="w-4 text-center"
-               [ngClass]="{
-                 'fas fa-futbol text-green-400': evento.tipoEvento === 'Gol',
-                 'fas fa-square text-yellow-400': evento.tipoEvento === 'TarjetaAmarilla',
-                 'fas fa-square text-red-500': evento.tipoEvento === 'TarjetaRoja'
-               }"></i>
+            <i class="fas w-4 text-center"
+               [class.fa-futbol]="evento.tipoEvento === 'Gol'"
+               [class.text-green-400]="evento.tipoEvento === 'Gol'"
+               [class.fa-square]="evento.tipoEvento === 'TarjetaAmarilla' || evento.tipoEvento === 'TarjetaRoja'"
+               [class.text-yellow-400]="evento.tipoEvento === 'TarjetaAmarilla'"
+               [class.text-red-500]="evento.tipoEvento === 'TarjetaRoja'"></i>
             <span class="text-white flex-1">{{ evento.nombreJugador }}</span>
             <span class="text-gray-500 text-xs">{{
               evento.tipoEvento === 'Gol' ? 'Gol' :
