@@ -86,7 +86,12 @@
                  'fas fa-square text-red-500': evento.tipoEvento === 'TarjetaRoja'
                }"></i>
             <span class="text-white flex-1">{{ evento.jugador?.nombre }}</span>
-            <span class="text-gray-500 text-xs">{{ evento.tipoEvento }}</span>
+            <span class="text-gray-500 text-xs">{{
+              evento.tipoEvento === 'Gol' ? 'Gol' :
+              evento.tipoEvento === 'TarjetaAmarilla' ? 'Tarjeta Amarilla' :
+              evento.tipoEvento === 'TarjetaRoja' ? 'Tarjeta Roja' :
+              evento.tipoEvento
+            }}</span>
           </div>
         </div>
       </div>
