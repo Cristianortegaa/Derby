@@ -67,6 +67,19 @@ export class AdminEquipos implements OnInit {
       return;
     }
 
+    const dorsalInvalido = jugadores.find(j => j.dorsal !== null && (j.dorsal < 1 || j.dorsal > 99));
+    if (dorsalInvalido) {
+      this.mostrarNotificacion('error', 'Los dorsales deben estar entre 1 y 99');
+      return;
+    }
+
+    const dorsales = jugadores.filter(j => j.dorsal).map(j => j.dorsal);
+    const dorsalDuplicado = dorsales.some((d, i) => dorsales.indexOf(d) !== i);
+    if (dorsalDuplicado) {
+      this.mostrarNotificacion('error', 'No puede haber dos jugadores con el mismo dorsal');
+      return;
+    }
+
     this.adminService.crearEquipo(this.formulario).subscribe({
       next: (equipo: any) => {
         const promesas = jugadores
