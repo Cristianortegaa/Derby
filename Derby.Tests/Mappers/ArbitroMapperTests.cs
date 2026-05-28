@@ -10,7 +10,7 @@ public class ArbitroMapperTests
     [Fact]
     public void ToDto_DeberiaMapearTodosLosCamposDelModelo()
     {
-        // ==================== ARRANGE ====================
+        // ==================== ARRANGE ===================
         var arbitro = new Arbitro { Id = 42, Nombre = "Roberto", Apellidos = "Fernández", NumeroColegiado = "COL-123" };
 
         // ==================== ACT ====================

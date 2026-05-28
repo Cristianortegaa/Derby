@@ -1,0 +1,83 @@
+{"version":8,"type":"context-options","origin":"testRunner","browserName":"","playwrightVersion":"1.60.0","options":{},"platform":"win32","wallTime":1779965571481,"monotonicTime":202135.741,"sdkLanguage":"javascript"}
+{"type":"before","callId":"hook@1","stepId":"hook@1","startTime":202141.331,"class":"Test","method":"hook","title":"Before Hooks","params":{},"stack":[]}
+{"type":"before","callId":"hook@2","stepId":"hook@2","parentId":"hook@1","startTime":202144.4,"class":"Test","method":"hook","title":"beforeEach hook","params":{},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":24,"column":8}]}
+{"type":"before","callId":"fixture@23","stepId":"fixture@23","parentId":"hook@2","startTime":202163.821,"class":"Test","method":"fixture","title":"Fixture \"context\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@24","stepId":"pw:api@24","parentId":"fixture@23","startTime":202166.154,"class":"Test","method":"pw:api","title":"Create context","params":{"recordVideo":"Object","selectorEngines":"[]","testIdAttributeName":"data-testid","acceptDownloads":"accept","bypassCSP":"false","colorScheme":"light","deviceScaleFactor":"1","hasTouch":"false","ignoreHTTPSErrors":"false","isMobile":"false","javaScriptEnabled":"true","locale":"en-US","offline":"false","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.96 Safari/537.36","viewport":"Object","baseURL":"http://localhost:4200","serviceWorkers":"allow","noDefaultViewport":"false","extraHTTPHeaders":"undefined","storageState":"undefined","reducedMotion":"undefined","forcedColors":"undefined","contrast":"undefined","clientCertificates":"undefined"},"stack":[]}
+{"type":"after","callId":"pw:api@24","endTime":202179.296,"annotations":[]}
+{"type":"after","callId":"fixture@23","endTime":202184.788,"annotations":[]}
+{"type":"before","callId":"fixture@25","stepId":"fixture@25","parentId":"hook@2","startTime":202185.398,"class":"Test","method":"fixture","title":"Fixture \"page\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@26","stepId":"pw:api@26","parentId":"fixture@25","startTime":202187.625,"class":"Test","method":"pw:api","title":"Create page","params":{},"stack":[]}
+{"type":"after","callId":"pw:api@26","endTime":205355.768,"annotations":[]}
+{"type":"after","callId":"fixture@25","endTime":205356.081,"annotations":[]}
+{"type":"before","callId":"pw:api@27","stepId":"pw:api@27","parentId":"hook@2","startTime":205359.788,"class":"Test","method":"pw:api","title":"Navigate to \"/login\"","params":{"url":"/login","waitUntil":"load","timeout":"30000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":8,"column":14,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@27","endTime":210605.308,"annotations":[]}
+{"type":"before","callId":"pw:api@28","stepId":"pw:api@28","parentId":"hook@2","startTime":210630.369,"class":"Test","method":"pw:api","title":"Wait for load state \"domcontentloaded\"","params":{"info":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":9,"column":14,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@28","endTime":210632.372,"annotations":[]}
+{"type":"before","callId":"pw:api@29","stepId":"pw:api@29","parentId":"hook@2","startTime":210638.614,"class":"Test","method":"pw:api","title":"Fill \"arbitro1@derby.com\" locator('input[type=\"email\"]')","params":{"selector":"input[type=\"email\"]","value":"arbitro1@derby.com","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":10,"column":45,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@29","endTime":211331.573,"annotations":[]}
+{"type":"before","callId":"pw:api@30","stepId":"pw:api@30","parentId":"hook@2","startTime":211347.933,"class":"Test","method":"pw:api","title":"Fill \"Arbitro@123\" locator('input[type=\"password\"]')","params":{"selector":"input[type=\"password\"]","value":"Arbitro@123","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":11,"column":48,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@30","endTime":211529.479,"annotations":[]}
+{"type":"before","callId":"expect@31","stepId":"expect@31","parentId":"hook@2","startTime":211545.283,"class":"Test","method":"expect","title":"Expect \"not toBeDisabled\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":13,"column":25,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"expect@31","endTime":211712.433,"annotations":[]}
+{"type":"before","callId":"pw:api@32","stepId":"pw:api@32","parentId":"hook@2","startTime":211728.574,"class":"Test","method":"pw:api","title":"Click locator('button[type=\"submit\"]')","params":{"selector":"button[type=\"submit\"]","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":14,"column":13,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@32","endTime":212444.459,"annotations":[]}
+{"type":"before","callId":"pw:api@33","stepId":"pw:api@33","parentId":"hook@2","startTime":212475.381,"class":"Test","method":"pw:api","title":"Wait for navigation","params":{"info":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":15,"column":14,"function":"loginComoArbitro"}]}
+{"type":"after","callId":"pw:api@33","endTime":214633.939,"annotations":[]}
+{"type":"after","callId":"hook@2","endTime":214653.538,"annotations":[]}
+{"type":"after","callId":"hook@1","endTime":214654.474,"annotations":[]}
+{"type":"before","callId":"pw:api@34","stepId":"pw:api@34","startTime":214678.069,"class":"Test","method":"pw:api","title":"Navigate to \"/arbitro/mis-partidos\"","params":{"url":"/arbitro/mis-partidos","waitUntil":"load","timeout":"30000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":45,"column":16}]}
+{"type":"after","callId":"pw:api@34","endTime":216407.392,"annotations":[]}
+{"type":"before","callId":"pw:api@35","stepId":"pw:api@35","startTime":216415.817,"class":"Test","method":"pw:api","title":"Wait for load state \"domcontentloaded\"","params":{"info":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":46,"column":16}]}
+{"type":"after","callId":"pw:api@35","endTime":216416.554,"annotations":[]}
+{"type":"before","callId":"pw:api@36","stepId":"pw:api@36","startTime":216433.275,"class":"Test","method":"pw:api","title":"Click locator('a[href*=\"/arbitro/acta\"]').first()","params":{"selector":"a[href*=\"/arbitro/acta\"] >> nth=0","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":47,"column":60}]}
+{"type":"after","callId":"pw:api@36","endTime":217077.168,"annotations":[]}
+{"type":"before","callId":"pw:api@37","stepId":"pw:api@37","startTime":217096.491,"class":"Test","method":"pw:api","title":"Wait for load state \"load\"","params":{"info":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":48,"column":16}]}
+{"type":"after","callId":"pw:api@37","endTime":217097.509,"annotations":[]}
+{"type":"before","callId":"expect@38","stepId":"expect@38","startTime":217147.976,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":49,"column":76}]}
+{"type":"after","callId":"expect@38","endTime":217404.237,"annotations":[]}
+{"type":"before","callId":"pw:api@39","stepId":"pw:api@39","startTime":217429.708,"class":"Test","method":"pw:api","title":"Click locator('button:has-text(\"Selecciona jugador\")')","params":{"selector":"button:has-text(\"Selecciona jugador\")","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":52,"column":65}]}
+{"type":"after","callId":"pw:api@39","endTime":217766.803,"annotations":[]}
+{"type":"before","callId":"pw:api@40","stepId":"pw:api@40","startTime":217806.982,"class":"Test","method":"pw:api","title":"Click locator('.absolute.z-30 div[class*=\"cursor-pointer\"]').first()","params":{"selector":".absolute.z-30 div[class*=\"cursor-pointer\"] >> nth=0","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":53,"column":79}]}
+{"type":"after","callId":"pw:api@40","endTime":218176.053,"annotations":[]}
+{"type":"before","callId":"pw:api@41","stepId":"pw:api@41","startTime":218200.82,"class":"Test","method":"pw:api","title":"Fill \"10\" locator('input[type=\"number\"]')","params":{"selector":"input[type=\"number\"]","value":"10","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":56,"column":48}]}
+{"type":"after","callId":"pw:api@41","endTime":218414.76,"annotations":[]}
+{"type":"before","callId":"pw:api@42","stepId":"pw:api@42","startTime":218443.76,"class":"Test","method":"pw:api","title":"Click getByRole('button', { name: /añadir evento/i })","params":{"selector":"internal:role=button[name=/añadir evento/i]","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":57,"column":64}]}
+{"type":"after","callId":"pw:api@42","endTime":218858.336,"annotations":[]}
+{"type":"before","callId":"expect@43","stepId":"expect@43","startTime":218890.901,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":60,"column":56}]}
+{"type":"after","callId":"expect@43","endTime":220227.305,"annotations":[]}
+{"type":"before","callId":"pw:api@44","stepId":"pw:api@44","startTime":220228.771,"class":"Test","method":"pw:api","title":"Click getByRole('button', { name: /cerrar acta/i })","params":{"selector":"internal:role=button[name=/cerrar acta/i]","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":63,"column":62}]}
+{"type":"after","callId":"pw:api@44","endTime":220541.548,"annotations":[]}
+{"type":"before","callId":"expect@45","stepId":"expect@45","startTime":220568.913,"class":"Test","method":"expect","title":"Expect \"toBeVisible\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":64,"column":73}]}
+{"type":"after","callId":"expect@45","endTime":220743.598,"annotations":[]}
+{"type":"before","callId":"pw:api@46","stepId":"pw:api@46","startTime":220745.028,"class":"Test","method":"pw:api","title":"Click locator('a:has-text(\"Cerrar Acta\")')","params":{"selector":"a:has-text(\"Cerrar Acta\")","strict":"true","timeout":"10000"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":67,"column":53}]}
+{"type":"after","callId":"pw:api@46","endTime":221316.926,"annotations":[]}
+{"type":"before","callId":"pw:api@47","stepId":"pw:api@47","startTime":221356.822,"class":"Test","method":"pw:api","title":"Wait for navigation","params":{"info":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":68,"column":16}]}
+{"type":"after","callId":"pw:api@47","endTime":222070.035,"annotations":[]}
+{"type":"before","callId":"expect@48","stepId":"expect@48","startTime":222086.848,"class":"Test","method":"expect","title":"Expect \"toHaveURL\"","params":{"expected":"Object"},"stack":[{"file":"C:\\Users\\ciber\\RiderProjects\\Derby\\e2e\\tests\\arbitro.spec.ts","line":69,"column":24}]}
+{"type":"after","callId":"expect@48","endTime":222235.422,"annotations":[]}
+{"type":"before","callId":"hook@49","stepId":"hook@49","startTime":222236.983,"class":"Test","method":"hook","title":"After Hooks","params":{},"stack":[]}
+{"type":"before","callId":"fixture@50","stepId":"fixture@50","parentId":"hook@49","startTime":222238.342,"class":"Test","method":"fixture","title":"Fixture \"page\"","params":{},"stack":[]}
+{"type":"after","callId":"fixture@50","endTime":222238.611,"annotations":[]}
+{"type":"before","callId":"fixture@51","stepId":"fixture@51","parentId":"hook@49","startTime":222250.556,"class":"Test","method":"fixture","title":"Fixture \"context\"","params":{},"stack":[]}
+{"type":"before","callId":"pw:api@52","stepId":"pw:api@52","parentId":"fixture@51","startTime":243501.519,"class":"Test","method":"pw:api","title":"Close context","params":{"reason":"Test ended."},"stack":[]}
+{"type":"after","callId":"pw:api@52","endTime":251715.289,"annotations":[]}
+{"type":"after","callId":"fixture@51","endTime":251715.675,"annotations":[]}
+{"type":"before","callId":"fixture@56","stepId":"fixture@56","parentId":"hook@49","startTime":251737.176,"class":"Test","method":"fixture","title":"Fixture \"navigationTimeout\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@56","endTime":251737.463,"annotations":[]}
+{"type":"before","callId":"fixture@57","stepId":"fixture@57","parentId":"hook@49","startTime":251737.976,"class":"Test","method":"fixture","title":"Fixture \"actionTimeout\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@57","endTime":251738.035,"annotations":[]}
+{"type":"before","callId":"fixture@61","stepId":"fixture@61","parentId":"hook@49","startTime":251749.479,"class":"Test","method":"fixture","title":"Fixture \"baseURL\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@61","endTime":251749.737,"annotations":[]}
+{"type":"before","callId":"fixture@62","stepId":"fixture@62","parentId":"hook@49","startTime":251757.02,"class":"Test","method":"fixture","title":"Fixture \"userAgent\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@62","endTime":251757.221,"annotations":[]}
+{"type":"before","callId":"fixture@64","stepId":"fixture@64","parentId":"hook@49","startTime":251758.972,"class":"Test","method":"fixture","title":"Fixture \"viewport\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@64","endTime":251759.055,"annotations":[]}
+{"type":"before","callId":"fixture@71","stepId":"fixture@71","parentId":"hook@49","startTime":251795.741,"class":"Test","method":"fixture","title":"Fixture \"isMobile\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@71","endTime":251795.878,"annotations":[]}
+{"type":"before","callId":"fixture@75","stepId":"fixture@75","parentId":"hook@49","startTime":251809.141,"class":"Test","method":"fixture","title":"Fixture \"hasTouch\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@75","endTime":251824.543,"annotations":[]}
+{"type":"before","callId":"fixture@77","stepId":"fixture@77","parentId":"hook@49","startTime":251826.99,"class":"Test","method":"fixture","title":"Fixture \"deviceScaleFactor\"","params":{},"stack":[{"file":"project#Chromium","line":1,"column":1}],"group":"configuration"}
+{"type":"after","callId":"fixture@77","endTime":251827.054,"annotations":[]}
+{"type":"after","callId":"hook@49","endTime":251851.058,"annotations":[]}
+{"type":"before","callId":"attach@025296fffb6d9c12801c3c7f0cd22c70","stepId":"attach@025296fffb6d9c12801c3c7f0cd22c70","startTime":279382.505,"class":"Test","method":"test.attach","title":"Attach \"trace\"","params":{},"stack":[]}
+{"type":"after","callId":"attach@025296fffb6d9c12801c3c7f0cd22c70","endTime":279382.824,"attachments":[]}

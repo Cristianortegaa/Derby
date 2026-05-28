@@ -77,6 +77,9 @@ export class AdminEquipos implements OnInit {
           this.resetFormulario();
           this.mostrarForm = false;
           this.mostrarNotificacion('exito', 'Equipo creado correctamente');
+        }).catch((err: any) => {
+          this.cargarEquipos();
+          this.mostrarNotificacion('error', err?.error?.error || 'Error al añadir algún jugador');
         });
       },
       error: (err: any) => this.mostrarNotificacion('error', err?.error?.error || 'Error al crear equipo')

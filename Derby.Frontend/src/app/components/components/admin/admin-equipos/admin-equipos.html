@@ -52,7 +52,7 @@
       <div class="mb-4">
         <div class="flex items-center justify-between mb-3">
           <p class="text-white text-sm font-semibold">
-            Jugadores <span class="text-gray-500 font-normal">({{ jugadoresNuevos.length }}/25 — mínimo 13)</span>
+            Jugadores <span class="text-gray-500 font-normal">({{ jugadoresNuevos.length }}/25 — mínimo 13, máximo 25)</span>
           </p>
           <button (click)="agregarJugadorForm()"
                   [disabled]="jugadoresNuevos.length >= 25"
