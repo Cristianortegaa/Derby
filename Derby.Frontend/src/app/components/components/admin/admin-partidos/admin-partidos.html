@@ -160,7 +160,6 @@
         <table class="w-full">
           <thead>
           <tr class="border-b border-slate-700/50">
-            <th class="text-left py-3 px-4 text-blue-400 font-bold">Liga</th>
             <th class="text-left py-3 px-4 text-yellow-400 font-bold">Jornada</th>
             <th class="text-left py-3 px-4 text-white font-bold">Local</th>
             <th class="text-left py-3 px-4 text-white font-bold">Visitante</th>
@@ -173,7 +172,6 @@
           </thead>
           <tbody>
           <tr *ngFor="let partido of partidosFiltrados" class="border-b border-slate-700/30 hover:bg-slate-800/50">
-            <td class="py-3 px-4 text-gray-400">{{ partido.liga?.nombre || 'N/A' }}</td>
             <td class="py-3 px-4 text-yellow-400 font-bold">J{{ partido.jornada }}</td>
             <td class="py-3 px-4 text-white font-semibold">{{ partido.equipoLocal?.nombre || 'N/A' }}</td>
             <td class="py-3 px-4 text-white font-semibold">{{ partido.equipoVisitante?.nombre || 'N/A' }}</td>
