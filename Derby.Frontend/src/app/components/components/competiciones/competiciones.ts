@@ -57,7 +57,7 @@ export class Competiciones implements OnInit {
   }
 
   cambiarCompeticion(): void {
-    this.ligas = this.todasLigas.filter((l: any) => l.competicionId === this.competicionSeleccionada);
+    this.ligas = this.todasLigas.filter((l: any) => l.competicionId == Number(this.competicionSeleccionada));
     this.ligaSeleccionada = 0;
     this.jornadas = [];
     this.clasificacion = [];
