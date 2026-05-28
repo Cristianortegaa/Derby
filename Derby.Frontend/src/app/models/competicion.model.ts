@@ -28,6 +28,8 @@ export interface ResultadoPartidoResponseDto {
   golesLocal: number;
   golesVisitante: number;
   fecha: string;
+  escudoLocalUrl: string;
+  escudoVisitanteUrl: string;
 }
 
 export interface EquipoClasificacionResponseDto {

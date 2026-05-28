@@ -35,7 +35,9 @@ public static class PartidoMapper
             EquipoVisitante = partido.EquipoVisitante?.Nombre ?? "Desconocido",
             GolesLocal = partido.GolesLocal ?? 0,
             GolesVisitante = partido.GolesVisitante ?? 0,
-            Fecha = partido.FechaHora ?? DateTime.MinValue
+            Fecha = partido.FechaHora ?? DateTime.MinValue,
+            EscudoLocalUrl = partido.EquipoLocal?.EscudoUrl ?? "",
+            EscudoVisitanteUrl = partido.EquipoVisitante?.EscudoUrl ?? ""
         };
     }
 }
