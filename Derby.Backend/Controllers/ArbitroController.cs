@@ -111,6 +111,7 @@ public class ArbitroController : ControllerBase
         return Ok(p);
     }
 
+    [AllowAnonymous]
     [HttpGet("partidos/{partidoId}/eventos")]
     public async Task<IActionResult> ObtenerEventos(int partidoId)
     {

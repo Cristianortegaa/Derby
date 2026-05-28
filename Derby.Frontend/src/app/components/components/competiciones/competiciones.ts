@@ -48,10 +48,6 @@ export class Competiciones implements OnInit {
         this.adminService.obtenerLigas().subscribe({
           next: (ligas) => {
             this.todasLigas = ligas;
-            if (competiciones.length > 0) {
-              this.competicionSeleccionada = competiciones[0].id;
-              this.cambiarCompeticion();
-            }
           },
           error: () => {}
         });
