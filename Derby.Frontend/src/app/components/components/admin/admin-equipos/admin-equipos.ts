@@ -19,7 +19,7 @@ export class AdminEquipos implements OnInit {
   filtroLiga = '';
   cargando = false;
   mostrarForm = false;
-  formulario = {nombre: '', sede: '', escudoUrl: ''};
+  formulario = {nombre: '', sede: '', escudoUrl: '', entrenador: ''};
 
   editandoId: number | null = null;
   mostrarFormEditar = false;

@@ -19,7 +19,6 @@ export class ArbitroService {
     return this.http.get<any[]>(`${this.apiUrl}/arbitro/${arbitroId}/partidos/pendientes`);
   }
 
-
   obtenerEventos(partidoId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/arbitro/partidos/${partidoId}/eventos`);
   }

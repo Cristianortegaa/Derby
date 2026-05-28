@@ -276,6 +276,7 @@ public class AdminController : ControllerBase
         }
     }
     
+    [AllowAnonymous]
     [HttpGet("equipos/{equipoId}/jugadores")]
     public async Task<IActionResult> ObtenerJugadores(int equipoId)
     {
