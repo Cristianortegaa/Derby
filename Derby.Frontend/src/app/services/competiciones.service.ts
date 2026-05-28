@@ -9,13 +9,14 @@ import {
   EquipoClasificacionResponseDto,
   GoleadorResponseDto
 } from '../models/competicion.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompeticionesService {
-  private apiUrl = 'https://derby-production.up.railway.app/api/competiciones';
+  private apiUrl = `${environment.apiUrl}/competiciones`;
 
   constructor(private http: HttpClient) {}
 
@@ -68,7 +69,7 @@ export class CompeticionesService {
   }
 
   obtenerEventosPartido(partidoId: number): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:5101/api/arbitro/partidos/${partidoId}/eventos`);
+    return this.http.get<any[]>(`${environment.apiUrl}/arbitro/partidos/${partidoId}/eventos`);
   }
 }
 
