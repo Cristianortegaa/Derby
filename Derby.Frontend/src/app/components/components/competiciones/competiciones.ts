@@ -28,6 +28,7 @@ export class Competiciones implements OnInit {
   resultados: ResultadoPartidoResponseDto[] = [];
   goleadores: GoleadorResponseDto[] = [];
   jornadaSeleccionada: number = 0;
+  filtroJornada: number | null = null;
   cargando: boolean = false;
   error: string = '';
 
@@ -91,6 +92,11 @@ export class Competiciones implements OnInit {
 
   cambiarTab(tab: TabActiva): void {
     this.tabActiva = tab;
+  }
+
+  get jornadasFiltradas(): JornadaResponseDto[] {
+    if (!this.filtroJornada) return this.jornadas;
+    return this.jornadas.filter(j => j.numero === Number(this.filtroJornada));
   }
 
   verActa(partido: any): void {
